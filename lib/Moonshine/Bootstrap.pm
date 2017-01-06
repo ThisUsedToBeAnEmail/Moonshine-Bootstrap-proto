@@ -24,9 +24,10 @@ our @ISA;
 
 BEGIN {
     my $fields = $Moonshine::Element::HAS{"attribute_list"}->();
+    my %field_list = map { $_ => 0 } @{ $fields }, qw/data tag/;
     {
         no strict 'refs';
-        *{"optional_attributes"} = sub { $fields }
+        *{"element_attributes"} = sub { \%field_list }
     };
 
     my @lazy_components =
@@ -60,16 +61,22 @@ sub validate_base_and_build {
         }
     );
 
+    
     my $html_spec = { };
     my $html_params = { };
-    for my $attribute (@{ __PACKAGE__->optional_attributes }, qw/tag data/) {
-        if (my $spec = delete $args{spec}->{$attribute}){
-            $html_spec->{$attribute} = $spec;
-        }
-        if (my $params = delete $args{params}->{$attribute}){
-            $html_params->{$attribute} = $params;
-            if ( not exists $html_spec->{$attribute} ) {
-                $html_spec->{$attribute} = 0;
+    
+    my $element_attributes = __PACKAGE__->element_attributes();
+    my %combine = (%{$args{params}}, %{$args{'spec'}});
+    for ( keys %combine ) {
+        if (defined $element_attributes->{$_}){
+            if (my $spec = delete $args{spec}->{$_}){
+                $html_spec->{$_} = $spec;
+            }
+            if (my $params = delete $args{params}->{$_}){
+                $html_params->{$_} = $params;
+                if ( not exists $html_spec->{$_} ) {
+                    $html_spec->{$_} = 0;
+                }
             }
         }
     }
