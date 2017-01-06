@@ -16,15 +16,15 @@ Version 0.01
 
 ### Sample Output
 
-        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 
 ## Buttons
 
-        $self->button( class => 'success', data => 'Left' );
+    $self->button( class => 'success', data => 'Left' );
 
 ### Sample Output
 
-        <button type="button" class="btn btn-success">Left</button>
+      <button type="button" class="btn btn-success">Left</button>
 
 ## Button Groups
 
@@ -42,11 +42,11 @@ Version 0.01
 
 ### Sample Output
 
-        <div class="btn-group" role="group" aria-label="...">
-                <button type="button" class="btn btn-default">Left</button>
-                <button type="button" class="btn btn-default">Middle</button>
-                <button type="button" class="btn btn-default">Right</button>
-        </div>
+    <div class="btn-group" role="group" aria-label="...">
+          <button type="button" class="btn btn-default">Left</button>
+          <button type="button" class="btn btn-default">Middle</button>
+          <button type="button" class="btn btn-default">Right</button>
+    </div>
 
 ## Button toolbar
 
@@ -72,12 +72,12 @@ Version 0.01
 ### Sample Output
 
     <div class="btn-toolbar" role="toolbar">
-            <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default">one</button>
-            </div> 
-            <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default">one</button>
-            </div>
+        <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default">one</button>
+        </div> 
+        <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default">one</button>
+        </div>
     </div>
 
 ## Dropdown
@@ -109,19 +109,19 @@ Version 0.01
 
 ### Sample Output
 
-        <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Dropdown
-                <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">Separated link</a></li>
-          </ul>
-        </div>
+    <div class="dropdown">
+      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Dropdown
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+      </ul>
+    </div>
 
 ## dropdown\_button
 
@@ -157,8 +157,8 @@ Version 0.01
 
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         Dropdown
-                <span class="caret"></span>
-        </button> 
+        <span class="caret"></span>
+    </button> 
 
 ## dropdown\_ul 
 
@@ -217,20 +217,20 @@ Version 0.01
 
     Add a divider to separate series of links in a dropdown menu
 
-               <ul class="dropdown-menu" aria-labelledby="dropdownMenuDivider">
-                 ...
-                 <li role="separator" class="divider"></li>
-                 ...
-               </ul> 
+           <ul class="dropdown-menu" aria-labelledby="dropdownMenuDivider">
+             ...
+             <li role="separator" class="divider"></li>
+             ...
+           </ul> 
         
 
 - alignment
 
     Change alignment of dropdown menu 
 
-               <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
+           <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
                ...
-               </ul>
+           </ul>
         
 
 ### Sample Output
@@ -262,7 +262,7 @@ Version 0.01
 
 ### Sample Output
 
-        <li class="dropdown-header">Dropdown header</li>
+    <li class="dropdown-header">Dropdown header</li>
 
 ## linked\_li  
 
@@ -359,10 +359,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 134:
+- Around line 141:
 
     You forgot a '=back' before '=head3'
 
-- Around line 343:
+- Around line 357:
 
     You forgot a '=back' before '=head3'
