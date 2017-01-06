@@ -8,6 +8,7 @@ BEGIN {
 
 subtest "build" => sub {
     my $class = Moonshine::Bootstrap->new();
+    
     component_test({
         class => $class,
         action => 'glyphicon',
@@ -42,7 +43,8 @@ subtest "build" => sub {
         },
         expected => '<div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button></div>'
     });     
-    
+
+
     # button_group sizing
     component_test({
         class => $class,
@@ -112,7 +114,7 @@ subtest "build" => sub {
         args => {
             link => 'http://some.url',
             data => 'URL',
-            disabled => 1,
+            disable => 1,
         },
         expected => '<li class="disabled"><a href="http://some.url">URL</a></li>'
     }); 
@@ -131,7 +133,7 @@ subtest "build" => sub {
         action => 'dropdown_ul',
         args => {
             aria_labelledby => 'dropdownMenu1',
-            list => [
+            children => [
                 {
                     link => 'http://some.url',
                     data => 'URL',
@@ -151,7 +153,7 @@ subtest "build" => sub {
         args => {
             alignment => 'right',
             aria_labelledby => 'dropdownMenu1',
-            list => [
+            children => [
                 {
                     link => 'http://some.url',
                     data => 'URL',
@@ -165,14 +167,13 @@ subtest "build" => sub {
         expected => '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1"><li><a href="http://some.url">URL</a></li><li><a href="http://second.url">Second</a></li></ul>' 
     }); 
 
-
     component_test({
         class => $class,
         action => 'dropdown_ul',
         args => {
             separators => [2],
             aria_labelledby => 'dropdownMenu1',
-            list => [
+            children => [
                 {
                     link => 'http://some.url',
                     data => 'URL',
@@ -192,7 +193,7 @@ subtest "build" => sub {
         args => {
             separators => [1, 3, 5],
             aria_labelledby => 'dropdownMenu1',
-            list => [
+            children => [
                 {
                     link => 'http://some.url',
                     data => 'URL',
@@ -213,7 +214,7 @@ subtest "build" => sub {
             mid => 'dropdownMenu1', 
             ul => {
                 separators => [1,3,5],
-                list => [
+                children => [
                     {
                         link => 'http://some.url',
                         data => 'URL',
@@ -240,7 +241,7 @@ subtest "build" => sub {
             mid => 'dropdownMenu1', 
             ul => {
                 separators => [1,3,5],
-                list => [
+                children => [
                     {
                         link => 'http://some.url',
                         data => 'URL',
@@ -248,7 +249,7 @@ subtest "build" => sub {
                     {
                         link => 'http://second.url',
                         data => 'Second',
-                        disabled => 1,
+                        disable => 1,
                     }
                 ],
             },
@@ -267,7 +268,7 @@ subtest "build" => sub {
             mid => 'dropdownMenu1', 
             ul => {
                 separators => [1,3,5],
-                list => [
+                children => [
                     {
                         link => 'http://some.url',
                         data => 'URL',
@@ -294,7 +295,7 @@ subtest "build" => sub {
             dropup => 1,
             ul => {
                 separators => [1,3,5],
-                list => [
+                children => [
                     {
                         link => 'http://some.url',
                         data => 'URL',
@@ -312,7 +313,6 @@ subtest "build" => sub {
         },
         expected => '<div class="dropup"><button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" aria-expanded="true" aria-haspopup="true" data-toggle="dropdown">Dropdown<span class="caret"></span></button><ul class="dropdown-menu" aria-labelledby="dropdownMenu1"><li class="divider" role="separator"></li><li><a href="http://some.url">URL</a></li><li class="divider" role="separator"></li><li class="dropdown-header">Second</li><li class="divider" role="separator"></li></ul></div>'   
     }); 
-
 };
 
 sub component_test {

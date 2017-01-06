@@ -24,10 +24,9 @@ our @ISA;
 
 BEGIN {
     my $fields = $Moonshine::Element::HAS{"attribute_list"}->();
-    my %param_spec = map { $_ => 0 } @{$fields};
     {
         no strict 'refs';
-        *{"optional_attributes"} = sub { \%param_spec }
+        *{"optional_attributes"} = sub { $fields }
     };
 
     my @lazy_components =
@@ -38,28 +37,54 @@ BEGIN {
             *{"$component"} = sub {
                 my $self = shift;
 
-                my %element_args = validate_with(
-                    params => \@_,
-                    spec   => $self->_setup_validation_spec(
-                        {
+                my ($base_args, $build_args) = validate_base_and_build({
+                    params => $_[0],
+                    spec   => {
                             tag    => { default => $component },
                             data   => 0,
-                            sizing => 0,
-                        }
-                    )
-                );
+                    }
+                });
 
-                return Moonshine::Element->new(%element_args);
+                return Moonshine::Element->new($base_args);
               }
         };
     }
 }
 
-sub _setup_validation_spec {
-    my ( $self, $args ) = @_;
-    my $base_spec = $self->optional_attributes;
-    my %merged = ( %{$base_spec}, %{$args} );
-    return \%merged;
+sub validate_base_and_build {
+    my %args = validate_with(
+        params => $_[0],
+        spec => {
+            params => { type => HASHREF },
+            spec => { type => HASHREF },
+        }
+    );
+
+    my $html_spec = { };
+    my $html_params = { };
+    for my $attribute (@{ __PACKAGE__->optional_attributes }, qw/tag data/) {
+        if (my $spec = delete $args{spec}->{$attribute}){
+            $html_spec->{$attribute} = $spec;
+        }
+        if (my $params = delete $args{params}->{$attribute}){
+            $html_params->{$attribute} = $params;
+            if ( not exists $html_spec->{$attribute} ) {
+                $html_spec->{$attribute} = 0;
+            }
+        }
+    }
+
+    my %hash1 = validate_with(
+        params  => $html_params,
+        spec    => $html_spec,
+    );
+
+    my %hash2 = validate_with(
+        params  => $args{params}, 
+        spec    => $args{spec},
+    );
+
+    return \%hash1, \%hash2;
 }
 
 =head1 Bootstraps Components
@@ -78,20 +103,19 @@ sub _setup_validation_spec {
 
 sub glyphicon {
     my ($self) = shift;
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                tag         => { default => 'span' },
-                class       => 1,
-                aria_hidden => { default => 'true' },
-            }
-        ),
-    );
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0],
+        spec   => {
+            tag         => { default => 'span' },
+            class       => 1,
+            aria_hidden => { default => 'true' },
+        }
+    });
 
-    $element_args{class} = sprintf "glyphicon glyphicon-%s",
-      $element_args{class};
-    return Moonshine::Element->new( \%element_args );
+    $base_args->{class} = sprintf "glyphicon glyphicon-%s",
+      $base_args->{class};
+    
+    return Moonshine::Element->new( $base_args );
 }
 
 =head2 Buttons
@@ -105,21 +129,19 @@ sub glyphicon {
 =cut
 
 sub button {
-    my $self         = shift;
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                tag   => { default => 'button' },
-                class => { default => 'default' },
-                type  => { default => 'button' },
-                data  => 1,
-            }
-        ),
-    );
+    my $self = shift;
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0],
+        spec   => {
+            tag   => { default => 'button' },
+            class => { default => 'default' },
+            type  => { default => 'button' },
+            data  => 1,
+        }
+    });
 
-    $element_args{class} = sprintf "btn btn-%s", $element_args{class};
-    return Moonshine::Element->new( \%element_args );
+    $base_args->{class} = sprintf "btn btn-%s", $base_args->{class};
+    return Moonshine::Element->new( $base_args );
 }
 
 =head2 Button Groups
@@ -150,29 +172,25 @@ SCALAR that appends btn-group-%s - lg, sm, xs
 
 sub button_group {
     my $self         = shift;
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                role   => { default => 'group' },
-                class  => { default => 'btn-group' },
-                sizing => 0,
-                group  => {
-                    type => ARRAYREF,
-                },
-            }
-        ),
-    );
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0],
+        spec   => {
+            role   => { default => 'group' },
+            class  => { default => 'btn-group' },
+            sizing => 0,
+            group  => {
+                type => ARRAYREF,
+            },
+        }
+    });
 
-    if ( my $group_sizing = $element_args{sizing} ) {
-        $element_args{class} = sprintf '%s btn-group-%s', $element_args{class},
-          $group_sizing;
+    if ( my $group_sizing = $build_args->{sizing} ) {
+        $base_args->{class} = sprintf '%s btn-group-%s', $base_args->{class}, $group_sizing;
     }
 
-    my $groups       = delete $element_args{group};
-    my $button_group = $self->div(%element_args);
+    my $button_group = $self->div($base_args);
 
-    for ( @{$groups} ) {
+    for ( @{$build_args->{group}} ) {
         $button_group->add_child( $self->button($_) );
     }
 
@@ -215,23 +233,20 @@ sub button_group {
 
 sub button_toolbar {
     my $self         = shift;
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                role    => { default => 'toolbar' },
-                class   => { default => 'btn-toolbar' },
-                toolbar => {
-                    type => ARRAYREF,
-                },
-            }
-        ),
-    );
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0],
+        spec   => {
+            role    => { default => 'toolbar' },
+            class   => { default => 'btn-toolbar' },
+            toolbar => {
+                type => ARRAYREF,
+            },
+        },
+    });
 
-    my $toolbars       = delete $element_args{toolbar};
-    my $button_toolbar = $self->div(%element_args);
+    my $button_toolbar = $self->div($base_args);
 
-    for ( @{$toolbars} ) {
+    for ( @{$build_args->{toolbar}} ) {
         $button_toolbar->add_child( $self->button_group($_) );
     }
 
@@ -289,35 +304,30 @@ Change position of dropdown menu via base_element div class - dropdown, dropup,
 
 sub dropdown {
     my $self         = shift;
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                class  => { default => '' },
-                dropup => 0,
-                button => {
-                    type => HASHREF,
-                },
-                ul => {
-                    type => HASHREF,
-                },
-                mid => {
-                    type => SCALAR,
-                }
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0],
+        spec   => {
+            class  => { default => '' },
+            dropup => 0,
+            button => {
+                type => HASHREF,
+            },
+            ul => {
+                type => HASHREF,
+            },
+            mid => {
+                type => SCALAR,
             }
-        ),
-    );
+        }
+    });
 
-    my $class = delete $element_args{dropup} ? 'dropup' : 'dropdown';
-    $element_args{class} .= $class;
+    my $class = $build_args->{dropup} ? 'dropup' : 'dropdown';
+    $base_args->{class} .= $class;
 
-    my $button = delete $element_args{button};
-    my $ul     = delete $element_args{ul};
-    my $id     = delete $element_args{mid};
-
-    my $div = $self->div(%element_args);
-    $div->add_child( $self->dropdown_button( ( %{$button}, id => $id ) ) );
-    $div->add_child( $self->dropdown_ul( ( %{$ul}, aria_labelledby => $id ) ) );
+    my $div = $self->div($base_args);
+    $div->add_child( $self->dropdown_button( \( %{$build_args->{button}}, id => $build_args->{mid} ) ) );
+    $div->add_child( $self->dropdown_ul( {( %{$build_args->{ul}}, aria_labelledby =>
+    $build_args->{mid} )} ) );
 
     return $div;
 }
@@ -366,23 +376,20 @@ is **required**
 sub dropdown_button {
     my ($self) = shift;
 
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                class         => { default => 'default' },
-                id            => 1,
-                data_toggle   => { default => 'dropdown' },
-                aria_haspopup => { default => 'true' },
-                aria_expanded => { default => 'true' },
-                data          => 1,
-            }
-        ),
-    );
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0],
+        spec   => {
+            class         => { default => 'default' },
+            id            => 1,
+            data_toggle   => { default => 'dropdown' },
+            aria_haspopup => { default => 'true' },
+            aria_expanded => { default => 'true' },
+            data          => 1,
+        }
+    });
 
-    $element_args{class} .= ' dropdown-toggle';
-
-    my $button = $self->button(%element_args);
+    $base_args->{class} .= ' dropdown-toggle';
+    my $button = $self->button($base_args);
     $button->add_child( $self->caret );
     return $button;
 }
@@ -399,7 +406,7 @@ sub dropdown_button {
                 data => 'Title',
             }
         ]
-        list => [
+        children => [
             {
                 heading => 1,
                 data => 'Title',
@@ -438,7 +445,7 @@ defaults to dropdown-menu
 
 Required
 
-=item list
+=item children
 
 Arrayref that gets used to build linked_li's 
 
@@ -477,41 +484,36 @@ Change alignment of dropdown menu
 sub dropdown_ul {
     my $self = shift;
 
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                class           => { default => 'dropdown-menu' },
-                aria_labelledby => 1,
-                alignment       => {
-                    type     => SCALAR,
-                    optional => 1,
-                },
-                separators => {
-                    type     => ARRAYREF,
-                    optional => 1,
-                },
-                headers => {
-                    type     => ARRAYREF,
-                    optional => 1,
-                },
-                list => {
-                    type => ARRAYREF,
-                }
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0],
+        spec   => {
+            class           => { default => 'dropdown-menu' },
+            aria_labelledby => 1,
+            alignment       => {
+                type     => SCALAR,
+                optional => 1,
+            },
+            separators => {
+                type     => ARRAYREF,
+                optional => 1,
+            },
+            headers => {
+                type     => ARRAYREF,
+                optional => 1,
+            },
+            children => {
+                type => ARRAYREF,
             }
-        ),
-    );
+        }
+    });
 
-    my $list       = delete $element_args{list};
-    my $separators = delete $element_args{separators};
-    my $headers    = delete $element_args{headers};
-    if ( my $alignment = delete $element_args{alignment} ) {
-        $element_args{class} .= sprintf " dropdown-menu-%s", $alignment;
+    if ( my $alignment = $build_args->{alignment} ) {
+        $base_args->{class} .= sprintf " dropdown-menu-%s", $alignment;
     }
 
-    my $ul = $self->ul(%element_args);
+    my $ul = $self->ul($base_args);
 
-    for ( @{$list} ) {
+    for ( @{$build_args->{children}} ) {
         if ( delete $_->{header} ) {
             $ul->add_child( $self->dropdown_header_li($_) );
         }
@@ -523,15 +525,15 @@ sub dropdown_ul {
         }
     }
 
-    if ($headers) {
-        for ( @{$headers} ) {
+    if ($build_args->{headers}) {
+        for ( @{$build_args->{headers}} ) {
             my $index = delete $_->{index} or die "no index";
             splice @{ $ul->{children} }, $index - 1, 0,
               $self->dropdown_header_li($_);
         }
     }
 
-    if ($separators) {
+    if (my $separators = $build_args->{separators}) {
         my $separator = $self->separator_li;
         for ( @{$separators} ) {
             splice @{ $ul->{children} }, $_ - 1, 0, $separator;
@@ -554,17 +556,15 @@ sub dropdown_ul {
 sub separator_li {
     my $self = shift;
 
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                role  => { default => 'separator' },
-                class => { default => 'divider' },
-            }
-        ),
-    );
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0] || {},
+        spec   => {
+            role  => { default => 'separator' },
+            class => { default => 'divider' },
+        }
+    });
 
-    return $self->li(%element_args);
+    return $self->li($base_args);
 }
 
 =head2 dropdown_header_li
@@ -590,17 +590,15 @@ sub separator_li {
 sub dropdown_header_li {
     my $self = shift;
 
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                class => { default => 'dropdown-header' },
-                data  => 1,
-            }
-        ),
-    );
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0] // {},
+        spec   => {
+            class => { default => 'dropdown-header' },
+            data  => 1,
+        }
+    });
 
-    return $self->li(%element_args);
+    return $self->li($base_args);
 }
 
 =head2 linked_li  
@@ -640,31 +638,24 @@ sub dropdown_header_li {
 sub linked_li {
     my $self = shift;
 
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                link     => 1,
-                data     => 1,
-                disabled => 0,
-            }
-        ),
-    );
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0] // {},
+        spec   => {
+            link     => 1,
+            data     => 1,
+            disable => 0,
+        }
+    });
+    
+    $build_args->{data} = delete $base_args->{data};
 
-    my $a_args = {
-        href => delete $element_args{link},
-        data => delete $element_args{data},
-    };
+    my $li = $self->li($base_args);
 
-    my $disabled = delete $element_args{disabled};
-
-    my $li = $self->li(%element_args);
-
-    if ($disabled) {
+    if ($build_args->{disable}) {
         $li->class('disabled');
     }
 
-    $li->add_child( $self->a($a_args) );
+    $li->add_child( $self->a({ href => $build_args->{link}, data => $build_args->{data} }) );
     return $li;
 }
 
@@ -688,17 +679,15 @@ sub linked_li {
 
 sub caret {
     my $self         = shift;
-    my %element_args = validate_with(
-        params => \@_,
-        spec   => $self->_setup_validation_spec(
-            {
-                tag   => { default => 'span' },
-                class => { default => 'caret' },
-            }
-        ),
-    );
+    my ($base_args, $build_args) = validate_base_and_build({
+        params => $_[0] // {},
+        spec   => {
+            tag   => { default => 'span' },
+            class => { default => 'caret' },
+        }
+    });
 
-    return Moonshine::Element->new(%element_args);
+    return Moonshine::Element->new($base_args);
 }
 
 1;
