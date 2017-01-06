@@ -53,7 +53,7 @@ BEGIN {
 
 sub validate_base_and_build {
     my %args = validate_with(
-        params => $_[0],
+        params => $_[0] // {},
         spec => {
             params => { type => HASHREF },
             spec => { type => HASHREF },
@@ -74,17 +74,17 @@ sub validate_base_and_build {
         }
     }
 
-    my %hash1 = validate_with(
+    my %base = validate_with(
         params  => $html_params,
         spec    => $html_spec,
     );
 
-    my %hash2 = validate_with(
+    my %build = validate_with(
         params  => $args{params}, 
         spec    => $args{spec},
     );
 
-    return \%hash1, \%hash2;
+    return \%base, \%build;
 }
 
 =head1 Bootstraps Components
@@ -104,7 +104,7 @@ sub validate_base_and_build {
 sub glyphicon {
     my ($self) = shift;
     my ($base_args, $build_args) = validate_base_and_build({
-        params => $_[0],
+        params => $_[0] // {},
         spec   => {
             tag         => { default => 'span' },
             class       => 1,
@@ -131,7 +131,7 @@ sub glyphicon {
 sub button {
     my $self = shift;
     my ($base_args, $build_args) = validate_base_and_build({
-        params => $_[0],
+        params => $_[0] // {},
         spec   => {
             tag   => { default => 'button' },
             class => { default => 'default' },
@@ -234,7 +234,7 @@ sub button_group {
 sub button_toolbar {
     my $self         = shift;
     my ($base_args, $build_args) = validate_base_and_build({
-        params => $_[0],
+        params => $_[0] // {},
         spec   => {
             role    => { default => 'toolbar' },
             class   => { default => 'btn-toolbar' },
@@ -305,7 +305,7 @@ Change position of dropdown menu via base_element div class - dropdown, dropup,
 sub dropdown {
     my $self         = shift;
     my ($base_args, $build_args) = validate_base_and_build({
-        params => $_[0],
+        params => $_[0] // {},
         spec   => {
             class  => { default => '' },
             dropup => 0,
@@ -377,7 +377,7 @@ sub dropdown_button {
     my ($self) = shift;
 
     my ($base_args, $build_args) = validate_base_and_build({
-        params => $_[0],
+        params => $_[0] // {},
         spec   => {
             class         => { default => 'default' },
             id            => 1,
@@ -485,7 +485,7 @@ sub dropdown_ul {
     my $self = shift;
 
     my ($base_args, $build_args) = validate_base_and_build({
-        params => $_[0],
+        params => $_[0] // {},
         spec   => {
             class           => { default => 'dropdown-menu' },
             aria_labelledby => 1,
@@ -557,7 +557,7 @@ sub separator_li {
     my $self = shift;
 
     my ($base_args, $build_args) = validate_base_and_build({
-        params => $_[0] || {},
+        params => $_[0] // {},
         spec   => {
             role  => { default => 'separator' },
             class => { default => 'divider' },
