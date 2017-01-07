@@ -104,6 +104,22 @@ sub validate_base_and_build {
 
 =head3 options
 
+=over
+
+=item tag
+
+default span
+
+=item class
+
+is required
+
+=item aria_hidden
+
+default true
+
+=back
+
 =head3 Sample Output
 
     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -134,6 +150,8 @@ sub glyphicon {
 
 =head3 Options
 
+=over
+
 =item sizing 
 
 Buttons can have different sizes.
@@ -141,6 +159,18 @@ Buttons can have different sizes.
     sizing => 'lg',
 
     <button class="btn btn-success btn-lg" ...>
+
+=item class
+
+default/success/danger...
+
+=item type
+
+defaults to button
+
+=item data
+
+=back
 
 =head3 Sample Output
 
@@ -213,7 +243,7 @@ ArrayRef of Hashes, that can build nested button_groups
     </ul>
   </div>
 
-=head3 vertical
+=item vertical
 
 Make a set of buttons appear vertically stacked rather than horizontally.
 
@@ -223,7 +253,7 @@ Make a set of buttons appear vertically stacked rather than horizontally.
         ...
     </div>
 
-=head3 justified
+=item justified
 
 Make a group of buttons stretch at equal sizes to span the entire width of its parent.
 
@@ -232,6 +262,8 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
     <div class="btn-group btn-group-justified" ...>
          ...
     </div>
+
+=back
 
 =head3 Sample Output
 
@@ -335,6 +367,18 @@ sub button_group {
             }
         ]
     );
+
+=head3 Options
+
+=over
+
+=item role
+
+=item class
+
+=item toolbar
+
+=back
 
 =head3 Sample Output
     
@@ -509,6 +553,7 @@ Create split dropdown button
         <span class="caret"></span>
     </button> 
 
+=back
 
 =head3 Sample Output
 
@@ -706,6 +751,16 @@ sub dropdown_ul {
 
     $self->separator_li;
 
+=head3 options
+
+=over
+
+=item role
+
+=item class
+
+=back
+
 =head3 Sample Output
 
     <li role="separator" class="divider"></li>
@@ -827,10 +882,6 @@ sub linked_li {
     );
     return $li;
 }
-
-=head2 
-
-=cut
 
 =head2 caret
 
@@ -983,6 +1034,20 @@ sub input_group {
 
     $self->input();
 
+=head3
+
+=over
+
+=item class
+
+default form-control
+
+=item type
+
+default text
+
+=back
+
 =head3 Renders
 
     <input type="text" class="form-control">
@@ -1008,6 +1073,22 @@ sub input {
 =head2 input addon
 
     $self->input_addon();
+
+=head3 Options
+
+=over
+
+=item checkbox
+
+=item radio
+
+=item button
+
+=item dropdown
+
+=item class
+
+=back
 
 =head3 Renders
 

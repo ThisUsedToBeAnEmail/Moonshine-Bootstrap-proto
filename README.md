@@ -14,6 +14,18 @@ Version 0.01
 
 ### options
 
+- tag
+
+    default span
+
+- class
+
+    is required
+
+- aria\_hidden
+
+    default true
+
 ### Sample Output
 
     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -31,6 +43,16 @@ Version 0.01
         sizing => 'lg',
 
         <button class="btn btn-success btn-lg" ...>
+
+- class
+
+    default/success/danger...
+
+- type
+
+    defaults to button
+
+- data
 
 ### Sample Output
 
@@ -75,25 +97,25 @@ Version 0.01
           </ul>
         </div>
 
-### vertical
+- vertical
 
-Make a set of buttons appear vertically stacked rather than horizontally.
+    Make a set of buttons appear vertically stacked rather than horizontally.
 
-    vertical => 1
+        vertical => 1
 
-    <div class="btn-group btn-group-vertical" ...>
-        ...
-    </div>
+        <div class="btn-group btn-group-vertical" ...>
+            ...
+        </div>
 
-### justified
+- justified
 
-Make a group of buttons stretch at equal sizes to span the entire width of its parent.
+    Make a group of buttons stretch at equal sizes to span the entire width of its parent.
 
-    justified => 1
+        justified => 1
 
-    <div class="btn-group btn-group-justified" ...>
-         ...
-    </div>
+        <div class="btn-group btn-group-justified" ...>
+             ...
+        </div>
 
 ### Sample Output
 
@@ -123,6 +145,12 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
             }
         ]
     );
+
+### Options
+
+- role
+- class
+- toolbar
 
 ### Sample Output
 
@@ -313,6 +341,11 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
 
     $self->separator_li;
 
+### options
+
+- role
+- class
+
 ### Sample Output
 
     <li role="separator" class="divider"></li>
@@ -357,8 +390,6 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
 ### Sample Output
 
     <li><a href="http://some.url">Action</a></li>
-
-## 
 
 ## caret
 
@@ -416,6 +447,16 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
 
     $self->input();
 
+### 
+
+- class
+
+    default form-control
+
+- type
+
+    default text
+
 ### Renders
 
     <input type="text" class="form-control">
@@ -423,6 +464,14 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
 ## input addon
 
     $self->input_addon();
+
+### Options
+
+- checkbox
+- radio
+- button
+- dropdown
+- class
 
 ### Renders
 
@@ -529,23 +578,3 @@ YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
 CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
 CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 137:
-
-    '=item' outside of any '=over'
-
-- Around line 145:
-
-    You forgot a '=back' before '=head3'
-
-- Around line 216:
-
-    You forgot a '=back' before '=head3'
-
-- Around line 513:
-
-    You forgot a '=back' before '=head3'
