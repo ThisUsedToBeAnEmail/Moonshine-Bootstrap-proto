@@ -691,7 +691,7 @@ sub dropdown_ul {
             params => $_[0] // {},
             spec => {
                 class           => { default => 'dropdown-menu' },
-                aria_labelledby => 1,
+                aria_labelledby => 0,
                 alignment       => {
                     type     => SCALAR,
                     optional => 1,
@@ -1243,6 +1243,8 @@ sub nav {
 
 =item disable
 
+=item dropdown
+
 =back
 
 =head3 renders
@@ -1266,6 +1268,11 @@ sub nav_item {
                 },
                 data => 0,
                 disable => 0,
+                dropdown => {
+                    build => 1,
+                    type => HASHREF,
+                    optional => 1,
+                }
             }
         }
     );
@@ -1280,6 +1287,16 @@ sub nav_item {
         link => $build_args->{link},
         disable => $build_args->{disable},    
     }); 
+
+    if (my $dropdown = $build_args->{dropdown} ) {
+        my $a = $li->children->[0];
+        $a->class('dropdown-toggle');
+        $a->role('button');
+        $a->aria_haspopup('true');
+        $a->aria_expanded('false');
+        $a->data_toggle('dropdown');
+        $li->add_child($self->dropdown_ul($dropdown));
+    }
     
     return $li;
 }
