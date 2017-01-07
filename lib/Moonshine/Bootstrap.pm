@@ -1102,13 +1102,18 @@ sub nav {
                 },
                 items => {
                     type => ARRAYREF,
-                }
+                },
+                stacked => 0,
             }
         }
     );
     
     my $class = sprintf "nav nav-%s", $build_args->{type}; 
     $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+  
+    if ( $build_args->{stacked} ) {
+        $base_args->{class} .= ' nav-stacked';
+    }  
    
     my $ul = $self->ul($base_args); 
    

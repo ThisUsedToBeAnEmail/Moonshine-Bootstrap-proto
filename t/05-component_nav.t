@@ -51,7 +51,27 @@ subtest "build" => sub {
         expected => '<ul class="nav nav-pills"><li class="active" role="presentation"><a href="#">Home</a></li><li role="presentation"><a href="#">Profile</a></li><li role="presentation"><a href="#">Messages</a></li></ul>',
     });
 
-
+    component_test({
+        class => $class,
+        action => 'nav',
+        args => {
+			type => 'pills',
+            stacked => 1,
+            items => [
+				{
+                    data => 'Home',
+                    active => 1,
+                },
+                {
+                    data => 'Profile',
+                },
+                {
+                    data => 'Messages',
+                }
+			],
+        },
+        expected => '<ul class="nav nav-pills nav-stacked"><li class="active" role="presentation"><a href="#">Home</a></li><li role="presentation"><a href="#">Profile</a></li><li role="presentation"><a href="#">Messages</a></li></ul>',
+    });
 };
 
 sub component_test {
