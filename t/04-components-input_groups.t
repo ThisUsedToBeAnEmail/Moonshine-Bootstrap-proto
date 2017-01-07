@@ -96,6 +96,27 @@ subtest "build" => sub {
         expected => '<label for="basic-username">Some text</label><div class="input-group"><span class="input-group-addon" id="basic-addon1">@</span><input class="form-control" id="basic-username" placeholder="Username" type="text" aria-describedby="basic-addon1"></input><span class="input-group-addon" id="basic-addon1">@</span></div>',
     });
 
+    component_test({
+        class => $class,
+        action => 'input_group_addon',
+        args => {
+			data => q(@),
+            id => 'basic-addon1',
+        },
+        expected => '<span class="input-group-addon" id="basic-addon1">@</span>',
+    });
+
+    component_test({
+        class => $class,
+        action => 'input_group_addon',
+        args => {
+			checkbox => 1,
+            id => 'basic-addon1',
+        },
+        expected => '<span class="input-group-addon" id="basic-addon1"><input type="checkbox"></input></span>',
+    });
+
+
 };
 
 sub component_test {
