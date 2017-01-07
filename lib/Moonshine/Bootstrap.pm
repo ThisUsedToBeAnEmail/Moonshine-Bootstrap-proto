@@ -864,6 +864,133 @@ sub caret {
     return Moonshine::Element->new($base_args);
 }
 
+=head2 Input Groups
+    
+    $self->input_group({
+        mid => 'basic-addon1',
+        placeholder => 'Username',
+        left => {
+            data => '@'
+        }
+    });
+
+=head3 options
+
+=over
+
+=item mid
+
+=item placeholder
+
+=item left
+
+=item right
+
+=back
+
+=head3 Sample Output
+
+    <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">@</span>
+        <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+    </div>
+
+=cut
+
+sub input_group {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                mid => 1,
+                class => { default => 'input-group' },
+                left => {
+                    type => HASHREF,
+                    optional => 1,
+                },
+                right => {
+                    type => HASHREF,
+                    optional => 1,
+                },
+                input => {
+                    type => HASHREF,
+                    optional => 1,
+                    default => {},
+                }
+            }
+        }
+    );
+
+    my $input_group = $self->div($base_args);
+    
+    if ( $build_args->{left} ) {
+        $build_args->{left}->{id} = $build_args->{mid};
+        $input_group->add_child($self->input_group_addon($build_args->{left}));
+    }
+
+    $build_args->{input}->{aria_describedby} = $build_args->{mid};
+    $input_group->add_child($self->input($build_args->{input}));
+
+    if ( $build_args->{right} ) {
+        $build_args->{right}->{id} = $build_args->{mid};
+        $input_group->add_child($self->input_group_addon($build_args->{right}));
+    }
+
+    return $input_group
+}
+
+=head2 input
+
+    $self->input();
+
+=head3 Renders
+
+    <input type="text" class="form-control">
+
+=cut
+
+sub input {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag => { default => 'input' },
+                class => { default => 'form-control' },
+                type => { default => 'text' },
+            }
+        }
+    );
+
+    return Moonshine::Element->new($base_args);
+}
+
+=head2 input addon
+
+    $self->input_addon();
+
+=head3 Renders
+
+    <span class="input-group-addon" ...>@</span>
+
+=cut
+
+sub input_group_addon {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                data => 1,
+                class => { default => 'input-group-addon' },
+            }
+        }
+    );
+
+    return $self->span($base_args);
+}
+
 1;
 
 __END__
