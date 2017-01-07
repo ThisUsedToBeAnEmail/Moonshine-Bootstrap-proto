@@ -1290,11 +1290,13 @@ sub nav_item {
 
     if (my $dropdown = $build_args->{dropdown} ) {
         my $a = $li->children->[0];
-        $a->class('dropdown-toggle');
-        $a->role('button');
-        $a->aria_haspopup('true');
-        $a->aria_expanded('false');
-        $a->data_toggle('dropdown');
+        $a->set({
+            class => 'dropdown-toggle',
+            role => 'button',
+            aria_haspopup => 'true',
+            aria_expanded => 'false',
+            data_toggle => 'dropdown'
+        });
         $li->add_child($self->dropdown_ul($dropdown));
     }
     
