@@ -54,13 +54,12 @@ BEGIN {
 
 sub validate_base_and_build {
     my %args = validate_with(
-        params => $_[0] // {},
+        params => $_[0],
         spec => {
             params => { type => HASHREF },
             spec => { type => HASHREF },
         }
     );
-
     
     my $html_spec = { };
     my $html_params = { };
@@ -163,9 +162,34 @@ sub button {
 
 Array of Hashes - each hash get sent to **button**
 
+unless dropdown => 1 is set, then the args gets sent to dropdown.
+
 =item sizing 
 
 SCALAR that appends btn-group-%s - lg, sm, xs
+
+=item nested
+
+ArrayRef of Hashes, that can build nested button_groups
+
+	nested => [ 
+		{
+         	index => 3,
+			dropdown => 1,
+		},
+		...
+	],
+
+   <div class="btn-group" role="group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Dropdown
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="#">Dropdown link</a></li>
+      <li><a href="#">Dropdown link</a></li>
+    </ul>
+  </div>
 
 =head3 Sample Output
 
@@ -180,11 +204,15 @@ SCALAR that appends btn-group-%s - lg, sm, xs
 sub button_group {
     my $self         = shift;
     my ($base_args, $build_args) = validate_base_and_build({
-        params => $_[0],
+        params => $_[0] // {},
         spec   => {
             role   => { default => 'group' },
             class  => { default => 'btn-group' },
             sizing => 0,
+			nested => {
+                type => ARRAYREF,
+				optional => 1,
+			},
             group  => {
                 type => ARRAYREF,
             },
@@ -197,9 +225,32 @@ sub button_group {
 
     my $button_group = $self->div($base_args);
 
+	my %drop_down_args = ( class => 'btn-group', role => 'group' );
     for ( @{$build_args->{group}} ) {
-        $button_group->add_child( $self->button($_) );
+        if ( exists $_->{group} ) {
+         	$button_group->add_child( $self->button_group($_) );
+		} elsif ( delete $_->{dropdown} ) {
+         	$button_group->add_child( $self->dropdown({
+				%{$_}, %drop_down_args
+			})); 
+		} else {
+			$button_group->add_child( $self->button($_) );
+		}
     }
+
+	for ( @{$build_args->{nested}} ) {
+		my $index = delete $_->{index};
+		my $nested_button_group = delete $_->{dropdown} 
+			? $self->dropdown({%{$_}, %drop_down_args})
+			: $self->button_group($_);      	
+
+		if ($index) {
+			splice @{ $button_group->{children} }, $index - 1, 0,
+              	$nested_button_group; 
+		} else {
+         	push @{ $button_group->{children} }, $nested_button_group;
+		}
+	}
 
     return $button_group;
 }
@@ -329,7 +380,7 @@ sub dropdown {
     });
 
     my $class = $build_args->{dropup} ? 'dropup' : 'dropdown';
-    $base_args->{class} .= $class;
+    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
 
     my $div = $self->div($base_args);
     $div->add_child( $self->dropdown_button( \( %{$build_args->{button}}, id => $build_args->{mid} ) ) );
@@ -666,6 +717,11 @@ sub linked_li {
     return $li;
 }
 
+=head2 
+
+=cut
+
+
 =head2 caret
 
     $self->caret
@@ -696,6 +752,7 @@ sub caret {
 
     return Moonshine::Element->new($base_args);
 }
+
 
 1;
 

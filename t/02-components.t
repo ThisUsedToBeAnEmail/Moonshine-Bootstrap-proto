@@ -43,7 +43,90 @@ subtest "build" => sub {
         },
         expected => '<div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button></div>'
     });     
+       
+    component_test({
+        class => $class,
+        action => 'button_group',
+        args => {
+            group => [
+                {
+                    data => 'one',
+                },
+                {
+                    data => 'two',
+                },
+            ],
+            nested => [
+                {
+                    index => 3,
+                    group => [
+                        {
+                            data => 'one',
+                        },
+                        {
+                            data => 'two',
+                        },
+                    ],
+                }
+            ],
+        },
+        expected => '<div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button><div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button></div></div>'
+    }); 
 
+    component_test({
+        class => $class,
+        action => 'button_group',
+        args => {
+            group => [
+                {
+                    data => 'one',
+                },
+                {
+                    data => 'two',
+                },
+                {
+                    group => [
+                        {
+                            data => 'one',
+                        },
+                        {
+                            data => 'two',
+                        },
+                    ],
+                }
+            ],
+        },
+        expected => '<div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button><div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button></div></div>'
+    }); 
+
+ 
+    component_test({
+        class => $class,
+        action => 'button_group',
+        args => {
+            group => [
+                {
+                    data => 'one',
+                },
+                {
+                    data => 'two',
+                },
+            ],
+            nested => [
+                {
+                    group => [
+                        {
+                            data => 'one',
+                        },
+                        {
+                            data => 'two',
+                        },
+                    ],
+                }
+            ],
+        },
+        expected => '<div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button><div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button></div></div>'
+    });          
 
     # button_group sizing
     component_test({
@@ -96,7 +179,6 @@ subtest "build" => sub {
         },
         expected => '<div class="btn-toolbar" role="toolbar"><div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button></div><div class="btn-group" role="group"><button class="btn btn-default" type="button">two</button></div></div>',
    });
-
 
     component_test({
         class => $class,
@@ -312,7 +394,88 @@ subtest "build" => sub {
             },
         },
         expected => '<div class="dropup"><button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" aria-expanded="true" aria-haspopup="true" data-toggle="dropdown">Dropdown<span class="caret"></span></button><ul class="dropdown-menu" aria-labelledby="dropdownMenu1"><li class="divider" role="separator"></li><li><a href="http://some.url">URL</a></li><li class="divider" role="separator"></li><li class="dropdown-header">Second</li><li class="divider" role="separator"></li></ul></div>'   
+    });
+
+     component_test({
+        class => $class,
+        action => 'button_group',
+        args => {
+            sizing => 'lg',
+            group => [
+                {
+                    data => 'one',
+                },
+                {
+                    data => 'two',
+                },
+            ],
+            nested => [ 
+                {
+                    dropdown => 1,
+                    mid => 'dropdownMenu1',
+                    dropup => 1,
+                    ul => {
+                        separators => [1,3,5],
+                        children => [
+                            {
+                                link => 'http://some.url',
+                                data => 'URL',
+                            },
+                            {
+                                data => 'Second',
+                                header => 1,
+                            }
+                        ],
+                    },
+                    button => {
+                        id => 'dropdownMenu1',
+                        data => 'Dropdown',
+                    },
+                },
+            ],
+        },
+        expected => '<div class="btn-group btn-group-lg" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button><div class="btn-group dropup" role="group"><button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" aria-expanded="true" aria-haspopup="true" data-toggle="dropdown">Dropdown<span class="caret"></span></button><ul class="dropdown-menu" aria-labelledby="dropdownMenu1"><li class="divider" role="separator"></li><li><a href="http://some.url">URL</a></li><li class="divider" role="separator"></li><li class="dropdown-header">Second</li><li class="divider" role="separator"></li></ul></div></div>'   
+    });
+
+    component_test({
+        class => $class,
+        action => 'button_group',
+        args => {
+            sizing => 'lg',
+            group => [
+                {
+                    data => 'one',
+                },
+                {
+                    data => 'two',
+                },
+                {
+                    dropdown => 1,
+                    mid => 'dropdownMenu1',
+                    dropup => 1,
+                    ul => {
+                        separators => [1,3,5],
+                        children => [
+                            {
+                                link => 'http://some.url',
+                                data => 'URL',
+                            },
+                            {
+                                data => 'Second',
+                                header => 1,
+                            }
+                        ],
+                    },
+                    button => {
+                        id => 'dropdownMenu1',
+                        data => 'Dropdown',
+                    },
+                },
+            ],
+        },
+        expected => '<div class="btn-group btn-group-lg" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button><div class="btn-group dropup" role="group"><button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" aria-expanded="true" aria-haspopup="true" data-toggle="dropdown">Dropdown<span class="caret"></span></button><ul class="dropdown-menu" aria-labelledby="dropdownMenu1"><li class="divider" role="separator"></li><li><a href="http://some.url">URL</a></li><li class="divider" role="separator"></li><li class="dropdown-header">Second</li><li class="divider" role="separator"></li></ul></div></div>'   
     }); 
+
 };
 
 sub component_test {
