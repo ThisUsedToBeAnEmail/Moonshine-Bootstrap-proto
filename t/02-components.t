@@ -192,6 +192,18 @@ subtest "build" => sub {
 
     component_test({
         class => $class,
+        action => 'dropdown_button',
+        args => {
+            split => 1,
+            id => 'dropdownMenu1',
+            data => 'Dropdown',
+        },
+        expected => '<button class="btn btn-default" type="button">Dropdown</button><button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" aria-expanded="true" aria-haspopup="true" data-toggle="dropdown"><span class="caret"></span></button>'   
+    });
+
+
+    component_test({
+        class => $class,
         action => 'button_toolbar',
         args => {
             toolbar => [

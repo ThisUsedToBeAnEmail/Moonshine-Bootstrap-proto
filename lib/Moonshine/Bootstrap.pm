@@ -146,7 +146,7 @@ sub button {
                 tag   => { default => 'button' },
                 class => { default => 'default' },
                 type  => { default => 'button' },
-                data  => 1,
+                data  => 0,
             }
         }
     );
@@ -481,10 +481,22 @@ defaults to true
 
 is **required**
 
+=item split
+
+Create split dropdown button
+
+    $self->dropdown_button({ split => 1 });
+
+     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Dropdown
+        <span class="caret"></span>
+    </button> 
+
+
 =head3 Sample Output
 
+    <button class="btn btn-default">Dropdown</button>
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        Dropdown
         <span class="caret"></span>
     </button> 
 
@@ -499,6 +511,7 @@ sub dropdown_button {
             spec => {
                 class         => { default => 'default' },
                 id            => 1,
+                split         => 0,
                 data_toggle   => { default => 'dropdown' },
                 aria_haspopup => { default => 'true' },
                 aria_expanded => { default => 'true' },
@@ -508,7 +521,15 @@ sub dropdown_button {
     );
 
     $base_args->{class} .= ' dropdown-toggle';
+    
+    $build_args->{data} = delete $base_args->{data}
+        if $build_args->{split};
+    
     my $button = $self->button($base_args);
+    
+    $button->add_before_element($self->button({ data => $build_args->{data}, class => $base_args->{class}}))
+        if $build_args->{split};
+
     $button->add_child( $self->caret );
     return $button;
 }
