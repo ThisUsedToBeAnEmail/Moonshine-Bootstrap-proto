@@ -1160,6 +1160,8 @@ sub nav {
 
 =item data
 
+=item disable
+
 =back
 
 =head3 renders
@@ -1182,6 +1184,7 @@ sub nav_item {
                     optional => 1,   
                 },
                 data => 0,
+                disable => 0,
             }
         }
     );
@@ -1191,10 +1194,14 @@ sub nav_item {
         $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
     }
 
-    my $li = $self->linked_li({%{$base_args}, link => $build_args->{link}}); 
+    my $li = $self->linked_li({
+        %{$base_args}, 
+        link => $build_args->{link},
+        disable => $build_args->{disable},    
+    }); 
+    
     return $li;
 }
-
 
 1;
 
