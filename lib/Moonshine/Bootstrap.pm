@@ -1061,6 +1061,118 @@ sub input_group_addon {
     return $group_addon;
 }
 
+=head2 nav
+
+    $self->nav();
+
+=head3 options
+
+=over
+
+=item class
+
+=item type 
+
+tabs or pills
+
+=item items
+
+=back
+
+=head3 renders
+
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#">Home</a></li>
+        <li role="presentation"><a href="#">Profile</a></li>
+        <li role="presentation"><a href="#">Messages</a></li>
+    </ul>
+
+=cut
+
+sub nav {
+   my $self = shift;
+   my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => '' },
+                type => {
+                    build => 1,
+                    type => SCALAR,   
+                },
+                items => {
+                    type => ARRAYREF,
+                }
+            }
+        }
+    );
+    
+    my $class = sprintf "nav nav-%s", $build_args->{type}; 
+    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+   
+    my $ul = $self->ul($base_args); 
+   
+    for (@{$build_args->{items}}) {
+        $ul->add_child($self->nav_item($_));
+    }
+   
+    return $ul; 
+}
+
+=head2 nav_item
+
+    $self->nav_item;
+
+=head3 options
+
+=over
+
+=item class
+
+=item role 
+
+=item link
+
+=item active
+
+=item data
+
+=back
+
+=head3 renders
+
+    <li role="presentation" class="active"><a href="#">Home</a></li>
+
+=cut
+
+sub nav_item {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => '' },
+                role => { default => "presentation" },
+                link => { default => '#' },
+                active => {
+                    build => 1,
+                    optional => 1,   
+                },
+                data => 0,
+            }
+        }
+    );
+
+    if ( $build_args->{active} ) {
+        my $class = 'active';
+        $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+    }
+
+    my $li = $self->linked_li({%{$base_args}, link => $build_args->{link}}); 
+    return $li;
+}
+
+
 1;
 
 __END__
