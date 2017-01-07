@@ -125,6 +125,19 @@ subtest "build" => sub {
         },
         expected => '<span class="input-group-addon" id="basic-addon1"><input class="form-control" type="radio"></input></span>',
     });
+
+    component_test({
+        class => $class,
+        action => 'input_group_addon',
+        args => {
+            id => 'basic-addon1',
+            button => {
+                data => 'Go!',
+            }
+        },
+        expected => '<span class="input-group-btn" id="basic-addon1"><button class="btn btn-default" type="button">Go!</button></span>',
+    });
+
 };
 
 sub component_test {

@@ -1023,6 +1023,10 @@ sub input_group_addon {
             spec => {
                 checkbox => 0,
                 radio => 0,
+                button => {
+                    type => HASHREF,
+                    optional => 1,   
+                },
                 class => { default => 'input-group-addon' },
             }
         }
@@ -1030,6 +1034,11 @@ sub input_group_addon {
     
     my $group_addon = $self->span($base_args);
 
+    if ( $build_args->{button} ) {
+        $group_addon->class("input-group-btn");
+        $group_addon->add_child($self->button($build_args->{button}));
+    }
+    
     if ( $build_args->{checkbox} ) {
         $group_addon->add_child($self->input({ type => 'checkbox' }));
     }
