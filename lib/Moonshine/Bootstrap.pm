@@ -31,7 +31,7 @@ BEGIN {
     };
 
     my @lazy_components =
-      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol/;
+      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
@@ -70,8 +70,9 @@ sub validate_base_and_build {
     my %combine = ( %{ $args{params} }, %{ $args{'spec'} } );
     for ( keys %combine ) {
         if ( defined $element_attributes->{$_} ) {
-            if ( my $spec = delete $args{spec}->{$_} ) {
-                $html_spec->{$_} = $spec;
+            if ( my $spec = $args{spec}->{$_} ) {
+                ref $spec eq 'HASH' && exists $spec->{build} and next;
+                $html_spec->{$_} = delete $args{spec}->{$_};
             }
             if ( my $params = delete $args{params}->{$_} ) {
                 $html_params->{$_} = $params;
@@ -878,7 +879,22 @@ sub caret {
 
 =over
 
+=item label
+
+    $self->input_group({ label => { data => 'some text' } });
+
+    <label>some text .... </label
+
 =item mid
+
+Used to map addon and input.
+
+=item lid
+
+Used to map label to input.
+
+    <label for="lid">
+    <input id="lid">
 
 =item placeholder
 
@@ -904,7 +920,13 @@ sub input_group {
             params => $_[0] // {},
             spec => {
                 mid => 1,
+                lid => 0,
                 class => { default => 'input-group' },
+                label => {
+                    type => HASHREF,
+                    optional => 1,
+                    build => 1,
+                },
                 left => {
                     type => HASHREF,
                     optional => 1,
@@ -923,10 +945,20 @@ sub input_group {
     );
 
     my $input_group = $self->div($base_args);
+   
+    my $label;
+    if ( $build_args->{label} ) {
+        $label = $input_group->add_before_element($self->label($build_args->{label}));
+    }
     
     if ( $build_args->{left} ) {
         $build_args->{left}->{id} = $build_args->{mid};
         $input_group->add_child($self->input_group_addon($build_args->{left}));
+    }
+
+    if (my $lid = $build_args->{lid} ) {
+        $build_args->{input}->{id} = $lid;
+        $label->for($lid); 
     }
 
     $build_args->{input}->{aria_describedby} = $build_args->{mid};
