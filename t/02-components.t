@@ -65,6 +65,23 @@ subtest "build" => sub {
         class => $class,
         action => 'button_group',
         args => {
+            justified => 1,
+            group => [
+                {
+                    data => 'one',
+                },
+                {
+                    data => 'two',
+                },
+            ],
+        },
+        expected => '<div class="btn-group btn-group-justified" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button></div>'
+    });  
+
+    component_test({
+        class => $class,
+        action => 'button_group',
+        args => {
             group => [
                 {
                     data => 'one',

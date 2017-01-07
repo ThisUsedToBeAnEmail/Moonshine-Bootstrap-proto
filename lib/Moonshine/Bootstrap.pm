@@ -197,8 +197,18 @@ Make a set of buttons appear vertically stacked rather than horizontally.
 
     vertical => 1
 
-    <div class="btn-group vertical" ...>
+    <div class="btn-group btn-group-vertical" ...>
         ...
+    </div>
+
+=head3 justified
+
+Make a group of buttons stretch at equal sizes to span the entire width of its parent.
+
+    justified => 1
+
+    <div class="btn-group btn-group-justified" ...>
+         ...
     </div>
 
 =head3 Sample Output
@@ -220,6 +230,7 @@ sub button_group {
             class  => { default => 'btn-group' },
             sizing => 0,
             vertical => 0,
+            justified => 0,
 			nested => {
                 type => ARRAYREF,
 				optional => 1,
@@ -237,6 +248,10 @@ sub button_group {
     if ( my $vertical = $build_args->{vertical} ) {
         $base_args->{class} = sprintf '%s btn-group-vertical', $base_args->{class};
     }
+
+    if ( my $vertical = $build_args->{justified} ) {
+        $base_args->{class} = sprintf '%s btn-group-justified', $base_args->{class};
+    }       
 
     my $button_group = $self->div($base_args);
 
