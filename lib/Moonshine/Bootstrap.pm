@@ -191,6 +191,16 @@ ArrayRef of Hashes, that can build nested button_groups
     </ul>
   </div>
 
+=head3 vertical
+
+Make a set of buttons appear vertically stacked rather than horizontally.
+
+    vertical => 1
+
+    <div class="btn-group vertical" ...>
+        ...
+    </div>
+
 =head3 Sample Output
 
     <div class="btn-group" role="group" aria-label="...">
@@ -209,6 +219,7 @@ sub button_group {
             role   => { default => 'group' },
             class  => { default => 'btn-group' },
             sizing => 0,
+            vertical => 0,
 			nested => {
                 type => ARRAYREF,
 				optional => 1,
@@ -221,6 +232,10 @@ sub button_group {
 
     if ( my $group_sizing = $build_args->{sizing} ) {
         $base_args->{class} = sprintf '%s btn-group-%s', $base_args->{class}, $group_sizing;
+    }
+
+    if ( my $vertical = $build_args->{vertical} ) {
+        $base_args->{class} = sprintf '%s btn-group-vertical', $base_args->{class};
     }
 
     my $button_group = $self->div($base_args);

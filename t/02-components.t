@@ -43,7 +43,24 @@ subtest "build" => sub {
         },
         expected => '<div class="btn-group" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button></div>'
     });     
-       
+    
+    component_test({
+        class => $class,
+        action => 'button_group',
+        args => {
+            vertical => 1,
+            group => [
+                {
+                    data => 'one',
+                },
+                {
+                    data => 'two',
+                },
+            ],
+        },
+        expected => '<div class="btn-group btn-group-vertical" role="group"><button class="btn btn-default" type="button">one</button><button class="btn btn-default" type="button">two</button></div>'
+    }); 
+
     component_test({
         class => $class,
         action => 'button_group',
