@@ -22,9 +22,19 @@ Version 0.01
 
     $self->button( class => 'success', data => 'Left' );
 
+### Options
+
+- sizing 
+
+    Buttons can have different sizes.
+
+        sizing => 'lg',
+
+        <button class="btn btn-success btn-lg" ...>
+
 ### Sample Output
 
-      <button type="button" class="btn btn-success">Left</button>
+    <button type="button" class="btn btn-success">Left</button>
 
 ## Button Groups
 
@@ -198,10 +208,21 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
 
     is \*\*required\*\*
 
+- split
+
+    Create split dropdown button
+
+        $self->dropdown_button({ split => 1 });
+
+         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Dropdown
+            <span class="caret"></span>
+        </button> 
+
 ### Sample Output
 
+    <button class="btn btn-default">Dropdown</button>
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        Dropdown
         <span class="caret"></span>
     </button> 
 
@@ -350,6 +371,113 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
 
     <span class="caret"></span>
 
+## Input Groups
+
+    $self->input_group({
+        mid => 'basic-addon1',
+        placeholder => 'Username',
+        left => {
+            data => '@'
+        }
+    });
+
+### options
+
+- label
+
+        $self->input_group({ label => { data => 'some text' } });
+
+        <label>some text .... </label
+
+- mid
+
+    Used to map addon and input.
+
+- lid
+
+    Used to map label to input.
+
+        <label for="lid">
+        <input id="lid">
+
+- placeholder
+- left
+- right
+- sizing
+
+### Sample Output
+
+    <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">@</span>
+        <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+    </div>
+
+## input
+
+    $self->input();
+
+### Renders
+
+    <input type="text" class="form-control">
+
+## input addon
+
+    $self->input_addon();
+
+### Renders
+
+    <span class="input-group-addon" ...>@</span>
+
+## nav
+
+    $self->nav();
+
+### options
+
+- class
+- type 
+
+    tabs or pills
+
+- items
+- stacked
+
+    Pills are also vertically stackable. Just add 
+
+        stacked => 1
+
+- justified
+
+    "Easily make tabs or pills equal widths of their parent at screen wider than 768pm". On smaller screens,
+    nav links become stacked.
+
+        justified => 1
+
+### renders
+
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#">Home</a></li>
+        <li role="presentation"><a href="#">Profile</a></li>
+        <li role="presentation"><a href="#">Messages</a></li>
+    </ul>
+
+## nav\_item
+
+    $self->nav_item;
+
+### options
+
+- class
+- role 
+- link
+- active
+- data
+- disable
+
+### renders
+
+    <li role="presentation" class="active"><a href="#">Home</a></li>
+
 # AUTHOR
 
 LNATION, `<thisusedtobeanemail at gmail.com>`
@@ -406,10 +534,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 199:
+- Around line 137:
+
+    '=item' outside of any '=over'
+
+- Around line 145:
 
     You forgot a '=back' before '=head3'
 
-- Around line 484:
+- Around line 216:
+
+    You forgot a '=back' before '=head3'
+
+- Around line 513:
 
     You forgot a '=back' before '=head3'
