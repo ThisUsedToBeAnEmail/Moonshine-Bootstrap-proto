@@ -44,6 +44,23 @@ subtest "build" => sub {
         action => 'input_group',
         args => {
 			mid => 'basic-addon1',
+            sizing => 'lg',
+			input => {
+                placeholder => 'Username',
+			},
+            right => {
+				data => q(@),
+			},
+        },
+        expected => '<div class="input-group input-group-lg"><input class="form-control" placeholder="Username" type="text" aria-describedby="basic-addon1"></input><span class="input-group-addon" id="basic-addon1">@</span></div>',
+    });
+
+
+    component_test({
+        class => $class,
+        action => 'input_group',
+        args => {
+			mid => 'basic-addon1',
 			input => {
                 placeholder => 'Username',
 			},

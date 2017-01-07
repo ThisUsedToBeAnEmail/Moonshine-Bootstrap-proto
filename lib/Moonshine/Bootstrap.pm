@@ -902,6 +902,8 @@ Used to map label to input.
 
 =item right
 
+=item sizing
+
 =back
 
 =head3 Sample Output
@@ -921,6 +923,7 @@ sub input_group {
             spec => {
                 mid => 1,
                 lid => 0,
+                sizing => 0,
                 class => { default => 'input-group' },
                 label => {
                     type => HASHREF,
@@ -944,6 +947,10 @@ sub input_group {
         }
     );
 
+    if ( my $sizing = $build_args->{sizing} ) {
+        $base_args->{class} = sprintf '%s input-group-%s', $base_args->{class}, $sizing;
+    }
+    
     my $input_group = $self->div($base_args);
    
     my $label;
