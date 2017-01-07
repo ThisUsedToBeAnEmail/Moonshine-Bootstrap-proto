@@ -131,9 +131,19 @@ sub glyphicon {
     
     $self->button( class => 'success', data => 'Left' );
 
+=head3 Options
+
+=item sizing 
+
+Buttons can have different sizes.
+
+    sizing => 'lg',
+
+    <button class="btn btn-success btn-lg" ...>
+
 =head3 Sample Output
 
-      <button type="button" class="btn btn-success">Left</button>
+    <button type="button" class="btn btn-success">Left</button>
 
 =cut
 
@@ -147,11 +157,17 @@ sub button {
                 class => { default => 'default' },
                 type  => { default => 'button' },
                 data  => 0,
+                sizing => 0,
             }
         }
     );
 
     $base_args->{class} = sprintf "btn btn-%s", $base_args->{class};
+    if ( my $button_sizing = $build_args->{sizing} ) {
+        $base_args->{class} = sprintf '%s btn-%s', $base_args->{class},
+          $button_sizing;
+    }
+
     return Moonshine::Element->new($base_args);
 }
 

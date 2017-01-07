@@ -30,6 +30,18 @@ subtest "build" => sub {
 
     component_test({
         class => $class,
+        action => 'button',
+        args => {
+            sizing => 'lg',
+            class => 'success',
+            data => 'Left',
+        },
+        expected => '<button class="btn btn-success btn-lg" type="button">Left</button>'
+    });    
+
+
+    component_test({
+        class => $class,
         action => 'button_group',
         args => {
             group => [
