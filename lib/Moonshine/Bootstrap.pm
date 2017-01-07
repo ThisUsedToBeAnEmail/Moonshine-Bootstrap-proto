@@ -1027,6 +1027,10 @@ sub input_group_addon {
                     type => HASHREF,
                     optional => 1,   
                 },
+                dropdown => {
+                    type => HASHREF,
+                    optional => 1,
+                },
                 class => { default => 'input-group-addon' },
             }
         }
@@ -1034,11 +1038,18 @@ sub input_group_addon {
     
     my $group_addon = $self->span($base_args);
 
-    if ( $build_args->{button} ) {
+    if ( my $button = $build_args->{button} ) {
         $group_addon->class("input-group-btn");
-        $group_addon->add_child($self->button($build_args->{button}));
+        $group_addon->add_child($self->button($button));
     }
     
+    if ( my $dropdown = $build_args->{dropdown} ) {
+        $group_addon->class("input-group-btn");
+        $group_addon->tag('div');
+        $group_addon->add_child($self->dropdown_button({%{$dropdown->{button}}, id => $dropdown->{mid}}));
+        $group_addon->add_child($self->dropdown_ul({%{$dropdown->{ul}}, aria_labelledby => $dropdown->{mid}}));
+    }
+
     if ( $build_args->{checkbox} ) {
         $group_addon->add_child($self->input({ type => 'checkbox' }));
     }

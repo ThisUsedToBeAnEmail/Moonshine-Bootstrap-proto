@@ -138,6 +138,35 @@ subtest "build" => sub {
         expected => '<span class="input-group-btn" id="basic-addon1"><button class="btn btn-default" type="button">Go!</button></span>',
     });
 
+
+    component_test({
+        class => $class,
+        action => 'input_group_addon',
+        args => {
+            id => 'basic-addon1',
+            dropdown => {
+                mid => 'dropdownMenu1', 
+                ul => {
+                    children => [
+                        {
+                            link => 'http://some.url',
+                            data => 'URL',
+                        },
+                        {
+                            link => 'http://second.url',
+                            data => 'Second',
+                        }
+                    ],
+                },
+                button => {
+                    id => 'dropdownMenu1',
+                    data => 'Dropdown',
+                },
+            }
+        },
+        expected => '<div class="input-group-btn" id="basic-addon1"><button class="btn btn-default dropdown-toggle" id="dropdownMenu1" type="button" aria-expanded="true" aria-haspopup="true" data-toggle="dropdown">Dropdown<span class="caret"></span></button><ul class="dropdown-menu" aria-labelledby="dropdownMenu1"><li><a href="http://some.url">URL</a></li><li><a href="http://second.url">Second</a></li></ul></div>'   
+    });
+
 };
 
 sub component_test {
