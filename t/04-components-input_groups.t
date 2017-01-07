@@ -113,10 +113,18 @@ subtest "build" => sub {
 			checkbox => 1,
             id => 'basic-addon1',
         },
-        expected => '<span class="input-group-addon" id="basic-addon1"><input type="checkbox"></input></span>',
+        expected => '<span class="input-group-addon" id="basic-addon1"><input class="form-control" type="checkbox"></input></span>',
     });
 
-
+    component_test({
+        class => $class,
+        action => 'input_group_addon',
+        args => {
+			radio => 1,
+            id => 'basic-addon1',
+        },
+        expected => '<span class="input-group-addon" id="basic-addon1"><input class="form-control" type="radio"></input></span>',
+    });
 };
 
 sub component_test {

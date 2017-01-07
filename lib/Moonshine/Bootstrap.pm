@@ -1021,13 +1021,24 @@ sub input_group_addon {
         {
             params => $_[0] // {},
             spec => {
-                data => 1,
+                checkbox => 0,
+                radio => 0,
                 class => { default => 'input-group-addon' },
             }
         }
     );
+    
+    my $group_addon = $self->span($base_args);
 
-    return $self->span($base_args);
+    if ( $build_args->{checkbox} ) {
+        $group_addon->add_child($self->input({ type => 'checkbox' }));
+    }
+
+    if ( $build_args->{radio} ) {
+        $group_addon->add_child($self->input({ type => 'radio' }));
+    }
+
+    return $group_addon;
 }
 
 1;
