@@ -1077,6 +1077,19 @@ tabs or pills
 
 =item items
 
+=item stacked
+
+Pills are also vertically stackable. Just add 
+    
+    stacked => 1
+
+=item justified
+
+"Easily make tabs or pills equal widths of their parent at screen wider than 768pm". On smaller screens,
+nav links become stacked.
+
+    justified => 1
+
 =back
 
 =head3 renders
@@ -1104,6 +1117,7 @@ sub nav {
                     type => ARRAYREF,
                 },
                 stacked => 0,
+                justified => 0,
             }
         }
     );
@@ -1115,6 +1129,10 @@ sub nav {
         $base_args->{class} .= ' nav-stacked';
     }  
    
+    if ( $build_args->{justified} ) {
+        $base_args->{class} .= ' nav-justified';
+    }  
+  
     my $ul = $self->ul($base_args); 
    
     for (@{$build_args->{items}}) {
