@@ -36,9 +36,54 @@ Version 0.01
 
     Array of Hashes - each hash get sent to \*\*button\*\*
 
+    unless dropdown => 1 is set, then the args gets sent to dropdown.
+
 - sizing 
 
     SCALAR that appends btn-group-%s - lg, sm, xs
+
+- nested
+
+    ArrayRef of Hashes, that can build nested button\_groups
+
+              nested => [ 
+                      {
+                      index => 3,
+                              dropdown => 1,
+                      },
+                      ...
+              ],
+
+         <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Dropdown link</a></li>
+            <li><a href="#">Dropdown link</a></li>
+          </ul>
+        </div>
+
+### vertical
+
+Make a set of buttons appear vertically stacked rather than horizontally.
+
+    vertical => 1
+
+    <div class="btn-group btn-group-vertical" ...>
+        ...
+    </div>
+
+### justified
+
+Make a group of buttons stretch at equal sizes to span the entire width of its parent.
+
+    justified => 1
+
+    <div class="btn-group btn-group-justified" ...>
+         ...
+    </div>
 
 ### Sample Output
 
@@ -172,7 +217,7 @@ Version 0.01
                 data => 'Title',
             }
         ]
-        list => [
+        children => [
             {
                 heading => 1,
                 data => 'Title',
@@ -209,7 +254,7 @@ Version 0.01
 
     Required
 
-- list
+- children
 
     Arrayref that gets used to build linked\_li's 
 
@@ -292,6 +337,8 @@ Version 0.01
 
     <li><a href="http://some.url">Action</a></li>
 
+## 
+
 ## caret
 
     $self->caret
@@ -359,10 +406,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 141:
+- Around line 199:
 
     You forgot a '=back' before '=head3'
 
-- Around line 357:
+- Around line 484:
 
     You forgot a '=back' before '=head3'
