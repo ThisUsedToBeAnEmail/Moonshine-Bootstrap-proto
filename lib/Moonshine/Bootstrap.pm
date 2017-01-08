@@ -184,10 +184,10 @@ sub button {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'button' },
-                class => { default => 'default' },
-                type  => { default => 'button' },
-                data  => 0,
+                tag    => { default => 'button' },
+                class  => { default => 'default' },
+                type   => { default => 'button' },
+                data   => 0,
                 sizing => 0,
             }
         }
@@ -583,14 +583,17 @@ sub dropdown_button {
     );
 
     $base_args->{class} .= ' dropdown-toggle';
-    
+
     $build_args->{data} = delete $base_args->{data}
-        if $build_args->{split};
-    
+      if $build_args->{split};
+
     my $button = $self->button($base_args);
-    
-    $button->add_before_element($self->button({ data => $build_args->{data}, class => $base_args->{class}}))
-        if $build_args->{split};
+
+    $button->add_before_element(
+        $self->button(
+            { data => $build_args->{data}, class => $base_args->{class} }
+        )
+    ) if $build_args->{split};
 
     $button->add_child( $self->caret );
     return $button;
@@ -972,62 +975,67 @@ sub input_group {
         {
             params => $_[0] // {},
             spec => {
-                mid => 1,
-                lid => 0,
+                mid    => 1,
+                lid    => 0,
                 sizing => 0,
-                class => { default => 'input-group' },
-                label => {
-                    type => HASHREF,
+                class  => { default => 'input-group' },
+                label  => {
+                    type     => HASHREF,
                     optional => 1,
-                    build => 1,
+                    build    => 1,
                 },
                 left => {
-                    type => HASHREF,
+                    type     => HASHREF,
                     optional => 1,
                 },
                 right => {
-                    type => HASHREF,
+                    type     => HASHREF,
                     optional => 1,
                 },
                 input => {
-                    type => HASHREF,
+                    type     => HASHREF,
                     optional => 1,
-                    default => {},
+                    default  => {},
                 }
             }
         }
     );
 
     if ( my $sizing = $build_args->{sizing} ) {
-        $base_args->{class} = sprintf '%s input-group-%s', $base_args->{class}, $sizing;
-    }
-    
-    my $input_group = $self->div($base_args);
-   
-    my $label;
-    if ( $build_args->{label} ) {
-        $label = $input_group->add_before_element($self->label($build_args->{label}));
-    }
-    
-    if ( $build_args->{left} ) {
-        $build_args->{left}->{id} = $build_args->{mid};
-        $input_group->add_child($self->input_group_addon($build_args->{left}));
+        $base_args->{class} = sprintf '%s input-group-%s', $base_args->{class},
+          $sizing;
     }
 
-    if (my $lid = $build_args->{lid} ) {
+    my $input_group = $self->div($base_args);
+
+    my $label;
+    if ( $build_args->{label} ) {
+        $label =
+          $input_group->add_before_element(
+            $self->label( $build_args->{label} ) );
+    }
+
+    if ( $build_args->{left} ) {
+        $build_args->{left}->{id} = $build_args->{mid};
+        $input_group->add_child(
+            $self->input_group_addon( $build_args->{left} ) );
+    }
+
+    if ( my $lid = $build_args->{lid} ) {
         $build_args->{input}->{id} = $lid;
-        $label->for($lid); 
+        $label->for($lid);
     }
 
     $build_args->{input}->{aria_describedby} = $build_args->{mid};
-    $input_group->add_child($self->input($build_args->{input}));
+    $input_group->add_child( $self->input( $build_args->{input} ) );
 
     if ( $build_args->{right} ) {
         $build_args->{right}->{id} = $build_args->{mid};
-        $input_group->add_child($self->input_group_addon($build_args->{right}));
+        $input_group->add_child(
+            $self->input_group_addon( $build_args->{right} ) );
     }
 
-    return $input_group
+    return $input_group;
 }
 
 =head2 input
@@ -1060,9 +1068,9 @@ sub input {
         {
             params => $_[0] // {},
             spec => {
-                tag => { default => 'input' },
+                tag   => { default => 'input' },
                 class => { default => 'form-control' },
-                type => { default => 'text' },
+                type  => { default => 'text' },
             }
         }
     );
@@ -1103,40 +1111,48 @@ sub input_group_addon {
             params => $_[0] // {},
             spec => {
                 checkbox => 0,
-                radio => 0,
-                button => {
-                    type => HASHREF,
-                    optional => 1,   
+                radio    => 0,
+                button   => {
+                    type     => HASHREF,
+                    optional => 1,
                 },
                 dropdown => {
-                    type => HASHREF,
+                    type     => HASHREF,
                     optional => 1,
                 },
                 class => { default => 'input-group-addon' },
             }
         }
     );
-    
+
     my $group_addon = $self->span($base_args);
 
     if ( my $button = $build_args->{button} ) {
         $group_addon->class("input-group-btn");
-        $group_addon->add_child($self->button($button));
+        $group_addon->add_child( $self->button($button) );
     }
-    
+
     if ( my $dropdown = $build_args->{dropdown} ) {
         $group_addon->class("input-group-btn");
         $group_addon->tag('div');
-        $group_addon->add_child($self->dropdown_button({%{$dropdown->{button}}, id => $dropdown->{mid}}));
-        $group_addon->add_child($self->dropdown_ul({%{$dropdown->{ul}}, aria_labelledby => $dropdown->{mid}}));
+        $group_addon->add_child(
+            $self->dropdown_button(
+                { %{ $dropdown->{button} }, id => $dropdown->{mid} }
+            )
+        );
+        $group_addon->add_child(
+            $self->dropdown_ul(
+                { %{ $dropdown->{ul} }, aria_labelledby => $dropdown->{mid} }
+            )
+        );
     }
 
     if ( $build_args->{checkbox} ) {
-        $group_addon->add_child($self->input({ type => 'checkbox' }));
+        $group_addon->add_child( $self->input( { type => 'checkbox' } ) );
     }
 
     if ( $build_args->{radio} ) {
-        $group_addon->add_child($self->input({ type => 'radio' }));
+        $group_addon->add_child( $self->input( { type => 'radio' } ) );
     }
 
     return $group_addon;
@@ -1184,43 +1200,43 @@ nav links become stacked.
 =cut
 
 sub nav {
-   my $self = shift;
-   my ( $base_args, $build_args ) = validate_base_and_build(
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
         {
             params => $_[0] // {},
             spec => {
                 class => { default => '' },
-                type => {
+                type  => {
                     build => 1,
-                    type => SCALAR,   
+                    type  => SCALAR,
                 },
                 items => {
                     type => ARRAYREF,
                 },
-                stacked => 0,
+                stacked   => 0,
                 justified => 0,
             }
         }
     );
-    
-    my $class = sprintf "nav nav-%s", $build_args->{type}; 
+
+    my $class = sprintf "nav nav-%s", $build_args->{type};
     $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
-  
+
     if ( $build_args->{stacked} ) {
         $base_args->{class} .= ' nav-stacked';
-    }  
-   
+    }
+
     if ( $build_args->{justified} ) {
         $base_args->{class} .= ' nav-justified';
-    }  
-  
-    my $ul = $self->ul($base_args); 
-   
-    for (@{$build_args->{items}}) {
-        $ul->add_child($self->nav_item($_));
     }
-   
-    return $ul; 
+
+    my $ul = $self->ul($base_args);
+
+    for ( @{ $build_args->{items} } ) {
+        $ul->add_child( $self->nav_item($_) );
+    }
+
+    return $ul;
 }
 
 =head2 nav_item
@@ -1259,18 +1275,18 @@ sub nav_item {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => '' },
-                role => { default => "presentation" },
-                link => { default => '#' },
+                class  => { default => '' },
+                role   => { default => "presentation" },
+                link   => { default => '#' },
                 active => {
-                    build => 1,
-                    optional => 1,   
+                    build    => 1,
+                    optional => 1,
                 },
-                data => 0,
-                disable => 0,
+                data     => 0,
+                disable  => 0,
                 dropdown => {
-                    build => 1,
-                    type => HASHREF,
+                    build    => 1,
+                    type     => HASHREF,
                     optional => 1,
                 }
             }
@@ -1282,24 +1298,28 @@ sub nav_item {
         $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
     }
 
-    my $li = $self->linked_li({
-        %{$base_args}, 
-        link => $build_args->{link},
-        disable => $build_args->{disable},    
-    }); 
+    my $li = $self->linked_li(
+        {
+            %{$base_args},
+            link    => $build_args->{link},
+            disable => $build_args->{disable},
+        }
+    );
 
-    if (my $dropdown = $build_args->{dropdown} ) {
+    if ( my $dropdown = $build_args->{dropdown} ) {
         my $a = $li->children->[0];
-        $a->set({
-            class => 'dropdown-toggle',
-            role => 'button',
-            aria_haspopup => 'true',
-            aria_expanded => 'false',
-            data_toggle => 'dropdown'
-        });
-        $li->add_child($self->dropdown_ul($dropdown));
+        $a->set(
+            {
+                class         => 'dropdown-toggle',
+                role          => 'button',
+                aria_haspopup => 'true',
+                aria_expanded => 'false',
+                data_toggle   => 'dropdown'
+            }
+        );
+        $li->add_child( $self->dropdown_ul($dropdown) );
     }
-    
+
     return $li;
 }
 
@@ -1328,32 +1348,33 @@ sub nav_item {
 =cut
 
 sub navbar {
-	my $self = shift;
+    my $self = shift;
     my ( $base_args, $build_args ) = validate_base_and_build(
         {
             params => $_[0] // {},
             spec => {
-				tag => { default => 'nav' },
+                tag => { default => 'nav' },
                 mid => 0,
-				type => { default => 'default', build => 1, },
-				items => {
-					type => ARRAYREF,	
-				},
+                type  => { default => 'default', build => 1, },
+                items => {
+                    type => ARRAYREF,
+                },
             },
         }
     );
 
-    my $class = sprintf "navbar navbar-%s", $build_args->{type}; 
+    my $class = sprintf "navbar navbar-%s", $build_args->{type};
     $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
-  
-	my $nav = Moonshine::Element->new($base_args);
-	my $container = $nav->add_child($self->div({ class => 'container-fluid' })); 
 
-	for (@{ $build_args->{items} }) {
-	    if ( $_->{headers} ) {
-            $container->add_child($self->navbar_header($_));   
-        }	
-	} 
+    my $nav = Moonshine::Element->new($base_args);
+    my $container =
+      $nav->add_child( $self->div( { class => 'container-fluid' } ) );
+
+    for ( @{ $build_args->{items} } ) {
+        if ( $_->{headers} ) {
+            $container->add_child( $self->navbar_header($_) );
+        }
+    }
 
     return $nav;
 }
@@ -1375,27 +1396,27 @@ sub navbar {
 =cut
 
 sub navbar_header {
-	my $self = shift;
+    my $self = shift;
     my ( $base_args, $build_args ) = validate_base_and_build(
         {
             params => $_[0] // {},
             spec => {
-           		class => { default => 'navbar-header' },
-				headers => {
-					type => ARRAYREF,
+                class   => { default => 'navbar-header' },
+                headers => {
+                    type  => ARRAYREF,
                     build => 1,
-				} 
-			},
+                }
+            },
         }
     );
 
-	my $navbar_header = $self->div($base_args);
-	
-	for ( @{$build_args->{headers}} ) {
-	    if ( defined $_->{img} ) {
-            $navbar_header->add_child($self->link_image($_));
-        }   	
-	}
+    my $navbar_header = $self->div($base_args);
+
+    for ( @{ $build_args->{headers} } ) {
+        if ( defined $_->{img} ) {
+            $navbar_header->add_child( $self->link_image($_) );
+        }
+    }
 
     return $navbar_header;
 }
@@ -1425,24 +1446,24 @@ required
 =cut
 
 sub link_image {
-	my $self = shift;
+    my $self = shift;
     my ( $base_args, $build_args ) = validate_base_and_build(
         {
             params => $_[0] // {},
             spec => {
-           		class => { default => 'navbar-brand' },
-				img => {
-					build => 1,
-					type => HASHREF,
-				}, 
-				href => 1,
-			},
+                class => { default => 'navbar-brand' },
+                img   => {
+                    build => 1,
+                    type  => HASHREF,
+                },
+                href => 1,
+            },
         }
     );
 
-	my $a = $self->a($base_args);
-	$a->add_child($self->img($build_args->{img}));
-	return $a;
+    my $a = $self->a($base_args);
+    $a->add_child( $self->img( $build_args->{img} ) );
+    return $a;
 }
 
 =head2 img
@@ -1470,19 +1491,19 @@ Required
 =cut
 
 sub img {
-	my $self = shift;
+    my $self = shift;
     my ( $base_args, $build_args ) = validate_base_and_build(
         {
-			params => $_[0] // {},
+            params => $_[0] // {},
             spec => {
-            	tag => { default => 'img' },
-				alt => 1,
-				src => 1,
-			},
+                tag => { default => 'img' },
+                alt => 1,
+                src => 1,
+            },
         }
     );
 
-	my $a = Moonshine::Element->new($base_args);
+    my $a = Moonshine::Element->new($base_args);
 }
 
 1;
