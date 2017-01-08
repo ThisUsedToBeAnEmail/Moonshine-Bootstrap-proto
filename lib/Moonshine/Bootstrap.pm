@@ -1402,6 +1402,9 @@ sub navbar {
             when ('text') {
                 $container->add_child( $self->navbar_text($nav) );
             }
+            when ('text_link') {
+                $container->add_child( $self->navbar_text_link($nav) );
+            }
         }
     }
 
@@ -1514,14 +1517,55 @@ sub navbar_text {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'p', },
-                class => { default => 'navbar-text' },
-                data  => 1,
+                tag  => { default => 'p', },
+                data => 1,
             },
         }
     );
 
+    my $class = 'navbar-text';
+    $base_args->{class} .= defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
     my $navbar_text = Moonshine::Element->new($base_args);
+    return $navbar_text;
+}
+
+=head2 navbar_text_link 
+
+=head3 options
+
+=over
+
+=item link 
+
+Hash Reference Used to build the <a>.
+
+=back
+
+=head3 Renders
+    
+    <p class="navbar-text">Navbar text<a href="#" class="navbar-link">more text</a></p>
+
+=cut
+
+sub navbar_text_link {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag  => { default => 'p', },
+                link => { type    => HASHREF },
+                data => 1,
+            },
+        }
+    );
+
+    my $navbar_text = $self->navbar_text($base_args);
+    $navbar_text->add_child(
+        $self->a( { %{ $build_args->{link} }, class => 'navbar-link' } ) );
     return $navbar_text;
 }
 

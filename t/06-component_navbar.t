@@ -257,6 +257,43 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar_text_link',
+            args   => {
+                data => 'Navbar Text',
+                link => {
+                    href => "some.url",
+                    data => "More Text",
+                }
+            },
+            expected =>
+'<p class="navbar-text">Navbar Text<a class="navbar-link" href="some.url">More Text</a></p>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar',
+            args   => {
+                navs => [
+                    {
+                        nav_type => 'text_link',
+                        data     => 'Navbar Text',
+                        link     => {
+                            href => 'some.url',
+                            data => 'More Text',
+                        }
+                    },
+                ],
+            },
+            expected =>
+'<nav class="navbar navbar-default"><div class="container-fluid"><p class="navbar-text">Navbar Text<a class="navbar-link" href="some.url">More Text</a></p></div></nav>',
+        }
+    );
+
 };
 
 sub component_test {

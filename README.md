@@ -592,6 +592,18 @@ Version 0.01
 
     <p class="navbar-text">Navbar text</p>
 
+## navbar\_text\_link 
+
+### options
+
+- link 
+
+    Hash Reference Used to build the &lt;a>.
+
+### Renders
+
+    <p class="navbar-text">Navbar text<a href="#" class="navbar-link">more text</a></p>
+
 ## navbar\_form
 
     $self->navbar_form({});
