@@ -1481,13 +1481,23 @@ sub navbar_button {
         {
             params => $_[0] // {},
             spec => {
-                class  => { default => 'navbar-btn' },
                 type   => { default => 'button' },
                 switch => { default => 'default', base => 1 },
-                data   => { default => 'Submit' }
+                data   => { default => 'Submit' },
+                alignment => 0,
             },
         }
     );
+
+    my $class = 'navbar-btn';
+    $base_args->{class} .= defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    if (my $align = $build_args->{alignment}) {
+        $base_args->{class} .= sprintf ' navbar-%s', $align;
+    }
+
 
     my $navbar_button = $self->button($base_args);
     return $navbar_button;

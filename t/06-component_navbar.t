@@ -232,6 +232,20 @@ subtest "build" => sub {
     component_test(
         {
             class  => $class,
+            action => 'navbar_button',
+            args   => {
+                alignment => 'right',
+                data => 'Menu'
+            },
+            expected =>
+'<button class="btn btn-default navbar-btn navbar-right" type="button">Menu</button>'
+        }
+    );
+
+
+    component_test(
+        {
+            class  => $class,
             action => 'navbar_text',
             args   => {
                 data => 'Navbar Text',
@@ -329,7 +343,7 @@ subtest "build" => sub {
                 }
             },
             expected =>
-'<p class="navbar-text navbar-right">Navbar Text<a class="navbar-link" href="some.url">More Text</a></p>'
+'<p class="navbar-text navbar-left">Navbar Text<a class="navbar-link" href="some.url">More Text</a></p>'
         }
     );
 
