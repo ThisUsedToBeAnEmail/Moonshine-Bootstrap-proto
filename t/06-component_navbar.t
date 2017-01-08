@@ -32,6 +32,7 @@ subtest "build" => sub {
             args   => {
                 headers => [
                     {
+                        header_type => 'link_image',
                         img => {
                             alt => 'Brand',
                             src => 'some.src',
@@ -52,6 +53,7 @@ subtest "build" => sub {
             args   => {
                 headers => [
                     {
+                        header_type => 'link_image',
                         img => {
                             alt => 'Brand',
                             src => 'some.src',
@@ -72,6 +74,7 @@ subtest "build" => sub {
             args   => {
                 headers => [
                     {
+                        header_type => 'link_image',
                         img => {
                             alt => 'Brand',
                             src => 'some.src',
@@ -79,6 +82,7 @@ subtest "build" => sub {
                         href => 'some.url',
                     },
                     {
+                        header_type => 'link_image',
                         img => {
                             alt => 'Brand',
                             src => 'some.src',
@@ -102,6 +106,7 @@ subtest "build" => sub {
                         nav_type => 'header',
                         headers  => [
                             {
+                                header_type => 'link_image',
                                 img => {
                                     alt => 'Brand',
                                     src => 'some.src',
@@ -468,31 +473,73 @@ subtest "build" => sub {
 		expected => '<button class="navbar-toggle collapsed" type="button" aria-expanded="false" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>',
 	});
 
-=pod
     component_test(
 		{
 			class => $class,
 			action => 'navbar',		
 			args => {
+                mid => 'bs-example-navbar-collapse-1',
 				navs => [
 					{
 						nav_type => 'header',
 						headers  => [
                             {
-								nav_type => 'toggle',
+								header_type => 'toggle',
 							},
 							{
-								nav_type => 'link',
+								header_type => 'brand',
 								data => 'Brand',
-							}
+							    href => '#',
+                            }
                         ],	
 					}
 				]
 			},
-			expected => '<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#">Brand</a></div></div></div>',
+			expected => '<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><button class="navbar-toggle collapsed" type="button" aria-expanded="false" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#">Brand</a></div></div></nav>',
 		}
 	);
-=cut
+
+    component_test(
+        {
+            class => $class,
+            action => 'navbar_brand',
+            args => {
+                data => 'Brand',
+                href => '#',
+            },
+            expected => '<a class="navbar-brand" href="#">Brand</a>'
+        }
+    );
+
+    component_test(
+        {
+            class => $class,
+            action => 'navbar_collapse',
+            args => {
+                id => 'bs-example-navbar-collapse-1',
+                navs => [
+                    {
+                        nav_type => 'nav',
+                        switch  => 'tabs',
+                        items => [
+                        {
+                            data   => 'Home',
+                            active => 1,
+                        },
+                        {
+                            data => 'Profile',
+                            },
+                            {
+                                data => 'Messages',
+                            }
+                        ],
+                    },
+                ],
+            },
+            expected => '<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav nav-tabs"><li class="active" role="presentation"><a href="#">Home</a></li><li role="presentation"><a href="#">Profile</a></li><li role="presentation"><a href="#">Messages</a></li></ul></div>',
+        }
+    );
+
 
 };
 

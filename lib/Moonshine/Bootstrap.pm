@@ -1401,7 +1401,14 @@ sub navbar {
     for my $nav ( @{ $build_args->{navs} } ) {
         given ( delete $nav->{nav_type} ) {
             when ('header') {
+                $nav->{mid} = $build_args->{mid} if $build_args->{mid};
                 $container->add_child( $self->navbar_header($nav) );
+            }
+            when ('collapse') {
+                $container->add_child( $self->navbar_collapse($nav) );
+            }
+            when ('nav') {
+                $container->add_child( $self->nav($nav) );
             }
             when ('button') {
                 $container->add_child( $self->navbar_button($nav) );
@@ -1419,6 +1426,74 @@ sub navbar {
     }
 
     return $nav;
+}
+
+=head2 navbar_collapse
+
+    $self->navbar_collapse({ navs => [ ] });
+
+=head3 options
+
+=over 
+
+=item navs
+
+nav_type
+
+=back
+
+=head3 renders
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    
+        ...
+
+    </nav>
+
+=cut
+
+sub navbar_collapse {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                id     => 1,
+                switch => { default => 'default' },
+                navs   => {
+                    type => ARRAYREF,
+                },
+            },
+        }
+    );
+
+    my $class = sprintf "collapse navbar-collapse";
+    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+
+    my $collapse = $self->div($base_args);
+
+    for my $nav ( @{ $build_args->{navs} } ) {
+        given ( delete $nav->{nav_type} ) {
+            when ('nav') {
+                $collapse->add_child( $self->nav($nav) );
+            }
+            when ('button') {
+                $collapse->add_child( $self->navbar_button($nav) );
+            }
+            when ('form') {
+                $collapse->add_child( $self->navbar_form($nav) );
+            }
+            when ('text') {
+                $collapse->add_child( $self->navbar_text($nav) );
+            }
+            when ('text_link') {
+                $collapse->add_child( $self->navbar_text_link($nav) );
+            }
+        }
+    }
+
+    return $collapse;
 }
 
 =head2 navbar_header
@@ -1446,7 +1521,8 @@ sub navbar_header {
                 headers => {
                     type  => ARRAYREF,
                     build => 1,
-                }
+                },
+                mid => { default => 'please-set-me', optional => 1 },
             },
         }
     );
@@ -1459,13 +1535,49 @@ sub navbar_header {
 
     my $navbar_header = $self->div($base_args);
 
-    for ( @{ $build_args->{headers} } ) {
-        if ( defined $_->{img} ) {
-            $navbar_header->add_child( $self->link_image($_) );
+    for my $header ( @{ $build_args->{headers} } ) {
+        given ( delete $header->{header_type} ) {
+            when ('link_image') {
+                $navbar_header->add_child( $self->link_image($header) );
+            }
+            when ('toggle') {
+                $header->{data_target} = $build_args->{mid};
+                $navbar_header->add_child( $self->navbar_toggle($header) );
+            }
+            when ('brand') {
+                $navbar_header->add_child( $self->navbar_brand($header) );
+            }
         }
     }
 
     return $navbar_header;
+}
+
+=head2 navbar_brand
+
+    $self->navbar_brand({ data => 'HEY' });
+
+=head3 options
+
+=head3 Renders
+
+    <a class="navbar-brand">HEY</a>
+
+=cut
+
+sub navbar_brand {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => 'navbar-brand' },
+                data  => 1,
+            },
+        }
+    );
+
+    return $self->a($base_args);
 }
 
 =head2 navbar_toggle
@@ -1489,14 +1601,14 @@ sub navbar_toggle {
         {
             params => $_[0] // {},
             spec => {
-                tag => { default => 'button' },
-                type => { default => 'button' },
-                class => { default => 'navbar-toggle collapsed' },
-                data_toggle => { default => 'collapse' },
+                tag           => { default => 'button' },
+                type          => { default => 'button' },
+                class         => { default => 'navbar-toggle collapsed' },
+                data_toggle   => { default => 'collapse' },
                 aria_expanded => { default => 'false' },
-                i => { default => 'icon-bar' },
-                sr_text => { default => 'Toggle navigation' },
-                data_target => 1, 
+                i             => { default => 'icon-bar' },
+                sr_text       => { default => 'Toggle navigation' },
+                data_target   => 1,
             },
         }
     );
@@ -1505,14 +1617,13 @@ sub navbar_toggle {
 
     my $toggle = Moonshine::Element->new($base_args);
 
-    $toggle->add_child($self->span({ class => 'sr-only', data => $build_args->{sr_text} }));
+    $toggle->add_child(
+        $self->span( { class => 'sr-only', data => $build_args->{sr_text} } ) );
     for (qw/1 2 3/) {
-        $toggle->add_child($self->span({ class => $build_args->{i} }));
+        $toggle->add_child( $self->span( { class => $build_args->{i} } ) );
     }
     return $toggle;
 }
-
-
 
 =head2 navbar_button 
 
