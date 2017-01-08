@@ -77,9 +77,10 @@ subtest "build" => sub {
             class  => $class,
             action => 'navbar',
             args   => {
-                items => [
+                navs => [
                     {
-                        headers => [
+                        nav_type => 'header',
+                        headers  => [
                             {
                                 img => {
                                     alt => 'Brand',
@@ -95,7 +96,6 @@ subtest "build" => sub {
 '<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><a class="navbar-brand" href="some.url"><img alt="Brand" src="some.src"></img></a></div></div></nav>'
         }
     );
-
     component_test(
         {
             class  => $class,
@@ -170,6 +170,64 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar',
+            args   => {
+                navs => [
+                    {
+                        nav_type => 'form',
+                        role     => 'search',
+                        fields   => [
+                            {
+                                field_type => 'field_group',
+                                fields     => [
+                                    {
+                                        field_type  => 'text',
+                                        placeholder => 'Search'
+                                    },
+                                ],
+                            },
+                            {
+                                field_type => 'submit_button',
+                            }
+                        ],
+                    },
+                ],
+            },
+            expected =>
+'<nav class="navbar navbar-default"><div class="container-fluid"><form class="navbar-form navbar-left" role="search"><div class="form-group"><input class="form-control" placeholder="Search" type="text"></input></div><button class="btn btn-default" type="submit">Submit</button></form></div></nav>',
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar',
+            args   => {
+                navs => [
+                    {
+                        nav_type => 'button',
+                    },
+                ],
+            },
+            expected =>
+'<nav class="navbar navbar-default"><div class="container-fluid"><button class="btn btn-default navbar-btn" type="button">Submit</button></div></nav>',
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar_button',
+            args   => {
+                data => 'Menu'
+            },
+            expected =>
+'<button class="btn btn-default navbar-btn" type="button">Menu</button>'
+        }
+    );
 };
 
 sub component_test {

@@ -206,7 +206,7 @@ sub button {
 
     $base_args->{class} =
       defined $base_args->{class}
-      ? sprintf "btn btn-%s", $base_args->{class}
+      ? sprintf "btn btn-%s %s", $build_args->{switch}, $base_args->{class}
       : sprintf "btn btn-%s", $build_args->{switch};
 
     if ( my $button_sizing = $build_args->{sizing} ) {
@@ -1344,7 +1344,11 @@ sub nav_item {
 
 =head3 options
 
-=over
+=over 
+
+=item navs
+
+nav_type
 
 =back
 
@@ -1371,7 +1375,7 @@ sub navbar {
                 tag    => { default => 'nav' },
                 mid    => 0,
                 switch => { default => 'default' },
-                items  => {
+                navs  => {
                     type => ARRAYREF,
                 },
             },
@@ -1385,9 +1389,17 @@ sub navbar {
     my $container =
       $nav->add_child( $self->div( { class => 'container-fluid' } ) );
 
-    for ( @{ $build_args->{items} } ) {
-        if ( $_->{headers} ) {
-            $container->add_child( $self->navbar_header($_) );
+    for my $nav ( @{ $build_args->{navs} } ) {
+        given ( delete $nav->{nav_type} ) {
+            when ('header') {
+                $container->add_child( $self->navbar_header($nav) );
+            }
+            when ('button') {
+                $container->add_child( $self->navbar_button($nav) );
+            }
+            when ('form') {
+                $container->add_child( $self->navbar_form($nav) );
+            }
         }
     }
 
@@ -1434,6 +1446,46 @@ sub navbar_header {
     }
 
     return $navbar_header;
+}
+
+=head2 navbar_button 
+
+=head3 options
+
+=over
+
+=item type
+
+defaults button
+
+=item switch
+
+default/success....
+
+=back
+
+=head3 Renders
+
+    <button type="button" class="btn btn-default">Submit</button>
+
+=cut
+
+sub navbar_button {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class  => { default => 'navbar-btn' },
+                type   => { default => 'button' },
+                switch => { default => 'default', base => 1 },
+                data   => { default => 'Submit' }
+            },
+        }
+    );
+
+    my $navbar_button = $self->button($base_args);
+    return $navbar_button;
 }
 
 =head2 navbar_form
