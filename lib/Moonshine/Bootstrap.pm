@@ -68,18 +68,23 @@ sub validate_base_and_build {
 
     my $element_attributes = __PACKAGE__->element_attributes();
     my %combine = ( %{ $args{params} }, %{ $args{'spec'} } );
-    for ( keys %combine ) {
-        if ( defined $element_attributes->{$_} ) {
-            if ( my $spec = $args{spec}->{$_} ) {
+    for my $key ( keys %combine ) {
+        if ( defined $element_attributes->{$key} ) {
+            if ( my $spec = $args{spec}->{$key} ) {
                 ref $spec eq 'HASH' && exists $spec->{build} and next;
-                $html_spec->{$_} = delete $args{spec}->{$_};
+                $html_spec->{$key} = delete $args{spec}->{$key};
             }
-            if ( my $params = delete $args{params}->{$_} ) {
-                $html_params->{$_} = $params;
-                if ( not exists $html_spec->{$_} ) {
-                    $html_spec->{$_} = 0;
+            if ( my $params = delete $args{params}->{$key} ) {
+                $html_params->{$key} = $params;
+                if ( not exists $html_spec->{$key} ) {
+                    $html_spec->{$key} = 0;
                 }
             }
+        }
+        elsif ( ref $combine{$key} eq 'HASH' && delete $combine{$key}->{base} )
+        {
+            $html_params->{$key} = $args{params}->{$key};
+            $html_spec->{$key}   = $args{spec}->{$key};
         }
     }
 
@@ -160,7 +165,7 @@ Buttons can have different sizes.
 
     <button class="btn btn-success btn-lg" ...>
 
-=item class
+=item switch
 
 default/success/danger...
 
@@ -185,7 +190,7 @@ sub button {
             params => $_[0] // {},
             spec => {
                 tag    => { default => 'button' },
-                class  => { default => 'default' },
+                switch => { default => 'default' },
                 type   => { default => 'button' },
                 data   => 0,
                 sizing => 0,
@@ -193,7 +198,11 @@ sub button {
         }
     );
 
-    $base_args->{class} = sprintf "btn btn-%s", $base_args->{class};
+    $base_args->{class} =
+      defined $base_args->{class}
+      ? sprintf "btn btn-%s", $base_args->{class}
+      : sprintf "btn btn-%s", $build_args->{switch};
+
     if ( my $button_sizing = $build_args->{sizing} ) {
         $base_args->{class} = sprintf '%s btn-%s', $base_args->{class},
           $button_sizing;
@@ -571,7 +580,7 @@ sub dropdown_button {
         {
             params => $_[0] // {},
             spec => {
-                class         => { default => 'default' },
+                switch        => { default => 'default' },
                 id            => 1,
                 split         => 0,
                 data_toggle   => { default => 'dropdown' },
@@ -582,7 +591,7 @@ sub dropdown_button {
         }
     );
 
-    $base_args->{class} .= ' dropdown-toggle';
+    $base_args->{class} .= sprintf '%s dropdown-toggle', $build_args->{switch};
 
     $build_args->{data} = delete $base_args->{data}
       if $build_args->{split};
@@ -1419,6 +1428,91 @@ sub navbar_header {
     }
 
     return $navbar_header;
+}
+
+=head2 navbar_form
+
+    $self->navbar_form({});
+
+=head3 Options
+
+=over
+
+=item fields
+
+ArrayRef
+
+=item button
+
+Defaults to Submit
+
+=back
+
+=head3 Renders
+
+    <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+
+=cut
+
+sub navbar_form {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class   => { default => 'navbar-header' },
+                headers => {
+                    type  => ARRAYREF,
+                    build => 1,
+                }
+            },
+        }
+    );
+
+}
+
+=head2 submit_button 
+
+=head3 options
+
+=over
+
+=item type
+
+defaults submit
+
+=item switch
+
+default/success....
+
+=back
+
+=head3 Renders
+
+    <button type="submit" class="btn btn-default">Submit</button>
+
+=cut
+
+sub submit_button {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                type   => { default => 'submit' },
+                switch => { default => 'default', base => 1 },
+                data   => { default => 'Submit' }
+            },
+        }
+    );
+
+    my $submit_button = $self->button($base_args);
+    return $submit_button;
 }
 
 =head2 link_image 

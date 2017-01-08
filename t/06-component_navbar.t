@@ -96,6 +96,18 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'submit_button',
+            args   => {
+                switch => 'success',
+            },
+            expected =>
+              '<button class="btn btn-success" type="submit">Submit</button>',
+        }
+    );
+
 };
 
 sub component_test {
