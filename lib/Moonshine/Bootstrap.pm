@@ -1334,29 +1334,28 @@ sub navbar {
             params => $_[0] // {},
             spec => {
 				tag => { default => 'nav' },
-                mid => 1,
+                mid => 0,
 				type => { default => 'default', build => 1, },
-				headers => {
-					type => 'ARRAYREF',
-					optional => 1,
-				},
-				navs => {
-					type => 'ARRAYREF',	
+				items => {
+					type => ARRAYREF,	
 				},
             },
         }
     );
 
-    my $class = sprintf "nav nav-%s", $build_args->{type}; 
+    my $class = sprintf "navbar navbar-%s", $build_args->{type}; 
     $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
   
 	my $nav = Moonshine::Element->new($base_args);
-	$nav->add_child($self->div({ class => 'container-fluid' })); 
+	my $container = $nav->add_child($self->div({ class => 'container-fluid' })); 
 
-	for (@{ $build_args->{nav} }) {
-		
+	for (@{ $build_args->{items} }) {
+	    if ( $_->{headers} ) {
+            $container->add_child($self->navbar_header($_));   
+        }	
 	} 
 
+    return $nav;
 }
 
 =head2 navbar_header
@@ -1485,8 +1484,6 @@ sub img {
 
 	my $a = Moonshine::Element->new($base_args);
 }
-
-
 
 1;
 
