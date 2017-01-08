@@ -1377,7 +1377,8 @@ sub navbar {
                 navs   => {
                     type => ARRAYREF,
                 },
-                fixed => { type => SCALAR, optional => 1 },
+                fixed  => { type => SCALAR, optional => 1 },
+                static => { type => SCALAR, optional => 1 },
             },
         }
     );
@@ -1387,6 +1388,10 @@ sub navbar {
 
     if ( my $fixed = $build_args->{fixed} ) {
         $base_args->{class} .= sprintf ' navbar-fixed-%s', $fixed;
+    }
+
+    if ( my $static = $build_args->{static} ) {
+        $base_args->{class} .= sprintf ' navbar-static-%s', $static;
     }
 
     my $nav = Moonshine::Element->new($base_args);

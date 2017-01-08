@@ -414,6 +414,29 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar',
+            args   => {
+                static => 'top',
+                navs  => [
+                    {
+                        nav_type  => 'text_link',
+                        data      => 'Navbar Text',
+                        alignment => 'right',
+                        link      => {
+                            href => 'some.url',
+                            data => 'More Text',
+                        },
+                    },
+                ],
+            },
+            expected =>
+'<nav class="navbar navbar-default navbar-static-top"><div class="container-fluid"><p class="navbar-text navbar-right">Navbar Text<a class="navbar-link" href="some.url">More Text</a></p></div></nav>',
+        }
+    );
+
 };
 
 sub component_test {
