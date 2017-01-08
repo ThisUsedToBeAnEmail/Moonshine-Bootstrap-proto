@@ -1409,6 +1409,7 @@ sub navbar {
                 $container->add_child( $self->navbar_header($nav) );
             }
             when ('collapse') {
+                $nav->{id} = $build_args->{mid} if $build_args->{mid};
                 $container->add_child( $self->navbar_collapse($nav) );
             }
             when ('nav') {

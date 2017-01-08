@@ -608,6 +608,88 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar',
+            args   => {
+                mid  => 'bs-example-navbar-collapse-1',
+                navs => [
+                    {
+                        nav_type => 'header',
+                        headers  => [
+                            {
+                                header_type => 'toggle',
+                            },
+                            {
+                                header_type => 'brand',
+                                data        => 'Brand',
+                                href        => '#',
+                            }
+                        ],
+                    },
+                    {
+                        nav_type => 'collapse',
+                        navs     => [
+                            {
+                                nav_type => 'nav',
+                                items    => [
+                                    {
+                                        data   => 'Home',
+                                        active => 1,
+                                    },
+                                    {
+                                        data => 'Profile',
+                                    },
+                                    {
+                                        data => 'Messages',
+                                    }
+                                ],
+                            },
+                            {
+                                alignment => 'left',
+                                nav_type  => 'form',
+                                role      => 'search',
+                                fields    => [
+                                    {
+                                        field_type => 'field_group',
+                                        fields     => [
+                                            {
+                                                field_type  => 'text',
+                                                placeholder => 'Search'
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        field_type => 'submit_button',
+                                    }
+                                ],
+                            },
+                            {
+                                nav_type  => 'nav',
+                                alignment => 'right',
+                                items     => [
+                                    {
+                                        data   => 'Home',
+                                        active => 1,
+                                    },
+                                    {
+                                        data => 'Profile',
+                                    },
+                                    {
+                                        data => 'Messages',
+                                    }
+                                ],
+                            },
+                        ],
+                    }
+                ],
+            },
+            expected =>
+'<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><button class="navbar-toggle collapsed" type="button" aria-expanded="false" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#">Brand</a></div><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav"><li class="active" role="presentation"><a href="#">Home</a></li><li role="presentation"><a href="#">Profile</a></li><li role="presentation"><a href="#">Messages</a></li></ul><form class="navbar-form navbar-left" role="search"><div class="form-group"><input class="form-control" placeholder="Search" type="text"></input></div><button class="btn btn-default" type="submit">Submit</button></form><ul class="nav navbar-nav navbar-right"><li class="active" role="presentation"><a href="#">Home</a></li><li role="presentation"><a href="#">Profile</a></li><li role="presentation"><a href="#">Messages</a></li></ul></div></div></nav>',
+        }
+    );
+
 };
 
 sub component_test {
