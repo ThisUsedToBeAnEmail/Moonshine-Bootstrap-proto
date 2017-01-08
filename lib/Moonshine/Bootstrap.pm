@@ -224,13 +224,13 @@ SCALAR that appends btn-group-%s - lg, sm, xs
 
 ArrayRef of Hashes, that can build nested button_groups
 
-	nested => [ 
-		{
-         	index => 3,
-			dropdown => 1,
-		},
-		...
-	],
+    nested => [ 
+        {
+             index => 3,
+            dropdown => 1,
+        },
+        ...
+    ],
 
    <div class="btn-group" role="group">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -1335,15 +1335,15 @@ sub nav_item {
 
 =head3 renders
 
-	<nav class="navbar navbar-default">
-  		<div class="container-fluid">
-    		<div class="navbar-header">
-      			<a class="navbar-brand" href="#">
-        			<img alt="Brand" src="...">
-     	 		</a>
-    		</div>
-  		</div>
-	</nav>
+    <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+                  <a class="navbar-brand" href="#">
+                    <img alt="Brand" src="...">
+                  </a>
+            </div>
+          </div>
+    </nav>
 
 =cut
 
@@ -1381,13 +1381,13 @@ sub navbar {
 
 =head2 navbar_header
 
-	$self->navbar_header({});
+    $self->navbar_header({});
 
 =head3 Options
 
 =head3 Renders
 
-	<div class="navbar-header">
+    <div class="navbar-header">
       <a class="navbar-brand" href="#">
         <img alt="Brand" src="...">
       </a>
@@ -1435,13 +1435,13 @@ required
 
 required
 
-	{ alt => '', src => '' }
+    { alt => '', src => '' }
 
 =back
 
 =head3 renders
 
-	<a class="navbar-brand" href="..."><img alt="some-text" src="..."></img></a>
+    <a class="navbar-brand" href="..."><img alt="some-text" src="..."></img></a>
 
 =cut
 
@@ -1468,7 +1468,7 @@ sub link_image {
 
 =head2 img
 
-	$self->img({ alt => '', src => '' });
+    $self->img({ alt => '', src => '' });
 
 =head3 Options
 
@@ -1485,8 +1485,8 @@ Required
 =back
 
 =head3 Renders
-	
-	<img alt=".." src="..">
+    
+    <img alt=".." src="..">
 
 =cut
 

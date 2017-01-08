@@ -78,13 +78,13 @@ Version 0.01
 
     ArrayRef of Hashes, that can build nested button\_groups
 
-              nested => [ 
-                      {
-                      index => 3,
-                              dropdown => 1,
-                      },
-                      ...
-              ],
+          nested => [ 
+              {
+                   index => 3,
+                  dropdown => 1,
+              },
+              ...
+          ],
 
          <div class="btn-group" role="group">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -477,9 +477,9 @@ Version 0.01
 
     <span class="input-group-addon" ...>@</span>
 
-## nav
+## navs
 
-    $self->nav();
+    $self->navs();
 
 ### options
 
@@ -522,10 +522,79 @@ Version 0.01
 - active
 - data
 - disable
+- dropdown
 
 ### renders
 
     <li role="presentation" class="active"><a href="#">Home</a></li>
+
+## navbar
+
+    $self->navbar();
+
+### options
+
+### renders
+
+    <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+                  <a class="navbar-brand" href="#">
+                    <img alt="Brand" src="...">
+                  </a>
+            </div>
+          </div>
+    </nav>
+
+## navbar\_header
+
+    $self->navbar_header({});
+
+### Options
+
+### Renders
+
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="...">
+      </a>
+    </div>
+
+## link\_image 
+
+### options
+
+- href
+
+    required
+
+- img
+
+    required
+
+        { alt => '', src => '' }
+
+### renders
+
+    <a class="navbar-brand" href="..."><img alt="some-text" src="..."></img></a>
+
+## img
+
+    $self->img({ alt => '', src => '' });
+
+### Options
+
+- alt 
+
+    Required
+
+- src
+
+    Required
+
+### Renders
+
+    <img alt=".." src="..">
 
 # AUTHOR
 
