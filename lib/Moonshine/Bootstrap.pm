@@ -586,10 +586,10 @@ sub dropdown_button {
         {
             params => $_[0] // {},
             spec => {
-                switch        => { default => 'default', base => 1 },
-                class         => { default => 'dropdown-toggle' },
-                id            => 1,
-                split         => 0,
+                switch => { default => 'default', base => 1 },
+                class  => { default => 'dropdown-toggle' },
+                id     => 1,
+                split  => 0,
                 data_toggle   => { default => 'dropdown' },
                 aria_haspopup => { default => 'true' },
                 aria_expanded => { default => 'true' },
@@ -1374,7 +1374,7 @@ sub navbar {
                 tag    => { default => 'nav' },
                 mid    => 0,
                 switch => { default => 'default' },
-                navs  => {
+                navs   => {
                     type => ARRAYREF,
                 },
             },
@@ -1398,6 +1398,9 @@ sub navbar {
             }
             when ('form') {
                 $container->add_child( $self->navbar_form($nav) );
+            }
+            when ('text') {
+                $container->add_child( $self->navbar_text($nav) );
             }
         }
     }
@@ -1485,6 +1488,41 @@ sub navbar_button {
 
     my $navbar_button = $self->button($base_args);
     return $navbar_button;
+}
+
+=head2 navbar_text 
+
+=head3 options
+
+=over
+
+=item tag
+
+Defaults <p>
+
+=back
+
+=head3 Renders
+    
+    <p class="navbar-text">Navbar text</p>
+
+=cut
+
+sub navbar_text {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'p', },
+                class => { default => 'navbar-text' },
+                data  => 1,
+            },
+        }
+    );
+
+    my $navbar_text = Moonshine::Element->new($base_args);
+    return $navbar_text;
 }
 
 =head2 navbar_form

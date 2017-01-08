@@ -534,6 +534,10 @@ Version 0.01
 
 ### options
 
+- navs
+
+    nav\_type
+
 ### renders
 
     <nav class="navbar navbar-default">
@@ -559,6 +563,34 @@ Version 0.01
         <img alt="Brand" src="...">
       </a>
     </div>
+
+## navbar\_button 
+
+### options
+
+- type
+
+    defaults button
+
+- switch
+
+    default/success....
+
+### Renders
+
+    <button type="button" class="btn btn-default">Submit</button>
+
+## navbar\_text 
+
+### options
+
+- tag
+
+    Defaults &lt;p>
+
+### Renders
+
+    <p class="navbar-text">Navbar text</p>
 
 ## navbar\_form
 

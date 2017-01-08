@@ -228,6 +228,35 @@ subtest "build" => sub {
 '<button class="btn btn-default navbar-btn" type="button">Menu</button>'
         }
     );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar_text',
+            args   => {
+                data => 'Navbar Text',
+            },
+            expected => '<p class="navbar-text">Navbar Text</p>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar',
+            args   => {
+                navs => [
+                    {
+                        nav_type => 'text',
+                        data     => 'Navbar Text',
+                    },
+                ],
+            },
+            expected =>
+'<nav class="navbar navbar-default"><div class="container-fluid"><p class="navbar-text">Navbar Text</p></div></nav>',
+        }
+    );
+
 };
 
 sub component_test {
