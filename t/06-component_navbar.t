@@ -108,6 +108,68 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar_form',
+            args   => {
+                switch => 'left',
+                role   => 'search',
+                fields => [
+                    {
+                        field_type => 'submit_button',
+                    },
+                ]
+            },
+            expected =>
+'<form class="navbar-form navbar-left" role="search"><button class="btn btn-default" type="submit">Submit</button></form>'
+
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'form_group',
+            args   => {
+                fields => [
+                    {
+                        field_type  => 'text',
+                        placeholder => 'Search'
+                    },
+                ]
+            },
+            expected =>
+'<div class="form-group"><input class="form-control" placeholder="Search" type="text"></input></div>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar_form',
+            args   => {
+                role   => 'search',
+                fields => [
+                    {
+                        field_type => 'field_group',
+                        fields     => [
+                            {
+                                field_type  => 'text',
+                                placeholder => 'Search'
+                            },
+                        ],
+                    },
+                    {
+                        field_type => 'submit_button',
+                    }
+                ],
+            },
+            expected =>
+'<form class="navbar-form navbar-left" role="search"><div class="form-group"><input class="form-control" placeholder="Search" type="text"></input></div><button class="btn btn-default" type="submit">Submit</button></form>',
+        }
+    );
+
 };
 
 sub component_test {

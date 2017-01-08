@@ -14,7 +14,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'nav',
             args   => {
-                type  => 'tabs',
+                switch  => 'tabs',
                 items => [
                     {
                         data   => 'Home',
@@ -38,7 +38,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'nav',
             args   => {
-                type  => 'pills',
+                switch  => 'pills',
                 items => [
                     {
                         data   => 'Home',
@@ -62,7 +62,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'nav',
             args   => {
-                type    => 'pills',
+                switch    => 'pills',
                 stacked => 1,
                 items   => [
                     {
@@ -87,7 +87,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'nav',
             args   => {
-                type      => 'pills',
+                switch    => 'pills',
                 justified => 1,
                 items     => [
                     {
@@ -112,7 +112,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'nav',
             args   => {
-                type      => 'pills',
+                switch    => 'pills',
                 justified => 1,
                 items     => [
                     {
@@ -138,7 +138,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'nav',
             args   => {
-                type      => 'pills',
+                switch    => 'pills',
                 justified => 1,
                 items     => [
                     {

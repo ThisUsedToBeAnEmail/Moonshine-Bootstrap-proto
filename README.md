@@ -44,7 +44,7 @@ Version 0.01
 
         <button class="btn btn-success btn-lg" ...>
 
-- class
+- switch
 
     default/success/danger...
 
@@ -484,7 +484,7 @@ Version 0.01
 ### options
 
 - class
-- type 
+- switch
 
     tabs or pills
 
@@ -559,6 +559,67 @@ Version 0.01
         <img alt="Brand" src="...">
       </a>
     </div>
+
+## navbar\_form
+
+    $self->navbar_form({});
+
+### Options
+
+- fields
+
+    ArrayRef
+
+- button
+
+    Defaults to Submit
+
+### Renders
+
+    <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+
+## form\_group
+
+    $self->form_group()
+
+### Options
+
+- class
+- fields
+
+        fields => [
+            {
+                field_type => 'text',
+            }
+        ]
+
+### Renders
+
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search">
+    </div>
+    
+
+## submit\_button 
+
+### options
+
+- type
+
+    defaults submit
+
+- switch
+
+    default/success....
+
+### Renders
+
+    <button type="submit" class="btn btn-default">Submit</button>
 
 ## link\_image 
 

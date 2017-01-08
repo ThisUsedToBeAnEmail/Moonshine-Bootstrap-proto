@@ -7,6 +7,9 @@ use warnings;
 use Moonshine::Element;
 use Params::Validate qw(:all);
 
+use feature qw/switch/;
+no if $] >= 5.017011, warnings => 'experimental::smartmatch';
+
 =head1 NAME
 
 Moonshine::Bootstrap  
@@ -31,7 +34,7 @@ BEGIN {
     };
 
     my @lazy_components =
-      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label/;
+      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
@@ -81,10 +84,13 @@ sub validate_base_and_build {
                 }
             }
         }
-        elsif ( ref $combine{$key} eq 'HASH' && delete $combine{$key}->{base} )
+        elsif ( ref $args{spec}->{$key} eq 'HASH'
+            && defined $args{spec}->{$key}->{base} )
         {
-            $html_params->{$key} = $args{params}->{$key};
-            $html_spec->{$key}   = $args{spec}->{$key};
+            my $param = delete $args{params}->{$key};
+            my $spec  = delete $args{spec}->{$key};
+            $html_params->{$key} = $param if $param;
+            $html_spec->{$key}   = $spec  if $spec;
         }
     }
 
@@ -1177,7 +1183,7 @@ sub input_group_addon {
 
 =item class
 
-=item type 
+=item switch
 
 tabs or pills
 
@@ -1214,8 +1220,8 @@ sub nav {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => '' },
-                type  => {
+                class  => { default => '' },
+                switch => {
                     build => 1,
                     type  => SCALAR,
                 },
@@ -1228,7 +1234,7 @@ sub nav {
         }
     );
 
-    my $class = sprintf "nav nav-%s", $build_args->{type};
+    my $class = sprintf "nav nav-%s", $build_args->{switch};
     $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
 
     if ( $build_args->{stacked} ) {
@@ -1362,17 +1368,17 @@ sub navbar {
         {
             params => $_[0] // {},
             spec => {
-                tag => { default => 'nav' },
-                mid => 0,
-                type  => { default => 'default', build => 1, },
-                items => {
+                tag    => { default => 'nav' },
+                mid    => 0,
+                switch => { default => 'default' },
+                items  => {
                     type => ARRAYREF,
                 },
             },
         }
     );
 
-    my $class = sprintf "navbar navbar-%s", $build_args->{type};
+    my $class = sprintf "navbar navbar-%s", $build_args->{switch};
     $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
 
     my $nav = Moonshine::Element->new($base_args);
@@ -1465,8 +1471,9 @@ sub navbar_form {
         {
             params => $_[0] // {},
             spec => {
-                class   => { default => 'navbar-header' },
-                headers => {
+                switch => { default => 'left' },
+                role   => 0,
+                fields => {
                     type  => ARRAYREF,
                     build => 1,
                 }
@@ -1474,6 +1481,79 @@ sub navbar_form {
         }
     );
 
+    my $class = sprintf "navbar-form navbar-%s", $build_args->{switch};
+    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+
+    my $form = $self->form($base_args);
+
+    for my $field ( @{ $build_args->{fields} } ) {
+        given ( delete $field->{field_type} ) {
+            when ('submit_button') {
+                $form->add_child( $self->submit_button($field) );
+            }
+            when ('field_group') {
+                $form->add_child( $self->form_group($field) );
+            }
+        }
+    }
+
+    return $form;
+}
+
+=head2 form_group
+
+    $self->form_group()
+
+=head3 Options
+
+=over
+
+=item class
+
+=item fields
+
+    fields => [
+        {
+            field_type => 'text',
+        }
+    ]
+
+=back
+
+=head3 Renders
+
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search">
+    </div>
+    
+=cut
+
+sub form_group {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class  => { default => 'form-group' },
+                fields => {
+                    type  => ARRAYREF,
+                    build => 1,
+                }
+            },
+        }
+    );
+
+    my $form_group = $self->div($base_args);
+
+    for my $field ( @{ $build_args->{fields} } ) {
+        given ( delete $field->{field_type} ) {
+            when ('text') {
+                $form_group->add_child( $self->input($field) );
+            }
+        }
+    }
+
+    return $form_group;
 }
 
 =head2 submit_button 
