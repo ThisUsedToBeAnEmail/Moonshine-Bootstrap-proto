@@ -1377,12 +1377,17 @@ sub navbar {
                 navs   => {
                     type => ARRAYREF,
                 },
+                fixed => { type => SCALAR, optional => 1 },
             },
         }
     );
 
     my $class = sprintf "navbar navbar-%s", $build_args->{switch};
     $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+
+    if ( my $fixed = $build_args->{fixed} ) {
+        $base_args->{class} .= sprintf ' navbar-fixed-%s', $fixed;
+    }
 
     my $nav = Moonshine::Element->new($base_args);
     my $container =
@@ -1442,7 +1447,8 @@ sub navbar_header {
     );
 
     my $class = 'navbar-header';
-    $base_args->{class} .= defined $base_args->{class}
+    $base_args->{class} .=
+      defined $base_args->{class}
       ? sprintf ' %s', $class
       : $class;
 
@@ -1494,11 +1500,12 @@ sub navbar_button {
     );
 
     my $class = 'navbar-btn';
-    $base_args->{class} .= defined $base_args->{class}
+    $base_args->{class} .=
+      defined $base_args->{class}
       ? sprintf ' %s', $class
       : $class;
 
-    if (my $align = $build_args->{alignment}) {
+    if ( my $align = $build_args->{alignment} ) {
         $base_args->{class} .= sprintf ' navbar-%s', $align;
     }
 
@@ -1530,19 +1537,20 @@ sub navbar_text {
         {
             params => $_[0] // {},
             spec => {
-                tag  => { default => 'p', },
-                data => 1,
+                tag       => { default => 'p', },
+                data      => 1,
                 alignment => 0,
             },
         }
     );
 
     my $class = 'navbar-text';
-    $base_args->{class} .= defined $base_args->{class}
+    $base_args->{class} .=
+      defined $base_args->{class}
       ? sprintf ' %s', $class
       : $class;
 
-    if (my $align = $build_args->{alignment}) {
+    if ( my $align = $build_args->{alignment} ) {
         $base_args->{class} .= sprintf ' navbar-%s', $align;
     }
 
@@ -1574,9 +1582,9 @@ sub navbar_text_link {
         {
             params => $_[0] // {},
             spec => {
-                tag  => { default => 'p', },
-                link => { type    => HASHREF },
-                alignment => { type => SCALAR, base => 1, optional => 1 },
+                tag       => { default => 'p', },
+                link      => { type    => HASHREF },
+                alignment => { type    => SCALAR, base => 1, optional => 1 },
                 data => 1,
             },
         }
@@ -1624,8 +1632,8 @@ sub navbar_form {
             params => $_[0] // {},
             spec => {
                 alignment => 0,
-                role   => 0,
-                fields => {
+                role      => 0,
+                fields    => {
                     type  => ARRAYREF,
                     build => 1,
                 }
@@ -1634,11 +1642,12 @@ sub navbar_form {
     );
 
     my $class = 'navbar-form';
-    $base_args->{class} .= defined $base_args->{class}
+    $base_args->{class} .=
+      defined $base_args->{class}
       ? sprintf ' %s', $class
       : $class;
 
-    if (my $align = $build_args->{alignment}) {
+    if ( my $align = $build_args->{alignment} ) {
         $base_args->{class} .= sprintf ' navbar-%s', $align;
     }
 

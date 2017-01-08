@@ -134,8 +134,8 @@ subtest "build" => sub {
             action => 'navbar_form',
             args   => {
                 alignment => 'left',
-                role   => 'search',
-                fields => [
+                role      => 'search',
+                fields    => [
                     {
                         field_type => 'submit_button',
                     },
@@ -170,8 +170,8 @@ subtest "build" => sub {
             action => 'navbar_form',
             args   => {
                 alignment => 'left',
-                role   => 'search',
-                fields => [
+                role      => 'search',
+                fields    => [
                     {
                         field_type => 'field_group',
                         fields     => [
@@ -199,9 +199,9 @@ subtest "build" => sub {
                 navs => [
                     {
                         alignment => 'left',
-                        nav_type => 'form',
-                        role     => 'search',
-                        fields   => [
+                        nav_type  => 'form',
+                        role      => 'search',
+                        fields    => [
                             {
                                 field_type => 'field_group',
                                 fields     => [
@@ -257,13 +257,12 @@ subtest "build" => sub {
             action => 'navbar_button',
             args   => {
                 alignment => 'right',
-                data => 'Menu'
+                data      => 'Menu'
             },
             expected =>
 '<button class="btn btn-default navbar-btn navbar-right" type="button">Menu</button>'
         }
     );
-
 
     component_test(
         {
@@ -337,10 +336,10 @@ subtest "build" => sub {
             args   => {
                 navs => [
                     {
-                        nav_type => 'text_link',
-                        data     => 'Navbar Text',
+                        nav_type  => 'text_link',
+                        data      => 'Navbar Text',
                         alignment => 'right',
-                        link     => {
+                        link      => {
                             href => 'some.url',
                             data => 'More Text',
                         }
@@ -357,9 +356,9 @@ subtest "build" => sub {
             class  => $class,
             action => 'navbar_text_link',
             args   => {
-                data => 'Navbar Text',
+                data      => 'Navbar Text',
                 alignment => 'left',
-                link => {
+                link      => {
                     href => "some.url",
                     data => "More Text",
                 }
@@ -369,6 +368,51 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar',
+            args   => {
+                fixed => 'top',
+                navs  => [
+                    {
+                        nav_type  => 'text_link',
+                        data      => 'Navbar Text',
+                        alignment => 'right',
+                        link      => {
+                            href => 'some.url',
+                            data => 'More Text',
+                        },
+                    },
+                ],
+            },
+            expected =>
+'<nav class="navbar navbar-default navbar-fixed-top"><div class="container-fluid"><p class="navbar-text navbar-right">Navbar Text<a class="navbar-link" href="some.url">More Text</a></p></div></nav>',
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar',
+            args   => {
+                fixed => 'bottom',
+                navs  => [
+                    {
+                        nav_type  => 'text_link',
+                        data      => 'Navbar Text',
+                        alignment => 'right',
+                        link      => {
+                            href => 'some.url',
+                            data => 'More Text',
+                        },
+                    },
+                ],
+            },
+            expected =>
+'<nav class="navbar navbar-default navbar-fixed-bottom"><div class="container-fluid"><p class="navbar-text navbar-right">Navbar Text<a class="navbar-link" href="some.url">More Text</a></p></div></nav>',
+        }
+    );
 
 };
 
