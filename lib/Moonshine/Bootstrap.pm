@@ -2069,6 +2069,47 @@ sub img {
     my $a = Moonshine::Element->new($base_args);
 }
 
+=head2 breadcrumbs
+
+=head3 options
+
+=head3 Renders
+
+	<ol class="breadcrumb">
+	  <li><a href="#">Home</a></li>
+	  <li><a href="#">Library</a></li>
+	  <li class="active">Data</li>
+	</ol>
+
+=cut
+
+sub breadcrumbs {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => 'breadcrumb' },
+                items => { type    => ARRAYREF },
+            },
+        }
+    );
+
+    my $ol = $self->ol($base_args);
+
+    for ( @{ $build_args->{items} } ) {
+        if ( delete $_->{active} ) {
+            $_->{class} = 'active';
+            $ol->add_child( $self->li($_) );
+        }
+        else {
+            $ol->add_child( $self->linked_li($_) );
+        }
+    }
+
+    return $ol;
+}
+
 1;
 
 __END__
