@@ -550,6 +550,24 @@ Version 0.01
           </div>
     </nav>
 
+## navbar\_collapse
+
+    $self->navbar_collapse({ navs => [ ] });
+
+### options
+
+- navs
+
+    nav\_type
+
+### renders
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    
+        ...
+
+    </nav>
+
 ## navbar\_header
 
     $self->navbar_header({});
@@ -563,6 +581,29 @@ Version 0.01
         <img alt="Brand" src="...">
       </a>
     </div>
+
+## navbar\_brand
+
+    $self->navbar_brand({ data => 'HEY' });
+
+### options
+
+### Renders
+
+    <a class="navbar-brand">HEY</a>
+
+## navbar\_toggle
+
+### options
+
+### Renders
+
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
 
 ## navbar\_button 
 
@@ -603,6 +644,20 @@ Version 0.01
 ### Renders
 
     <p class="navbar-text">Navbar text<a href="#" class="navbar-link">more text</a></p>
+
+## navbar\_nav
+
+### options
+
+- link 
+
+    Hash Reference Used to build the &lt;a>.
+
+### Renders
+
+    <ul class="nav navbar-nav navbar-right">
+
+    </ul>
 
 ## navbar\_form
 

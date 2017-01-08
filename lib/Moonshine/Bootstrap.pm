@@ -1221,8 +1221,9 @@ sub nav {
             spec => {
                 class  => { default => '' },
                 switch => {
-                    build => 1,
-                    type  => SCALAR,
+                    build    => 1,
+                    type     => SCALAR,
+                    optional => 1,
                 },
                 items => {
                     type => ARRAYREF,
@@ -1233,8 +1234,11 @@ sub nav {
         }
     );
 
-    my $class = sprintf "nav nav-%s", $build_args->{switch};
-    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+    my $class;
+    if ( $class = $build_args->{switch} ) {
+        $class = sprintf "nav nav-%s", $class;
+        $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+    }
 
     if ( $build_args->{stacked} ) {
         $base_args->{class} .= ' nav-stacked';
@@ -1476,7 +1480,7 @@ sub navbar_collapse {
     for my $nav ( @{ $build_args->{navs} } ) {
         given ( delete $nav->{nav_type} ) {
             when ('nav') {
-                $collapse->add_child( $self->nav($nav) );
+                $collapse->add_child( $self->navbar_nav($nav) );
             }
             when ('button') {
                 $collapse->add_child( $self->navbar_button($nav) );
@@ -1756,6 +1760,61 @@ sub navbar_text_link {
     $navbar_text->add_child(
         $self->a( { %{ $build_args->{link} }, class => 'navbar-link' } ) );
     return $navbar_text;
+}
+
+=head2 navbar_nav
+
+=head3 options
+
+=over
+
+=item link 
+
+Hash Reference Used to build the <a>.
+
+=back
+
+=head3 Renders
+    
+    <ul class="nav navbar-nav navbar-right">
+
+    </ul>
+
+=cut
+
+sub navbar_nav {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                alignment => 0,
+                switch    => {
+                    base     => 1,
+                    type     => SCALAR,
+                    optional => 1,
+                },
+                items => {
+                    type => ARRAYREF,
+                    base => 1,
+                },
+                stacked   => { base => 1, optional => 1 },
+                justified => { base => 1, optional => 1 },
+            },
+        }
+    );
+
+    my $class = 'nav navbar-nav';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    if ( my $align = $build_args->{alignment} ) {
+        $base_args->{class} .= sprintf ' navbar-%s', $align;
+    }
+
+    return $self->nav($base_args);
 }
 
 =head2 navbar_form
