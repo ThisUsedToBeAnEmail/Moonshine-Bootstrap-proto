@@ -1142,9 +1142,9 @@ sub input_group_addon {
     return $group_addon;
 }
 
-=head2 nav
+=head2 navs
 
-    $self->nav();
+    $self->navs();
 
 =head3 options
 
@@ -1302,6 +1302,188 @@ sub nav_item {
     
     return $li;
 }
+
+=head2 navbar
+
+    $self->navbar();
+
+=head3 options
+
+=over
+
+=back
+
+=head3 renders
+
+	<nav class="navbar navbar-default">
+  		<div class="container-fluid">
+    		<div class="navbar-header">
+      			<a class="navbar-brand" href="#">
+        			<img alt="Brand" src="...">
+     	 		</a>
+    		</div>
+  		</div>
+	</nav>
+
+=cut
+
+sub navbar {
+	my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+				tag => { default => 'nav' },
+                mid => 1,
+				type => { default => 'default', build => 1, },
+				headers => {
+					type => 'ARRAYREF',
+					optional => 1,
+				},
+				navs => {
+					type => 'ARRAYREF',	
+				},
+            },
+        }
+    );
+
+    my $class = sprintf "nav nav-%s", $build_args->{type}; 
+    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+  
+	my $nav = Moonshine::Element->new($base_args);
+	$nav->add_child($self->div({ class => 'container-fluid' })); 
+
+	for (@{ $build_args->{nav} }) {
+		
+	} 
+
+}
+
+=head2 navbar_header
+
+	$self->navbar_header({});
+
+=head3 Options
+
+=head3 Renders
+
+	<div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="...">
+      </a>
+    </div>
+
+=cut
+
+sub navbar_header {
+	my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+           		class => { default => 'navbar-header' },
+				headers => {
+					type => ARRAYREF,
+				} 
+			},
+        }
+    );
+
+	my $navbar_header = $self->div($base_args);
+	
+	for ( @{$build_args->{headers}} ) {
+		
+	}
+
+
+}
+
+=head2 link_image 
+
+=head3 options
+
+=over
+
+=item href
+
+required
+
+=item img
+
+required
+
+	{ alt => '', src => '' }
+
+=back
+
+=head3 renders
+
+	<a class="navbar-brand" href="..."><img alt="some-text" src="..."></img></a>
+
+=cut
+
+sub link_image {
+	my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+           		class => { default => 'navbar-brand' },
+				img => {
+					build => 1,
+					type => HASHREF,
+				}, 
+				href => 1,
+			},
+        }
+    );
+
+	my $a = $self->a($base_args);
+	$a->add_child($self->img($build_args->{img}));
+	return $a;
+}
+
+=head2 img
+
+	$self->img({ alt => '', src => '' });
+
+=head3 Options
+
+=over
+
+=item alt 
+
+Required
+
+=item src
+
+Required
+
+=back
+
+=head3 Renders
+	
+	<img alt=".." src="..">
+
+=cut
+
+sub img {
+	my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+			params => $_[0] // {},
+            spec => {
+            	tag => { default => 'img' },
+				alt => 1,
+				src => 1,
+			},
+        }
+    );
+
+	my $a = Moonshine::Element->new($base_args);
+}
+
+
 
 1;
 
