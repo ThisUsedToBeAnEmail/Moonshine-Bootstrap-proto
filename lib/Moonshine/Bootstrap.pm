@@ -1519,6 +1519,7 @@ sub navbar_text {
             spec => {
                 tag  => { default => 'p', },
                 data => 1,
+                alignment => 0,
             },
         }
     );
@@ -1527,6 +1528,10 @@ sub navbar_text {
     $base_args->{class} .= defined $base_args->{class}
       ? sprintf ' %s', $class
       : $class;
+
+    if (my $align = $build_args->{alignment}) {
+        $base_args->{class} .= sprintf ' navbar-%s', $align;
+    }
 
     my $navbar_text = Moonshine::Element->new($base_args);
     return $navbar_text;
@@ -1558,6 +1563,7 @@ sub navbar_text_link {
             spec => {
                 tag  => { default => 'p', },
                 link => { type    => HASHREF },
+                alignment => { type => SCALAR, base => 1, optional => 1 },
                 data => 1,
             },
         }
