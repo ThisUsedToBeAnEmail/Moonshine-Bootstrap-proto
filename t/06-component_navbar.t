@@ -58,6 +58,26 @@ subtest "build" => sub {
                         },
                         href => 'some.url',
                     },
+                ],
+            },
+            expected =>
+'<div class="navbar-header"><a class="navbar-brand" href="some.url"><img alt="Brand" src="some.src"></img></a></div>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'navbar_header',
+            args   => {
+                headers => [
+                    {
+                        img => {
+                            alt => 'Brand',
+                            src => 'some.src',
+                        },
+                        href => 'some.url',
+                    },
                     {
                         img => {
                             alt => 'Brand',
@@ -113,7 +133,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'navbar_form',
             args   => {
-                switch => 'left',
+                alignment => 'left',
                 role   => 'search',
                 fields => [
                     {
@@ -149,6 +169,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'navbar_form',
             args   => {
+                alignment => 'left',
                 role   => 'search',
                 fields => [
                     {
@@ -177,6 +198,7 @@ subtest "build" => sub {
             args   => {
                 navs => [
                     {
+                        alignment => 'left',
                         nav_type => 'form',
                         role     => 'search',
                         fields   => [

@@ -1433,7 +1433,6 @@ sub navbar_header {
         {
             params => $_[0] // {},
             spec => {
-                class   => { default => 'navbar-header' },
                 headers => {
                     type  => ARRAYREF,
                     build => 1,
@@ -1441,6 +1440,11 @@ sub navbar_header {
             },
         }
     );
+
+    my $class = 'navbar-header';
+    $base_args->{class} .= defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
 
     my $navbar_header = $self->div($base_args);
 
@@ -1497,7 +1501,6 @@ sub navbar_button {
     if (my $align = $build_args->{alignment}) {
         $base_args->{class} .= sprintf ' navbar-%s', $align;
     }
-
 
     my $navbar_button = $self->button($base_args);
     return $navbar_button;
@@ -1620,7 +1623,7 @@ sub navbar_form {
         {
             params => $_[0] // {},
             spec => {
-                switch => { default => 'left' },
+                alignment => 0,
                 role   => 0,
                 fields => {
                     type  => ARRAYREF,
@@ -1630,8 +1633,14 @@ sub navbar_form {
         }
     );
 
-    my $class = sprintf "navbar-form navbar-%s", $build_args->{switch};
-    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+    my $class = 'navbar-form';
+    $base_args->{class} .= defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    if (my $align = $build_args->{alignment}) {
+        $base_args->{class} .= sprintf ' navbar-%s', $align;
+    }
 
     my $form = $self->form($base_args);
 
