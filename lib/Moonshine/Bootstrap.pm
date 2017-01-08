@@ -586,7 +586,8 @@ sub dropdown_button {
         {
             params => $_[0] // {},
             spec => {
-                switch        => { default => 'default' },
+                switch        => { default => 'default', base => 1 },
+                class         => { default => 'dropdown-toggle' },
                 id            => 1,
                 split         => 0,
                 data_toggle   => { default => 'dropdown' },
@@ -596,8 +597,6 @@ sub dropdown_button {
             }
         }
     );
-
-    $base_args->{class} .= sprintf '%s dropdown-toggle', $build_args->{switch};
 
     $build_args->{data} = delete $base_args->{data}
       if $build_args->{split};
