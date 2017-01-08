@@ -1384,6 +1384,7 @@ sub navbar_header {
            		class => { default => 'navbar-header' },
 				headers => {
 					type => ARRAYREF,
+                    build => 1,
 				} 
 			},
         }
@@ -1392,10 +1393,12 @@ sub navbar_header {
 	my $navbar_header = $self->div($base_args);
 	
 	for ( @{$build_args->{headers}} ) {
-		
+	    if ( defined $_->{img} ) {
+            $navbar_header->add_child($self->link_image($_));
+        }   	
 	}
 
-
+    return $navbar_header;
 }
 
 =head2 link_image 

@@ -22,6 +22,46 @@ subtest "build" => sub {
         expected => '<a class="navbar-brand" href="some.url"><img alt="Brand" src="some.src"></img></a>'
 	});
 
+    component_test({
+        class => $class,
+        action => 'navbar_header',
+        args => {
+            headers => [ 
+                {
+                    img => {
+                        alt => 'Brand',
+                        src => 'some.src',
+                    },
+                    href => 'some.url',
+                },
+            ],
+        },
+        expected => '<div class="navbar-header"><a class="navbar-brand" href="some.url"><img alt="Brand" src="some.src"></img></a></div>'
+    });
+
+    component_test({
+        class => $class,
+        action => 'navbar_header',
+        args => {
+            headers => [ 
+                {
+                    img => {
+                        alt => 'Brand',
+                        src => 'some.src',
+                    },
+                    href => 'some.url',
+                },
+                {
+                    img => {
+                        alt => 'Brand',
+                        src => 'some.src',
+                    },
+                    href => 'some.url',
+                },
+            ],
+        },
+        expected => '<div class="navbar-header"><a class="navbar-brand" href="some.url"><img alt="Brand" src="some.src"></img></a><a class="navbar-brand" href="some.url"><img alt="Brand" src="some.src"></img></a></div>'
+    });
 };
 
 sub component_test {
