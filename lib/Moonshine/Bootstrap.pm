@@ -1468,6 +1468,52 @@ sub navbar_header {
     return $navbar_header;
 }
 
+=head2 navbar_toggle
+
+=head3 options
+
+=head3 Renders
+
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+
+=cut
+
+sub navbar_toggle {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag => { default => 'button' },
+                type => { default => 'button' },
+                class => { default => 'navbar-toggle collapsed' },
+                data_toggle => { default => 'collapse' },
+                aria_expanded => { default => 'false' },
+                i => { default => 'icon-bar' },
+                sr_text => { default => 'Toggle navigation' },
+                data_target => 1, 
+            },
+        }
+    );
+
+    $base_args->{data_target} = sprintf "#%s", $base_args->{data_target};
+
+    my $toggle = Moonshine::Element->new($base_args);
+
+    $toggle->add_child($self->span({ class => 'sr-only', data => $build_args->{sr_text} }));
+    for (qw/1 2 3/) {
+        $toggle->add_child($self->span({ class => $build_args->{i} }));
+    }
+    return $toggle;
+}
+
+
+
 =head2 navbar_button 
 
 =head3 options

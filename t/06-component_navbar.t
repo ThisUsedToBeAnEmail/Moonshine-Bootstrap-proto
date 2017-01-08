@@ -461,7 +461,38 @@ subtest "build" => sub {
         }
     );
 
+	component_test({
+		class => $class,
+		action => 'navbar_toggle',
+		args => { data_target => 'bs-example-navbar-collapse-1' },
+		expected => '<button class="navbar-toggle collapsed" type="button" aria-expanded="false" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>',
+	});
 
+=pod
+    component_test(
+		{
+			class => $class,
+			action => 'navbar',		
+			args => {
+				navs => [
+					{
+						nav_type => 'header',
+						headers  => [
+                            {
+								nav_type => 'toggle',
+							},
+							{
+								nav_type => 'link',
+								data => 'Brand',
+							}
+                        ],	
+					}
+				]
+			},
+			expected => '<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#">Brand</a></div></div></div>',
+		}
+	);
+=cut
 
 };
 
