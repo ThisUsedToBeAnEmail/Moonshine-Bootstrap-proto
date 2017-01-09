@@ -2276,6 +2276,68 @@ sub pagination {
     return $ul;
 }
 
+=head2 pager
+
+=head3 options
+
+=item count
+ 
+=item paging 
+
+=item sizing
+
+=item previous
+
+=item next
+
+=item count
+
+=item items
+
+=head3 render
+
+    <ul class="pager">
+        <li><a href="#">Previous</a></li>
+        <li><a href="#">Next</a></li>
+    </ul>
+
+=cut
+
+sub pager {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => 'pager' },
+                items => { type    => ARRAYREF, optional => 1, base => 1, },
+                sizing => { optional => 1, base => 1 },
+                count => { optional => 1, base => 1 },
+                previous => { 
+                    default => { 
+                        span => { data => 'Previous'}, 
+                        link => { href => '#' }, 
+                    },
+                    type => HASHREF,
+                    base => 1, 
+                },
+                next => { 
+                    default => { 
+                        span => { data => 'Next' }, 
+                        link => { href => "#" } 
+                    },  
+                    type => HASHREF,
+                    base => 1, 
+                },
+            },
+        }
+    );
+
+    my $pager = $self->pagination($base_args);
+    return $pager;
+}
+
+
 
 
 1;
