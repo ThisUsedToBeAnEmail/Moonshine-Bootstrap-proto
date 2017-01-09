@@ -43,7 +43,7 @@ BEGIN {
 
                 my ( $base_args, $build_args ) = validate_base_and_build(
                     {
-                        params => $_[0],
+                        params => $_[0] // {},
                         spec   => {
                             tag  => { default => $component },
                             data => 0,
@@ -899,6 +899,71 @@ sub linked_li {
     );
     return $li;
 }
+
+=head2 linked_li_span 
+
+    $self->linked_li_span({ link => { href => 'http://some.url' }, span => { data => 'Action'} )
+
+=head3 Options
+
+=over
+
+=item Disabled
+
+    $self->linked_li( disabled => 1, ... )
+
+    <li class="disabled"><a href="#"><span aria-hidden="true">Disabled link</span></a></li>
+
+=item link
+
+    $self->linked_li({ link => { href => "#" , ... } })
+
+    <a href="#">
+
+=item span
+
+    $self->linked_li({ span => { data => [1, 2, 3] }, ... })
+
+    123
+
+=back
+
+=head3 Sample Output
+
+    <li><a href="http://some.url"><span aria-hidden="true">Action</span></a></li>
+
+=cut
+
+sub linked_li_span {
+    my $self = shift;
+
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                link    => { type => HASHREF },
+                span    => { type => HASHREF, build => 1 },
+                disable => 0,
+            }
+        }
+    );
+
+    $build_args->{data} = delete $base_args->{data};
+
+    my $li = $self->li($base_args);
+
+    if ( $build_args->{disable} ) {
+        $li->class('disabled');
+    }
+
+    my $a = $li->add_child($self->a($build_args->{link}));
+    $a->add_child($self->span($build_args->{span}));
+
+    return $li;
+}
+
+
+
 
 =head2 caret
 
@@ -2109,6 +2174,72 @@ sub breadcrumbs {
 
     return $ol;
 }
+
+=head2 pagination
+
+=head3 count 
+
+=head3 Renders
+
+	<ul class="pagination">
+        <li>
+            <a href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li><a href="#">1</a></li>
+	    <li><a href="#">2</a></li>
+	    <li><a href="#">3</a></li>
+        <li>
+            <a href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+	</ul>
+
+=cut
+
+sub pagination {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => 'pagination' },
+                items => { type    => ARRAYREF, optional => 1 },
+                count => 0,
+                previous => { default => { data => '&laquo;', href => "#" }, type => HASHREF },
+                next => { default => { data => '&raquo;', href => "#" }, type => HASHREF },
+            },
+        }
+    );
+
+    my $ul = $self->ul($base_args);
+
+    $ul->add_child($self->linked_span($build_args->{previous}));
+
+    if ( defined $build_args->{items} ) {
+        for ( @{ $build_args->{items} } ) {
+            if ( delete $_->{active} ) {
+                $_->{class} = 'active';
+                $ul->add_child( $self->li($_) );
+            }
+            else {
+                $ul->add_child( $self->linked_li($_) );
+            }
+        }
+    } elsif ( defined $build_args->{page_count} ) {
+        for ( 1 .. $build_args->{page_count} ) {
+            $ul->add_child( $self->linked_li({ data => $_, href => '#' }) );
+        } 
+    }
+
+    $ul->add_child($self->linked_span($build_args->{previous}));
+
+    return $ul;
+}
+
+
 
 1;
 
