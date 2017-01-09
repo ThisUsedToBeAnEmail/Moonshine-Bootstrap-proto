@@ -2380,6 +2380,55 @@ sub pager {
     return $pager;
 }
 
+=head2 text_label
+
+    $self->text_label({ data => '', switch => '' });
+
+=head3 Options
+
+=over
+
+=item data 
+
+Required
+
+=item switch
+
+Optional - default is default
+
+=back
+
+=head3 Renders
+    
+    <span class="label label-default">Default</span>
+
+=cut
+
+sub text_label {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                switch => { default => 'default' },
+                data => 1,
+            },
+        }
+    );
+
+    my $class = sprintf 'label label-%s', $build_args->{switch};
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $a = $self->span($base_args);
+}
+
+
+
+
+
 1;
 
 __END__
