@@ -93,6 +93,14 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class => $class,
+            action => 'pager',
+            args => { aligned => 1, disable => 'both' },
+            expected => '<ul class="pager"><li class="previous disabled"><a href="#"><span>Previous</span></a></li><li class="next disabled"><a href="#"><span>Next</span></a></li></ul>'
+        }
+    );
 };
 
 sub component_test {

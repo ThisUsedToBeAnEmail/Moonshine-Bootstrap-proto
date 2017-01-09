@@ -44,7 +44,7 @@ BEGIN {
                 my ( $base_args, $build_args ) = validate_base_and_build(
                     {
                         params => $_[0] // {},
-                        spec   => {
+                        spec => {
                             tag  => { default => $component },
                             data => 0,
                         }
@@ -941,8 +941,8 @@ sub linked_li_span {
         {
             params => $_[0] // {},
             spec => {
-                link    => { type => HASHREF },
-                span    => { type => HASHREF, build => 1 },
+                link => { type => HASHREF },
+                span => { type => HASHREF, build => 1 },
                 disable => 0,
             }
         }
@@ -956,14 +956,11 @@ sub linked_li_span {
         $li->class('disabled');
     }
 
-    my $a = $li->add_child($self->a($build_args->{link}));
-    $a->add_child($self->span($build_args->{span}));
+    my $a = $li->add_child( $self->a( $build_args->{link} ) );
+    $a->add_child( $self->span( $build_args->{span} ) );
 
     return $li;
 }
-
-
-
 
 =head2 caret
 
@@ -2225,22 +2222,22 @@ sub pagination {
             spec => {
                 class => { default => 'pagination' },
                 items => { type    => ARRAYREF, optional => 1 },
-                sizing => 0,
-                count => 0,
-                previous => { 
-                    default => { 
-                        span => { data => '&laquo;', aria_hidden => 'true' }, 
-                        link => { href => "#", aria_label => 'Previous' }, 
+                sizing   => 0,
+                count    => 0,
+                previous => {
+                    default => {
+                        span => { data => '&laquo;', aria_hidden => 'true' },
+                        link => { href => "#", aria_label => 'Previous' },
                     },
-                    type => HASHREF 
+                    type => HASHREF
                 },
-                next => { 
-                    default => { 
-                        span => { data => '&raquo;', aria_hidden => 'true' }, 
-                        link => { href => "#", aria_label => "Next" } 
-                    },  
-                    type => HASHREF,
-                    build => 1, 
+                next => {
+                    default => {
+                        span => { data => '&raquo;', aria_hidden => 'true' },
+                        link => { href => "#",       aria_label  => "Next" }
+                    },
+                    type  => HASHREF,
+                    build => 1,
                 },
             },
         }
@@ -2253,7 +2250,7 @@ sub pagination {
 
     my $ul = $self->ul($base_args);
 
-    $ul->add_child($self->linked_li_span($build_args->{previous}));
+    $ul->add_child( $self->linked_li_span( $build_args->{previous} ) );
 
     if ( defined $build_args->{items} ) {
         for ( @{ $build_args->{items} } ) {
@@ -2265,20 +2262,25 @@ sub pagination {
                 $ul->add_child( $self->linked_li($_) );
             }
         }
-    } elsif ( defined $build_args->{count} ) {
+    }
+    elsif ( defined $build_args->{count} ) {
         for ( 1 .. $build_args->{count} ) {
-            $ul->add_child( $self->linked_li({ data => $_, link => '#' }) );
-        } 
+            $ul->add_child( $self->linked_li( { data => $_, link => '#' } ) );
+        }
     }
 
-    $ul->add_child($self->linked_li_span($build_args->{next}));
+    $ul->add_child( $self->linked_li_span( $build_args->{next} ) );
 
     return $ul;
 }
 
 =head2 pager
 
-=head3 options
+    $self->pager({ });
+
+=head3 Options
+
+=over
 
 =item count
  
@@ -2294,7 +2296,13 @@ sub pagination {
 
 =item items
 
-=head3 render
+=item disable
+
+=item aligned
+
+=back
+
+=head3 Renders
 
     <ul class="pager">
         <li><a href="#">Previous</a></li>
@@ -2311,41 +2319,56 @@ sub pager {
             spec => {
                 class => { default => 'pager' },
                 items => { type    => ARRAYREF, optional => 1, base => 1, },
-                sizing => { optional => 1, base => 1 },
-                count => { optional => 1, base => 1 },
-                previous => { 
-                    default => { 
-                        span => { data => 'Previous'}, 
-                        link => { href => '#' }, 
+                sizing   => { optional => 1, base => 1 },
+                count    => { optional => 1, base => 1 },
+                previous => {
+                    default => {
+                        span => { data => 'Previous' },
+                        link => { href => '#' },
                     },
                     type => HASHREF,
-                    base => 1, 
+                    base => 1,
                 },
-                next => { 
-                    default => { 
-                        span => { data => 'Next' }, 
-                        link => { href => "#" } 
-                    },  
+                next => {
+                    default => {
+                        span => { data => 'Next' },
+                        link => { href => "#" }
+                    },
                     type => HASHREF,
-                    base => 1, 
+                    base => 1,
                 },
                 aligned => 0,
+                disable => 0,
             },
         }
     );
-    
-    if ($build_args->{aligned}) {
-        $base_args->{previous}->{class} = 'previous';
-        $base_args->{next}->{class} = 'next';
+
+    if ( $build_args->{aligned} ) {
+        $base_args->{previous}->{class} .= 'previous';
+        $base_args->{next}->{class}     .= 'next';
     }
 
+    given ( $build_args->{disable} ) {
+        my $dis = 'disabled';
+        when ('previous') {
+            $base_args->{previous}->{class} .=
+              defined $base_args->{previous}->{class} ? " $dis" : $dis;
+        }
+        when ('next') {
+            $base_args->{next}->{class} .=
+              defined $base_args->{next}->{class} ? " $dis" : $dis;
+        }
+        when ('both') {
+            $base_args->{next}->{class} .=
+              defined $base_args->{next}->{class} ? " $dis" : $dis;
+            $base_args->{previous}->{class} .=
+              defined $base_args->{previous}->{class} ? " $dis" : $dis;
+        }
+    }
 
     my $pager = $self->pagination($base_args);
     return $pager;
 }
-
-
-
 
 1;
 
