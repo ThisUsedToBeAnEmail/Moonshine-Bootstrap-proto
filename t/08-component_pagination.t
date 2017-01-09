@@ -84,6 +84,15 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class => $class,
+            action => 'pager',
+            args => { aligned => 1 },
+            expected => '<ul class="pager"><li class="previous"><a href="#"><span>Previous</span></a></li><li class="next"><a href="#"><span>Next</span></a></li></ul>'
+        }
+    );
+
 };
 
 sub component_test {

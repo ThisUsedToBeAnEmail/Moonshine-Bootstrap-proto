@@ -2329,9 +2329,16 @@ sub pager {
                     type => HASHREF,
                     base => 1, 
                 },
+                aligned => 0,
             },
         }
     );
+    
+    if ($build_args->{aligned}) {
+        $base_args->{previous}->{class} = 'previous';
+        $base_args->{next}->{class} = 'next';
+    }
+
 
     my $pager = $self->pagination($base_args);
     return $pager;
