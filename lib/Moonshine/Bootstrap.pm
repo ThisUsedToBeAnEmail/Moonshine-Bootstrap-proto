@@ -2140,11 +2140,11 @@ sub img {
 
 =head3 Renders
 
-	<ol class="breadcrumb">
-	  <li><a href="#">Home</a></li>
-	  <li><a href="#">Library</a></li>
-	  <li class="active">Data</li>
-	</ol>
+    <ol class="breadcrumb">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Library</a></li>
+      <li class="active">Data</li>
+    </ol>
 
 =cut
 
@@ -2181,21 +2181,21 @@ sub breadcrumbs {
 
 =head3 Renders
 
-	<ul class="pagination">
+    <ul class="pagination">
         <li>
             <a href="#" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
         <li><a href="#">1</a></li>
-	    <li><a href="#">2</a></li>
-	    <li><a href="#">3</a></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
         <li>
             <a href="#" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
-	</ul>
+    </ul>
 
 =cut
 
