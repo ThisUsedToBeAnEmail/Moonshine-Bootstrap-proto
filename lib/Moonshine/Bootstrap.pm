@@ -2177,7 +2177,25 @@ sub breadcrumbs {
 
 =head2 pagination
 
-=head3 count 
+=head3 options
+
+=over
+
+=item count
+ 
+=item paging 
+
+=item sizing
+
+=item previous
+
+=item next
+
+=item count
+
+=item items
+
+=back
 
 =head3 Renders
 
@@ -2207,6 +2225,7 @@ sub pagination {
             spec => {
                 class => { default => 'pagination' },
                 items => { type    => ARRAYREF, optional => 1 },
+                sizing => 0,
                 count => 0,
                 previous => { 
                     default => { 
@@ -2226,6 +2245,11 @@ sub pagination {
             },
         }
     );
+
+    if ( my $group_sizing = $build_args->{sizing} ) {
+        $base_args->{class} = sprintf '%s pagination-%s', $base_args->{class},
+          $group_sizing;
+    }
 
     my $ul = $self->ul($base_args);
 
