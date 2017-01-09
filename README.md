@@ -391,6 +391,34 @@ Version 0.01
 
     <li><a href="http://some.url">Action</a></li>
 
+## linked\_li\_span 
+
+    $self->linked_li_span({ link => { href => 'http://some.url' }, span => { data => 'Action'} )
+
+### Options
+
+- Disabled
+
+        $self->linked_li( disabled => 1, ... )
+
+        <li class="disabled"><a href="#"><span aria-hidden="true">Disabled link</span></a></li>
+
+- link
+
+        $self->linked_li({ link => { href => "#" , ... } })
+
+        <a href="#">
+
+- span
+
+        $self->linked_li({ span => { data => [1, 2, 3] }, ... })
+
+        123
+
+### Sample Output
+
+    <li><a href="http://some.url"><span aria-hidden="true">Action</span></a></li>
+
 ## caret
 
     $self->caret
@@ -755,6 +783,139 @@ Version 0.01
 ### Renders
 
     <img alt=".." src="..">
+
+## breadcrumbs
+
+### options
+
+### Renders
+
+    <ol class="breadcrumb">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Library</a></li>
+      <li class="active">Data</li>
+    </ol>
+
+## pagination
+
+### options
+
+- count
+- paging 
+- sizing
+- previous
+- next
+- count
+- items
+
+### Renders
+
+    <ul class="pagination">
+        <li>
+            <a href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li><a href="#">1</a></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li>
+            <a href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+
+## pager
+
+    $self->pager({ });
+
+### Options
+
+- count
+- paging 
+- sizing
+- previous
+- next
+- count
+- items
+- disable
+- aligned
+
+### Renders
+
+    <ul class="pager">
+        <li><a href="#">Previous</a></li>
+        <li><a href="#">Next</a></li>
+    </ul>
+
+## text\_label
+
+    $self->text_label({ data => '', switch => '' });
+
+### Options
+
+- data 
+
+    Required
+
+- switch
+
+    Optional - default is default
+
+### Renders
+
+    <span class="label label-default">Default</span>
+
+## badge
+
+    $self->badge({ data => '42', wrapper => { tag => 'button' });
+
+### Options
+
+- data 
+
+    Required
+
+- wrapper
+
+    Optional
+
+### Renders
+
+    <button ...<span class="badge">42</span></button>
+
+## jumbotron
+
+### Options
+
+## items
+
+## full\_width
+
+### Renders
+
+    <div class="jumbotron">
+        ...
+    </div>
+
+## page\_header
+
+    $self->page_header({});
+
+### Options
+
+## header
+
+## header\_tag
+
+## small
+
+### Renders
+
+    <div class="page-header">
+        <h2>Example page header <small>Subtest for header</small></h2>
+    </div>
 
 # AUTHOR
 
