@@ -2208,15 +2208,28 @@ sub pagination {
                 class => { default => 'pagination' },
                 items => { type    => ARRAYREF, optional => 1 },
                 count => 0,
-                previous => { default => { data => '&laquo;', href => "#" }, type => HASHREF },
-                next => { default => { data => '&raquo;', href => "#" }, type => HASHREF },
+                previous => { 
+                    default => { 
+                        span => { data => '&laquo;', aria_hidden => 'true' }, 
+                        link => { href => "#", aria_label => 'Previous' }, 
+                    },
+                    type => HASHREF 
+                },
+                next => { 
+                    default => { 
+                        span => { data => '&raquo;', aria_hidden => 'true' }, 
+                        link => { href => "#", aria_label => "Next" } 
+                    },  
+                    type => HASHREF,
+                    build => 1, 
+                },
             },
         }
     );
 
     my $ul = $self->ul($base_args);
 
-    $ul->add_child($self->linked_span($build_args->{previous}));
+    $ul->add_child($self->linked_li_span($build_args->{previous}));
 
     if ( defined $build_args->{items} ) {
         for ( @{ $build_args->{items} } ) {
@@ -2228,13 +2241,13 @@ sub pagination {
                 $ul->add_child( $self->linked_li($_) );
             }
         }
-    } elsif ( defined $build_args->{page_count} ) {
-        for ( 1 .. $build_args->{page_count} ) {
-            $ul->add_child( $self->linked_li({ data => $_, href => '#' }) );
+    } elsif ( defined $build_args->{count} ) {
+        for ( 1 .. $build_args->{count} ) {
+            $ul->add_child( $self->linked_li({ data => $_, link => '#' }) );
         } 
     }
 
-    $ul->add_child($self->linked_span($build_args->{previous}));
+    $ul->add_child($self->linked_li_span($build_args->{next}));
 
     return $ul;
 }
