@@ -34,7 +34,7 @@ BEGIN {
     };
 
     my @lazy_components =
-      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form/;
+      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form small/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
@@ -2524,6 +2524,52 @@ sub jumbotron {
             $div->add_child( $self->$action($_) );
         }
     }
+    return $div;
+}
+
+=head2 page_header
+
+    $self->page_header({});
+
+=head3 Options
+
+=head2 header
+
+=head2 header_tag
+
+=head2 small
+
+=head3 Renders
+
+    <div class="page-header">
+        <h2>Example page header <small>Subtest for header</small></h2>
+    </div>
+
+=cut
+
+sub page_header {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class      => { default => 'page-header' },
+                header_tag => { default => 'h1' },
+                header     => 0,
+                small      => 0,
+            },
+        }
+    );
+
+    my $div = $self->div($base_args);
+
+    my $action = $build_args->{header_tag};
+    my $header = $div->add_child( $self->$action( $build_args->{header} ) );
+
+    if ( my $data = $build_args->{small} ) {
+        $header->add_child( $self->small( { data => $data } ) );
+    }
+
     return $div;
 }
 
