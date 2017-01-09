@@ -2239,6 +2239,8 @@ sub pagination {
                     type  => HASHREF,
                     build => 1,
                 },
+                nav => 0,
+                nav_args => { default => { tag => 'nav' } },
             },
         }
     );
@@ -2270,6 +2272,12 @@ sub pagination {
     }
 
     $ul->add_child( $self->linked_li_span( $build_args->{next} ) );
+
+    if (defined $build_args->{nav}) {
+        my $nav = Moonshine::Element->new($build_args->{nav_args});
+        $nav->add_child($ul);
+        return $nav;
+    }
 
     return $ul;
 }
@@ -2339,6 +2347,8 @@ sub pager {
                 },
                 aligned => 0,
                 disable => 0,
+                nav => { optional => 1, base => 1 },
+                nav_args => { optional => 1, base => 1 },
             },
         }
     );
