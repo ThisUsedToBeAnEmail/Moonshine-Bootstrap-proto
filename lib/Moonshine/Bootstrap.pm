@@ -2479,6 +2479,54 @@ sub badge {
     return $span;
 }
 
+=head2 jumbotron
+
+=head3 Options
+
+=head2 items
+
+=head2 full_width
+
+=head3 Renders
+
+    <div class="jumbotron">
+        ...
+    </div>
+
+=cut
+
+sub jumbotron {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                full_width => 0,
+                items      => { type => ARRAYREF, optional => 1 },
+            },
+        }
+    );
+
+    my $class = 'jumbotron';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $div = $self->div($base_args);
+    if ( defined $build_args->{full_width} ) {
+        $div->add_child( $self->div( { class => 'container' } ) );
+    }
+
+    if ( defined $build_args->{items} ) {
+        for ( @{ $build_args->{items} } ) {
+            my $action = delete $_->{action} or die "a misserable death";
+            $div->add_child( $self->$action($_) );
+        }
+    }
+    return $div;
+}
+
 1;
 
 __END__
