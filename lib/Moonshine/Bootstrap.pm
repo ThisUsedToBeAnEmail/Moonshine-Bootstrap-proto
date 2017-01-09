@@ -2273,8 +2273,8 @@ sub pagination {
 
     $ul->add_child( $self->linked_li_span( $build_args->{next} ) );
 
-    if (defined $build_args->{nav}) {
-        my $nav = Moonshine::Element->new($build_args->{nav_args});
+    if ( defined $build_args->{nav} ) {
+        my $nav = Moonshine::Element->new( $build_args->{nav_args} );
         $nav->add_child($ul);
         return $nav;
     }
@@ -2347,7 +2347,7 @@ sub pager {
                 },
                 aligned => 0,
                 disable => 0,
-                nav => { optional => 1, base => 1 },
+                nav      => { optional => 1, base => 1 },
                 nav_args => { optional => 1, base => 1 },
             },
         }
@@ -2411,7 +2411,7 @@ sub text_label {
             params => $_[0] // {},
             spec => {
                 switch => { default => 'default' },
-                data => 1,
+                data   => 1,
             },
         }
     );
@@ -2422,12 +2422,62 @@ sub text_label {
       ? sprintf ' %s', $class
       : $class;
 
-    my $a = $self->span($base_args);
+    my $span = $self->span($base_args);
+    return $span;
 }
 
+=head2 badge
 
+    $self->badge({ data => '42', wrapper => { tag => 'button' });
 
+=head3 Options
 
+=over
+
+=item data 
+
+Required
+
+=item wrapper
+
+Optional
+
+=back
+
+=head3 Renders
+    
+    <button ...<span class="badge">42</span></button>
+
+=cut
+
+sub badge {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                data    => 1,
+                wrapper => { type => HASHREF, optional => 1 },
+            },
+        }
+    );
+
+    my $class = 'badge';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $span = $self->span($base_args);
+
+    if ( defined $build_args->{wrapper} ) {
+        my $wrapper = Moonshine::Element->new( $build_args->{wrapper} );
+        $wrapper->add_child($span);
+        return $wrapper;
+    }
+
+    return $span;
+}
 
 1;
 
