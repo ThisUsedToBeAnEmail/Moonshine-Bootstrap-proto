@@ -2671,7 +2671,8 @@ sub alert {
         {
             params => $_[0] // {},
             spec => {
-                switch => { default => 'success' },
+                switch => { default  => 'success' },
+                link   => { optional => 1, type => HASHREF },
             },
         }
     );
@@ -2683,9 +2684,18 @@ sub alert {
       : $class;
 
     my $div = $self->div($base_args);
+
+    if ( my $link = $build_args->{link} ) {
+        my $link_class = 'alert-link';
+        $link->{class} .=
+          defined $link->{class}
+          ? sprintf ' %s', $link_class
+          : $link_class;
+        $div->add_child( $self->a($link) );
+    }
+
     return $div;
 }
-
 
 1;
 
