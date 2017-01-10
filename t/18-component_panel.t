@@ -100,6 +100,24 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'panel',
+            args   => {
+                switch => 'success',
+                header => {
+                    data => 'Basic panel example',
+                },
+                body => {
+                    data => '...'
+                }
+            },
+            expected =>
+'<div class="panel panel-success"><div class="panel-heading">Basic panel example</div><div class="panel-body">...</div></div>'
+        }
+    );
+
 };
 
 sub component_test {

@@ -3498,6 +3498,72 @@ sub panel_footer {
     return $footer;
 }
 
+=head2 responsive_embed
+
+    $self->responsive_embed({ });
+
+=head3 options
+
+=head3 renders
+    
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="#"></iframe>
+    </div>
+
+=cut
+
+sub responsive_embed {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'div' },
+                iframe => 0,
+                ratio => 0,
+            },
+        }
+    );
+
+    my $class = sprintf 'embed-responsive embed-responsive-%s', $build_args->{ratio};
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $responsive = Moonshine::Element->new($base_args);
+
+    $responsive->add_child($self->responsive_iframe($build_args->{iframe}));
+
+    return $responsive;
+}
+
+sub responsive_iframe {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'iframe' },
+                iframe => 0,
+                ratio => 0,
+            },
+        }
+    );
+
+    my $class = sprintf 'embed-responsive-item';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $responsive = Moonshine::Element->new($base_args);
+
+    return $responsive;
+}
+
+
+
 1;
 
 __END__
