@@ -3318,6 +3318,7 @@ sub panel {
                 switch => { default  => 'default' },
                 body   => { optional => 1, type => HASHREF },
                 header => { optional => 1, type => HASHREF },
+                footer => { optional => 1, type => HASHREF },
             },
         }
     );
@@ -3335,6 +3336,9 @@ sub panel {
 
     $build_args->{body}
       and $panel->add_child( $self->panel_body( $build_args->{body} ) );
+
+    $build_args->{footer}
+      and $panel->add_child( $self->panel_body( $build_args->{footer} ) );
 
     return $panel;
 }
@@ -3455,6 +3459,43 @@ sub panel_title {
     my $title = Moonshine::Element->new($base_args);
 
     return $title;
+}
+
+=head2 panel_footer
+
+    $self->panel_footer({ });
+
+=head3 options
+
+=head3 renders
+    
+    <div class="panel-footer">
+        Basic panel example
+    </div>
+
+=cut
+
+sub panel_footer {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'div' },
+                title => 0,
+            },
+        }
+    );
+
+    my $class = 'panel-footer';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $footer = Moonshine::Element->new($base_args);
+
+    return $footer;
 }
 
 1;

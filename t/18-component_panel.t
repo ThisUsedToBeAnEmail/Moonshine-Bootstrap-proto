@@ -46,6 +46,18 @@ subtest "build" => sub {
     component_test(
         {
             class  => $class,
+            action => 'panel_footer',
+            args   => {
+                data => 'Basic panel footer',
+            },
+            expected =>
+'<div class="panel-footer">Basic panel footer</div>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
             action => 'panel',
             args   => {
                 body => {
