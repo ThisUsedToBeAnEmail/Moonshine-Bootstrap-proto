@@ -2786,6 +2786,7 @@ sub progress_bar {
                 switch        => 0,
                 striped       => 0,
                 show          => 0,
+                animated      => 0,
             },
         }
     );
@@ -2796,6 +2797,10 @@ sub progress_bar {
 
     if ( defined $build_args->{striped} ) {
         push @{ $base_args->{class} }, 'progress-bar-striped';
+    }
+
+    if ( defined $build_args->{animated} ) {
+        push @{ $base_args->{class} }, 'active';
     }
 
     my $percent = $base_args->{aria_valuenow} . "%";
