@@ -31,7 +31,7 @@ subtest "build" => sub {
             expected => '<li class="list-group-item active">Hello World</li>'
         }
     );
-    
+
     component_test(
         {
             class  => $class,
@@ -39,12 +39,13 @@ subtest "build" => sub {
             args   => {
                 data   => 'Hello World',
                 active => 1,
-                badge => { data => '41' },
+                badge  => { data => '41' },
             },
-            expected => '<li class="list-group-item active">Hello World<span class="badge">41</span></li>'
+            expected =>
+'<li class="list-group-item active">Hello World<span class="badge">41</span></li>'
         }
     );
-    
+
     component_test(
         {
             class  => $class,
@@ -59,6 +60,66 @@ subtest "build" => sub {
             },
             expected =>
 '<ul class="list-group"><li class="list-group-item active">Hello World</li></ul>'
+        }
+
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group_item',
+            args   => {
+                data => 'Hello World',
+                href => '#',
+            },
+            expected => '<a class="list-group-item" href="#">Hello World</a>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group_item',
+            args   => {
+                data   => 'Hello World',
+                href   => '#',
+                active => 1,
+            },
+            expected =>
+              '<a class="list-group-item active" href="#">Hello World</a>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group_item',
+            args   => {
+                data   => 'Hello World',
+                active => 1,
+                href   => '#',
+                badge  => { data => '41' },
+            },
+            expected =>
+'<a class="list-group-item active" href="#">Hello World<span class="badge">41</span></a>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group',
+            args   => {
+                items => [
+                    {
+                        data   => 'Hello World',
+                        href   => '#',
+                        active => 1,
+                    }
+                ],
+            },
+            expected =>
+'<div class="list-group"><a class="list-group-item active" href="#">Hello World</a></div>'
         }
     );
 

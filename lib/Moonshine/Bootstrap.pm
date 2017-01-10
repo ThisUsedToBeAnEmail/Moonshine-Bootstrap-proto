@@ -3057,7 +3057,6 @@ sub list_group {
     return $list;
 }
 
-
 =head2 list_group_item
 
 =head3 options
@@ -3076,9 +3075,6 @@ sub list_group {
     </ul>
 
 =cut
-
-
-
 
 sub list_group_item {
     my $self = shift;
@@ -3104,8 +3100,104 @@ sub list_group_item {
 
     my $item = Moonshine::Element->new($base_args);
 
-    if ( my $badge = $build_args->{badge} ) { 
-        $item->add_child($self->badge($badge));
+    if ( my $badge = $build_args->{badge} ) {
+        $item->add_child( $self->badge($badge) );
+    }
+
+    return $item;
+}
+
+=head2 linked_group
+
+=head3 options
+
+=over
+
+=item
+
+=back
+
+=head3 render
+
+    <div class="list-group">
+        <a class="list-group-item" href="#">Some text</a>
+        ....
+    </div>
+
+=cut
+
+sub linked_group {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'div' },
+                items => { type    => ARRAYREF, optional => 1 }
+            },
+        }
+    );
+
+    my $class = 'list-group';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $list = Moonshine::Element->new($base_args);
+
+    for ( @{ $build_args->{items} } ) {
+        $list->add_child( $self->linked_group_item($_) );
+    }
+
+    return $list;
+}
+
+=head2 linked_group_item
+
+=head3 options
+
+=over
+
+=item
+
+=back
+
+=head3 render
+
+    <div class="list-group">
+        <a class="list-group-item" href="#">Some text</a>
+        ....
+    </div>
+
+=cut
+
+sub linked_group_item {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'a' },
+                items => { type    => ARRAYREF, optional => 1 },
+                active => 0,
+                badge => { type => HASHREF, optional => 1 },
+            },
+        }
+    );
+
+    my $class = 'list-group-item';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    $build_args->{active} and $base_args->{class} .= ' active';
+
+    my $item = Moonshine::Element->new($base_args);
+
+    if ( my $badge = $build_args->{badge} ) {
+        $item->add_child( $self->badge($badge) );
     }
 
     return $item;
