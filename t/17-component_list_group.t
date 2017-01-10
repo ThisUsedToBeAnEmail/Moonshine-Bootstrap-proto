@@ -255,7 +255,32 @@ subtest "build" => sub {
             expected =>
 '<div class="list-group"><a class="list-group-item active" href="#"><h4 class="list-group-item-heading">List group item heading</h4><p class="list-group-item-text">...</p></a></div>',
         }
-      )
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'panel_body',
+            args   => {
+                data => 'Basic panel example',
+            },
+            expected => '<div class="panel-body">Basic panel example</div>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'panel',
+            args   => {
+                body => {
+                    data => 'Basic panel example',
+                }
+            },
+            expected =>
+'<div class="panel panel-default"><div class="panel-body">Basic panel example</div></div>'
+        }
+    );
 
 };
 

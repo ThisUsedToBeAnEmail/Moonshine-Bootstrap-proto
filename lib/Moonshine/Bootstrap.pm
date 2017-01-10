@@ -3294,6 +3294,83 @@ sub linked_group_item_text {
     return $element;
 }
 
+=head2 panel
+
+    $self->panel({ });
+
+=head3 options
+
+=head3 renders
+    
+    <div class="panel panel-default">
+        ...
+    </div>
+
+=cut
+
+sub panel {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag    => { default  => 'div' },
+                switch => { default  => 'default' },
+                body   => { optional => 1, type => HASHREF },
+            },
+        }
+    );
+
+    my $class = sprintf 'panel panel-%s', $build_args->{switch};
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $panel = Moonshine::Element->new($base_args);
+
+    $build_args->{body}
+      and $panel->add_child( $self->panel_body( $build_args->{body} ) );
+
+    return $panel;
+}
+
+=head2 panel_body
+
+    $self->panel_body({ });
+
+=head3 options
+
+=head3 renders
+    
+        <div class="panel-body">
+            Basic panel example
+        </div>
+
+=cut
+
+sub panel_body {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag => { default => 'div' },
+            },
+        }
+    );
+
+    my $class = 'panel-body';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $body = Moonshine::Element->new($base_args);
+
+    return $body;
+}
+
 1;
 
 __END__
