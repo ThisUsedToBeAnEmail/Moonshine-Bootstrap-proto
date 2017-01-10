@@ -3518,14 +3518,15 @@ sub responsive_embed {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'div' },
+                tag    => { default => 'div' },
                 iframe => 0,
-                ratio => 0,
+                ratio  => 0,
             },
         }
     );
 
-    my $class = sprintf 'embed-responsive embed-responsive-%s', $build_args->{ratio};
+    my $class = sprintf 'embed-responsive embed-responsive-%s',
+      $build_args->{ratio};
     $base_args->{class} .=
       defined $base_args->{class}
       ? sprintf ' %s', $class
@@ -3533,7 +3534,7 @@ sub responsive_embed {
 
     my $responsive = Moonshine::Element->new($base_args);
 
-    $responsive->add_child($self->responsive_iframe($build_args->{iframe}));
+    $responsive->add_child( $self->responsive_iframe( $build_args->{iframe} ) );
 
     return $responsive;
 }
@@ -3544,9 +3545,9 @@ sub responsive_iframe {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'iframe' },
+                tag    => { default => 'iframe' },
                 iframe => 0,
-                ratio => 0,
+                ratio  => 0,
             },
         }
     );
@@ -3562,7 +3563,44 @@ sub responsive_iframe {
     return $responsive;
 }
 
+=head2 well
 
+    $self->well({ switch => '' });
+
+=head3 options
+
+=head3 render
+
+    <div class="well well-lg"></div>
+
+=cut
+
+sub well {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag    => { default => 'div' },
+                switch => 0,
+            },
+        }
+    );
+
+    my $class = 'well';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    if ( my $switch = $build_args->{switch} ) {
+        $base_args->{class} .= sprintf ' %s-%s', $class, $switch;
+    }
+
+    my $well = Moonshine::Element->new($base_args);
+
+    return $well;
+}
 
 1;
 

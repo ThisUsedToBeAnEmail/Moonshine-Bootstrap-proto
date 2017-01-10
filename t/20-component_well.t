@@ -12,29 +12,37 @@ subtest "build" => sub {
     component_test(
         {
             class  => $class,
-            action => 'responsive_embed',
+            action => 'well',
             args   => {
-                ratio  => '16by9',
-                iframe => { src => '...' },
+                data => '...',
             },
-            expected =>
-'<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="..."></iframe></div>'
+            expected => '<div class="well">...</div>'
         }
     );
 
     component_test(
         {
             class  => $class,
-            action => 'responsive_embed',
+            action => 'well',
             args   => {
-                ratio  => '4by3',
-                iframe => { src => '...' },
+                switch => 'lg',
+                data   => '...',
             },
-            expected =>
-'<div class="embed-responsive embed-responsive-4by3"><iframe class="embed-responsive-item" src="..."></iframe></div>'
+            expected => '<div class="well well-lg">...</div>'
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'well',
+            args   => {
+                switch => 'sm',
+                data   => '...',
+            },
+            expected => '<div class="well well-sm">...</div>'
+        }
+    );
 };
 
 sub component_test {

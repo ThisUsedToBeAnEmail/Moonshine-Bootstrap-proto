@@ -917,6 +917,299 @@ Version 0.01
         <h2>Example page header <small>Subtest for header</small></h2>
     </div>
 
+## thumbnail
+
+TODO's - grids, items??
+
+    $self->thumbnail({ tag => '' });
+
+### Options
+
+## tag
+
+default div
+
+### Renders
+
+    <div class="thumbnail"></div>
+
+## caption
+
+TODO's - grids, items??
+
+    $self->caption({ tag => '' });
+
+### Options
+
+## tag
+
+default div
+
+### Renders
+
+    <div class="caption"></div>
+
+## alert
+
+    $self->alert({ data => '', switch => '' });
+
+### Options
+
+- data 
+
+    Optional
+
+- switch
+
+    Optional - default is success
+
+### Renders
+
+    <div class="alert alert-success"></div>
+
+## progress
+
+    $self->progress({ bar => {  } });
+
+### Options
+
+- bar 
+
+    Optional
+
+### Renders
+
+    <div class="progress"></div>
+
+## progress\_bar
+
+    $self->progress_bar();
+
+### Options
+
+- progress-bar
+- progressbar
+- aria\_valuenow
+- aria\_valuemax
+- aria\_valuemin
+
+### Renders
+
+    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+        60%
+    </div>
+
+## media
+
+    $self->media({ });
+
+### options
+
+- media
+
+### renders
+
+    <div class="media">
+        <div class="media-left media-top"><a href="#"><img class="media-object" src="url" alt="alt text"></img></a></div>
+    </div>
+
+## media\_object 
+
+    $self->media_object({ });
+
+### options
+
+### renders
+
+    <div class="media-left media-top"><a href="#"><img class="media-object" src="url" alt="alt text"></img></a></div>'
+
+## media\_link\_img 
+
+    $self->media_link_img({ });
+
+### options
+
+- href
+
+    required
+
+- img
+
+    required
+
+        { alt => '', src => '' }
+
+### renders
+
+    <a href="#"><img class="media-object" src="url" alt="alt text"></img></a>
+
+## media\_list
+
+### options
+
+-
+
+### render
+
+    <ul class="media-list">
+        <li class="media">
+            ...
+        </li>
+    </ul>
+
+## list\_group
+
+### options
+
+-
+
+### render
+
+    <ul class="list-group">
+        <li class="list-group-item">Some text</li>
+        ....
+    </ul>
+
+## list\_group\_item
+
+### options
+
+-
+
+### render
+
+    <ul class="list-group">
+        <li class="list-group-item">Some text</li>
+        ....
+    </ul>
+
+## linked\_group
+
+### options
+
+-
+
+### render
+
+    <div class="list-group">
+        <a class="list-group-item" href="#">Some text</a>
+        ....
+    </div>
+
+## linked\_group\_item
+
+### options
+
+-
+
+### render
+
+    <div class="list-group">
+        <a class="list-group-item" href="#">Some text</a>
+        ....
+    </div>
+
+## list\_group\_item\_heading
+
+### options
+
+### renders
+
+    <h4 class="list-group-item-heading">ABC</h4>
+
+## list\_group\_item\_text
+
+    $self->list_group_item_text();
+        
+
+### options
+
+### renders
+
+    <p class="list-group-item-text">...</h4>
+
+## panel
+
+    $self->panel({ });
+
+### options
+
+### renders
+
+    <div class="panel panel-default">
+        ...
+    </div>
+
+## panel\_body
+
+    $self->panel_body({ });
+
+### options
+
+### renders
+
+    <div class="panel-body">
+        Basic panel example
+    </div>
+
+## panel\_header
+
+    $self->panel_header({ });
+
+### options
+
+### renders
+
+    <div class="panel-heading">
+        Basic panel example
+    </div>
+
+## panel\_title
+
+    $self->panel_title({ });
+
+### options
+
+### renders
+
+    <h3 class="panel-title">
+        Basic panel example
+    </h3>
+
+## panel\_footer
+
+    $self->panel_footer({ });
+
+### options
+
+### renders
+
+    <div class="panel-footer">
+        Basic panel example
+    </div>
+
+## responsive\_embed
+
+    $self->responsive_embed({ });
+
+### options
+
+### renders
+
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="#"></iframe>
+    </div>
+
+## well
+
+    $self->well({ switch => '' });
+
+### options
+
+### render
+
+    <div class="well well-lg"></div>
+
 # AUTHOR
 
 LNATION, `<thisusedtobeanemail at gmail.com>`
