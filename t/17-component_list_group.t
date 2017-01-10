@@ -38,6 +38,21 @@ subtest "build" => sub {
             action => 'list_group_item',
             args   => {
                 data   => 'Hello World',
+                disable => 1,
+            },
+            expected => '<li class="list-group-item disabled">Hello World</li>'
+        }
+    );
+
+
+
+
+    component_test(
+        {
+            class  => $class,
+            action => 'list_group_item',
+            args   => {
+                data   => 'Hello World',
                 active => 1,
                 badge  => { data => '41' },
             },
@@ -87,6 +102,20 @@ subtest "build" => sub {
             },
             expected =>
               '<a class="list-group-item active" href="#">Hello World</a>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group_item',
+            args   => {
+                data   => 'Hello World',
+                href   => '#',
+                disable => 1,
+            },
+            expected =>
+              '<a class="list-group-item disabled" href="#">Hello World</a>'
         }
     );
 
