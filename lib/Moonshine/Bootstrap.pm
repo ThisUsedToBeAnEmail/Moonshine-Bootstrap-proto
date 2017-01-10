@@ -3057,6 +3057,29 @@ sub list_group {
     return $list;
 }
 
+
+=head2 list_group_item
+
+=head3 options
+
+=over
+
+=item
+
+=back
+
+=head3 render
+
+    <ul class="list-group">
+        <li class="list-group-item">Some text</li>
+        ....
+    </ul>
+
+=cut
+
+
+
+
 sub list_group_item {
     my $self = shift;
     my ( $base_args, $build_args ) = validate_base_and_build(
@@ -3066,6 +3089,7 @@ sub list_group_item {
                 tag   => { default => 'li' },
                 items => { type    => ARRAYREF, optional => 1 },
                 active => 0,
+                badge => { type => HASHREF, optional => 1 },
             },
         }
     );
@@ -3080,8 +3104,11 @@ sub list_group_item {
 
     my $item = Moonshine::Element->new($base_args);
 
-    return $item;
+    if ( my $badge = $build_args->{badge} ) { 
+        $item->add_child($self->badge($badge));
+    }
 
+    return $item;
 }
 
 1;

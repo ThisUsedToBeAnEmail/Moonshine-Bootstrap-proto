@@ -31,7 +31,20 @@ subtest "build" => sub {
             expected => '<li class="list-group-item active">Hello World</li>'
         }
     );
-
+    
+    component_test(
+        {
+            class  => $class,
+            action => 'list_group_item',
+            args   => {
+                data   => 'Hello World',
+                active => 1,
+                badge => { data => '41' },
+            },
+            expected => '<li class="list-group-item active">Hello World<span class="badge">41</span></li>'
+        }
+    );
+    
     component_test(
         {
             class  => $class,
