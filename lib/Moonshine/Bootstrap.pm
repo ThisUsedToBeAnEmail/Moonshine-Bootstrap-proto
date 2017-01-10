@@ -2854,13 +2854,14 @@ sub media {
         {
             params => $_[0] // {},
             spec => {
+                tag => { default => 'div' },
                 class => { default => 'media' },
                 items => { type    => ARRAYREF, optional => 1 }
             },
         }
     );
 
-    my $div = $self->div($base_args);
+    my $div = Moonshine::Element->new($base_args);
 
     for ( @{ $build_args->{items} } ) {
         my $action = delete $_->{action} or die '\o/';
@@ -2962,6 +2963,52 @@ sub media_link_img {
     $base_args->{img}->{class} = 'media-object';
     my $link = $self->link_image($base_args);
     return $link;
+}
+
+=head2 media_list
+
+=head3 options
+
+=over
+
+=item
+
+=back
+
+=head3 render
+
+    <ul class="media-list">
+        <li class="media">
+            ...
+        </li>
+    </ul>
+
+=cut
+
+sub media_list {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                items => { type    => ARRAYREF, optional => 1 }
+            },
+        }
+    );   
+
+    my $class = 'media-list';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $ul = $self->ul($base_args);
+
+    for ( @{ $build_args->{items} } ) {
+        $ul->add_child($self->media({ tag => 'li', %{ $_ } }));
+    }
+    
+    return $ul;
 }
 
 1;

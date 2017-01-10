@@ -97,6 +97,47 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'media_list',
+            args   => {
+                items => [ 
+                    {
+                        items => [
+                            {
+                                action => 'media_object',
+                                x      => 'left',
+                                y      => 'middle',
+                                items  => [
+                                    {
+                                        action => 'media_link_img',
+                                        href   => "#",
+                                        img    => { src => 'url', alt => 'alt text' },
+                                    }
+                                ],
+                            },
+                            {
+                                action => 'media_object',
+                                body   => 1,
+                                items  => [
+                                    {
+                                        action => 'h4',
+                                        class  => 'media-heading',
+                                        data   => "Middle aligned media",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                ],
+            },
+            expected =>
+'<ul class="media-list"><li class="media"><div class="media-left media-middle"><a href="#"><img alt="alt text" class="media-object" src="url"></img></a></div><div class="media-body"><h4 class="media-heading">Middle aligned media</h4></div></li></ul>'
+        }
+    );
+
+
 };
 
 sub component_test {
