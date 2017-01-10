@@ -31,6 +31,46 @@ subtest "build" => sub {
 
     component_test(
         {
+            class  => $class,
+            action => 'progress_bar',
+            args   => { aria_valuenow => '60', show => 1, switch => 'success' },
+            expected =>
+'<div class="progress-bar progress-bar-success" style="min-width:3em; width:60%;" aria-valuemax="100" aria-valuemin="1" aria-valuenow="60" role="progressbar">60%</div>',
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'progress_bar',
+            args   => { aria_valuenow => '60', show => 1, switch => 'info' },
+            expected =>
+'<div class="progress-bar progress-bar-info" style="min-width:3em; width:60%;" aria-valuemax="100" aria-valuemin="1" aria-valuenow="60" role="progressbar">60%</div>',
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'progress_bar',
+            args   => { aria_valuenow => '60', show => 1, switch => 'warning' },
+            expected =>
+'<div class="progress-bar progress-bar-warning" style="min-width:3em; width:60%;" aria-valuemax="100" aria-valuemin="1" aria-valuenow="60" role="progressbar">60%</div>',
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'progress_bar',
+            args   => { aria_valuenow => '60', show => 1, switch => 'danger' },
+            expected =>
+'<div class="progress-bar progress-bar-danger" style="min-width:3em; width:60%;" aria-valuemax="100" aria-valuemin="1" aria-valuenow="60" role="progressbar">60%</div>',
+        }
+    );
+
+    component_test(
+        {
             class    => $class,
             action   => 'progress',
             args     => {},
