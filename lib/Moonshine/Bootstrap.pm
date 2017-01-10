@@ -3086,6 +3086,7 @@ sub list_group_item {
                 items => { type    => ARRAYREF, optional => 1 },
                 active => 0,
                 disable => 0,
+                switch => 0,
                 badge => { type => HASHREF, optional => 1 },
             },
         }
@@ -3099,6 +3100,10 @@ sub list_group_item {
 
     $build_args->{active} and $base_args->{class} .= ' active';
     $build_args->{disable} and $base_args->{class} .= ' disabled';
+
+    if ( my $switch = $build_args->{switch} ) {
+        $base_args->{class} .= sprintf ' %s-%s', $class, $switch;
+    }
 
     my $item = Moonshine::Element->new($base_args);
 
@@ -3186,6 +3191,7 @@ sub linked_group_item {
                 disable => 0,
                 badge => { type => HASHREF, optional => 1 },
                 button => 0,
+                switch => 0,
             },
         }
     );
@@ -3198,6 +3204,10 @@ sub linked_group_item {
 
     $build_args->{active} and $base_args->{class} .= ' active';
     $build_args->{disable} and $base_args->{class} .= ' disabled';
+
+    if ( my $switch = $build_args->{switch} ) {
+        $base_args->{class} .= sprintf ' %s-%s', $class, $switch;
+    }
 
     if ( defined $build_args->{button} ) {
         $base_args->{tag} = 'button';

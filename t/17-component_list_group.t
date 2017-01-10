@@ -45,8 +45,6 @@ subtest "build" => sub {
     );
 
 
-
-
     component_test(
         {
             class  => $class,
@@ -60,6 +58,22 @@ subtest "build" => sub {
 '<li class="list-group-item active">Hello World<span class="badge">41</span></li>'
         }
     );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'list_group_item',
+            args   => {
+                data   => 'Hello World',
+                active => 1,
+                badge  => { data => '41' },
+                switch => 'success',
+            },
+            expected =>
+'<li class="list-group-item active list-group-item-success">Hello World<span class="badge">41</span></li>'
+        }
+    );
+
 
     component_test(
         {
@@ -162,6 +176,20 @@ subtest "build" => sub {
             },
             expected =>
 '<button class="list-group-item" type="button">Hello World</button>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group_item',
+            args   => {
+                data   => 'Hello World',
+                button => 1,
+                switch => 'success',
+            },
+            expected =>
+'<button class="list-group-item list-group-item-success" type="button">Hello World</button>'
         }
     );
 
