@@ -3182,6 +3182,7 @@ sub linked_group_item {
                 items => { type    => ARRAYREF, optional => 1 },
                 active => 0,
                 badge => { type => HASHREF, optional => 1 },
+                button => 0,
             },
         }
     );
@@ -3193,6 +3194,11 @@ sub linked_group_item {
       : $class;
 
     $build_args->{active} and $base_args->{class} .= ' active';
+
+    if ( defined $build_args->{button} ) {
+        $base_args->{tag} = 'button';
+        $base_args->{type} = 'button';
+    }
 
     my $item = Moonshine::Element->new($base_args);
 

@@ -123,6 +123,39 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group_item',
+            args   => {
+                data   => 'Hello World',
+                button => 1,
+            },
+            expected =>
+'<button class="list-group-item" type="button">Hello World</button>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group',
+            args   => {
+                items => [
+                    {
+                        data   => 'Hello World',
+                        button => 1,
+                    }
+                ],
+            },
+            expected =>
+'<div class="list-group"><button class="list-group-item" type="button">Hello World</button></div>'
+        }
+    );
+
+
+
+
 };
 
 sub component_test {
