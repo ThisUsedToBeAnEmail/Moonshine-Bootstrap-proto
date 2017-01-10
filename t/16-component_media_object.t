@@ -102,7 +102,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'media_list',
             args   => {
-                items => [ 
+                items => [
                     {
                         items => [
                             {
@@ -113,7 +113,8 @@ subtest "build" => sub {
                                     {
                                         action => 'media_link_img',
                                         href   => "#",
-                                        img    => { src => 'url', alt => 'alt text' },
+                                        img =>
+                                          { src => 'url', alt => 'alt text' },
                                     }
                                 ],
                             },
@@ -136,7 +137,6 @@ subtest "build" => sub {
 '<ul class="media-list"><li class="media"><div class="media-left media-middle"><a href="#"><img alt="alt text" class="media-object" src="url"></img></a></div><div class="media-body"><h4 class="media-heading">Middle aligned media</h4></div></li></ul>'
         }
     );
-
 
 };
 

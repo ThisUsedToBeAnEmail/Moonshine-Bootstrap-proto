@@ -2854,7 +2854,7 @@ sub media {
         {
             params => $_[0] // {},
             spec => {
-                tag => { default => 'div' },
+                tag   => { default => 'div' },
                 class => { default => 'media' },
                 items => { type    => ARRAYREF, optional => 1 }
             },
@@ -2991,10 +2991,10 @@ sub media_list {
         {
             params => $_[0] // {},
             spec => {
-                items => { type    => ARRAYREF, optional => 1 }
+                items => { type => ARRAYREF, optional => 1 }
             },
         }
-    );   
+    );
 
     my $class = 'media-list';
     $base_args->{class} .=
@@ -3005,10 +3005,83 @@ sub media_list {
     my $ul = $self->ul($base_args);
 
     for ( @{ $build_args->{items} } ) {
-        $ul->add_child($self->media({ tag => 'li', %{ $_ } }));
+        $ul->add_child( $self->media( { tag => 'li', %{$_} } ) );
     }
-    
+
     return $ul;
+}
+
+=head2 list_group
+
+=head3 options
+
+=over
+
+=item
+
+=back
+
+=head3 render
+
+    <ul class="list-group">
+        <li class="list-group-item">Some text</li>
+        ....
+    </ul>
+
+=cut
+
+sub list_group {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'ul' },
+                items => { type    => ARRAYREF, optional => 1 }
+            },
+        }
+    );
+
+    my $class = 'list-group';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $list = Moonshine::Element->new($base_args);
+
+    for ( @{ $build_args->{items} } ) {
+        $list->add_child( $self->list_group_item($_) );
+    }
+
+    return $list;
+}
+
+sub list_group_item {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'li' },
+                items => { type    => ARRAYREF, optional => 1 },
+                active => 0,
+            },
+        }
+    );
+
+    my $class = 'list-group-item';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    $build_args->{active} and $base_args->{class} .= ' active';
+
+    my $item = Moonshine::Element->new($base_args);
+
+    return $item;
+
 }
 
 1;
