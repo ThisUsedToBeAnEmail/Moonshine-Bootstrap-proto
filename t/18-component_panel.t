@@ -23,6 +23,17 @@ subtest "build" => sub {
     component_test(
         {
             class  => $class,
+            action => 'panel_header',
+            args   => {
+                data => 'Basic panel example',
+            },
+            expected => '<div class="panel-heading">Basic panel example</div>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
             action => 'panel',
             args   => {
                 body => {
@@ -31,6 +42,37 @@ subtest "build" => sub {
             },
             expected =>
 '<div class="panel panel-default"><div class="panel-body">Basic panel example</div></div>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'panel',
+            args   => {
+                header => {
+                    data => 'Basic panel example',
+                }
+            },
+            expected =>
+'<div class="panel panel-default"><div class="panel-heading">Basic panel example</div></div>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'panel',
+            args   => {
+                header => {
+                    data => 'Basic panel example',
+                },
+                body => {
+                    data => '...'
+                }
+            },
+            expected =>
+'<div class="panel panel-default"><div class="panel-heading">Basic panel example</div><div class="panel-body">...</div></div>'
         }
     );
 

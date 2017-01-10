@@ -3317,6 +3317,7 @@ sub panel {
                 tag    => { default  => 'div' },
                 switch => { default  => 'default' },
                 body   => { optional => 1, type => HASHREF },
+                header => { optional => 1, type => HASHREF },
             },
         }
     );
@@ -3329,9 +3330,12 @@ sub panel {
 
     my $panel = Moonshine::Element->new($base_args);
 
+    $build_args->{header}
+        and $panel->add_child($self->panel_header( $build_args->{header} ) );
+
     $build_args->{body}
       and $panel->add_child( $self->panel_body( $build_args->{body} ) );
-
+    
     return $panel;
 }
 
@@ -3343,9 +3347,9 @@ sub panel {
 
 =head3 renders
     
-        <div class="panel-body">
-            Basic panel example
-        </div>
+    <div class="panel-body">
+        Basic panel example
+    </div>
 
 =cut
 
@@ -3369,6 +3373,42 @@ sub panel_body {
     my $body = Moonshine::Element->new($base_args);
 
     return $body;
+}
+
+=head2 panel_header
+
+    $self->panel_header({ });
+
+=head3 options
+
+=head3 renders
+    
+    <div class="panel-heading">
+        Basic panel example
+    </div>
+
+=cut
+
+sub panel_header {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag => { default => 'div' },
+            },
+        }
+    );
+
+    my $class = 'panel-heading';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $header = Moonshine::Element->new($base_args);
+
+    return $header;
 }
 
 1;
