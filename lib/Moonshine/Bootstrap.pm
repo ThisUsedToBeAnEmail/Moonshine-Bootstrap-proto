@@ -3331,11 +3331,11 @@ sub panel {
     my $panel = Moonshine::Element->new($base_args);
 
     $build_args->{header}
-        and $panel->add_child($self->panel_header( $build_args->{header} ) );
+      and $panel->add_child( $self->panel_header( $build_args->{header} ) );
 
     $build_args->{body}
       and $panel->add_child( $self->panel_body( $build_args->{body} ) );
-    
+
     return $panel;
 }
 
@@ -3395,7 +3395,8 @@ sub panel_header {
         {
             params => $_[0] // {},
             spec => {
-                tag => { default => 'div' },
+                tag   => { default => 'div' },
+                title => { build   => 1, optional => 1 },
             },
         }
     );
@@ -3408,7 +3409,52 @@ sub panel_header {
 
     my $header = Moonshine::Element->new($base_args);
 
+    if ( defined $build_args->{title} ) {
+        $header->add_child(
+            $self->panel_title(
+                ref $build_args->{title} eq 'HASH' ? $build_args->{title} : {}
+            )
+        );
+    }
+
     return $header;
+}
+
+=head2 panel_title
+
+    $self->panel_title({ });
+
+=head3 options
+
+=head3 renders
+    
+    <h3 class="panel-title">
+        Basic panel example
+    </h3>
+
+=cut
+
+sub panel_title {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag   => { default => 'h3' },
+                title => 0,
+            },
+        }
+    );
+
+    my $class = 'panel-title';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $title = Moonshine::Element->new($base_args);
+
+    return $title;
 }
 
 1;
