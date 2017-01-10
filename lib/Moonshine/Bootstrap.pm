@@ -2697,6 +2697,114 @@ sub alert {
     return $div;
 }
 
+=head2 progress
+
+    $self->progress({ bar => {  } });
+
+=head3 Options
+
+=over
+
+=item bar 
+
+Optional
+
+=back
+
+=head3 Renders
+    
+    <div class="progress"></div>
+
+=cut
+
+sub progress {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                bar => { optional => 1, type => HASHREF },
+            },
+        }
+    );
+
+    my $class = 'progress';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $div = $self->div($base_args);
+
+    if ( my $bar = $build_args->{bar} ) {
+        $div->add_child( $self->progress_bar($bar) );
+    }
+
+    return $div;
+}
+
+=head2 progress_bar
+
+    $self->progress_bar();
+
+=head3 Options
+
+=over
+
+=item progress-bar
+
+=item progressbar
+
+=item aria_valuenow
+
+=item aria_valuemax
+
+=item aria_valuemin
+
+=back
+
+=head3 Renders
+    
+    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+        60%
+    </div>
+
+=cut
+
+sub progress_bar {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class         => { default => 'progress-bar' },
+                role          => { default => 'progressbar' },
+                aria_valuenow => 1,
+                aria_valuemin => { default => "1" },
+                aria_valuemax => { default => 100 },
+                style         => { default => ['min-width:3em;'] },
+                show          => 0,
+            },
+        }
+    );
+
+    my $percent = $base_args->{aria_valuenow} . "%";
+
+    push @{ $base_args->{style} }, sprintf 'width:%s;', $percent;
+
+    my $div = $self->div($base_args);
+
+    if ( $build_args->{show} ) {
+        $div->data($percent);
+    }
+    else {
+        $div->add_child(
+            $self->span( { class => 'sr-only', data => $percent } ) );
+    }
+
+    return $div;
+}
+
 1;
 
 __END__
