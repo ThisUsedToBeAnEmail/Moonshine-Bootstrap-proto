@@ -2777,20 +2777,25 @@ sub progress_bar {
         {
             params => $_[0] // {},
             spec => {
-                class         => { default => [ 'progress-bar' ] },
+                class         => { default => ['progress-bar'] },
                 role          => { default => 'progressbar' },
                 aria_valuenow => 1,
                 aria_valuemin => { default => "1" },
                 aria_valuemax => { default => 100 },
                 style         => { default => ['min-width:3em;'] },
                 switch        => 0,
+                striped       => 0,
                 show          => 0,
             },
         }
     );
 
     if ( my $switch = $build_args->{switch} ) {
-        push @{$base_args->{class}},  sprintf 'progress-bar-%s', $switch;
+        push @{ $base_args->{class} }, sprintf 'progress-bar-%s', $switch;
+    }
+
+    if ( defined $build_args->{striped} ) {
+        push @{ $base_args->{class} }, 'progress-bar-striped';
     }
 
     my $percent = $base_args->{aria_valuenow} . "%";

@@ -71,6 +71,21 @@ subtest "build" => sub {
 
     component_test(
         {
+            class  => $class,
+            action => 'progress_bar',
+            args   => {
+                aria_valuenow => '60',
+                show          => 1,
+                switch        => 'danger',
+                striped       => 1
+            },
+            expected =>
+'<div class="progress-bar progress-bar-danger progress-bar-striped" style="min-width:3em; width:60%;" aria-valuemax="100" aria-valuemin="1" aria-valuenow="60" role="progressbar">60%</div>',
+        }
+    );
+
+    component_test(
+        {
             class    => $class,
             action   => 'progress',
             args     => {},
