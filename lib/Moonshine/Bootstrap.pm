@@ -3084,9 +3084,9 @@ sub list_group_item {
             spec => {
                 tag   => { default => 'li' },
                 items => { type    => ARRAYREF, optional => 1 },
-                active => 0,
+                active  => 0,
                 disable => 0,
-                switch => 0,
+                switch  => 0,
                 badge => { type => HASHREF, optional => 1 },
             },
         }
@@ -3098,7 +3098,7 @@ sub list_group_item {
       ? sprintf ' %s', $class
       : $class;
 
-    $build_args->{active} and $base_args->{class} .= ' active';
+    $build_args->{active}  and $base_args->{class} .= ' active';
     $build_args->{disable} and $base_args->{class} .= ' disabled';
 
     if ( my $switch = $build_args->{switch} ) {
@@ -3187,9 +3187,9 @@ sub linked_group_item {
             spec => {
                 tag   => { default => 'a' },
                 items => { type    => ARRAYREF, optional => 1 },
-                active => 0,
+                active  => 0,
                 disable => 0,
-                badge => { type => HASHREF, optional => 1 },
+                badge  => { type => HASHREF, optional => 1 },
                 button => 0,
                 switch => 0,
             },
@@ -3202,7 +3202,7 @@ sub linked_group_item {
       ? sprintf ' %s', $class
       : $class;
 
-    $build_args->{active} and $base_args->{class} .= ' active';
+    $build_args->{active}  and $base_args->{class} .= ' active';
     $build_args->{disable} and $base_args->{class} .= ' disabled';
 
     if ( my $switch = $build_args->{switch} ) {
@@ -3210,7 +3210,7 @@ sub linked_group_item {
     }
 
     if ( defined $build_args->{button} ) {
-        $base_args->{tag} = 'button';
+        $base_args->{tag}  = 'button';
         $base_args->{type} = 'button';
     }
 
@@ -3220,7 +3220,78 @@ sub linked_group_item {
         $item->add_child( $self->badge($badge) );
     }
 
+    if ( defined $build_args->{items} ) {
+        for ( @{ $build_args->{items} } ) {
+            my $action = delete $_->{action} or die "RAWWRRR";
+            $item->add_child( $self->$action($_) );
+        }
+    }
+
     return $item;
+}
+
+=head2 list_group_item_heading
+
+=head3 options
+
+=head3 renders
+    
+    <h4 class="list-group-item-heading">ABC</h4>
+
+=cut
+
+sub linked_group_item_heading {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag => { default => 'h4' },
+            },
+        }
+    );
+
+    my $class = 'list-group-item-heading';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $element = Moonshine::Element->new($base_args);
+    return $element;
+}
+
+=head2 list_group_item_text
+    
+    $self->list_group_item_text();
+        
+=head3 options
+
+=head3 renders
+    
+    <p class="list-group-item-text">...</h4>
+
+=cut
+
+sub linked_group_item_text {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag => { default => 'p' },
+            },
+        }
+    );
+
+    my $class = 'list-group-item-text';
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $element = Moonshine::Element->new($base_args);
+    return $element;
 }
 
 1;

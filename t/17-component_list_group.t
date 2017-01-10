@@ -37,13 +37,12 @@ subtest "build" => sub {
             class  => $class,
             action => 'list_group_item',
             args   => {
-                data   => 'Hello World',
+                data    => 'Hello World',
                 disable => 1,
             },
             expected => '<li class="list-group-item disabled">Hello World</li>'
         }
     );
-
 
     component_test(
         {
@@ -73,7 +72,6 @@ subtest "build" => sub {
 '<li class="list-group-item active list-group-item-success">Hello World<span class="badge">41</span></li>'
         }
     );
-
 
     component_test(
         {
@@ -124,8 +122,8 @@ subtest "build" => sub {
             class  => $class,
             action => 'linked_group_item',
             args   => {
-                data   => 'Hello World',
-                href   => '#',
+                data    => 'Hello World',
+                href    => '#',
                 disable => 1,
             },
             expected =>
@@ -210,8 +208,54 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group_item_text',
+            args   => {
+                data => 'Hello World',
+            },
+            expected => '<p class="list-group-item-text">Hello World</p>'
+        }
+    );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group_item_heading',
+            args   => {
+                data => 'Hello World',
+            },
+            expected => '<h4 class="list-group-item-heading">Hello World</h4>'
+        }
+    );
 
+    component_test(
+        {
+            class  => $class,
+            action => 'linked_group',
+            args   => {
+                items => [
+                    {
+                        active => 1,
+                        href   => '#',
+                        items  => [
+                            {
+                                action => 'linked_group_item_heading',
+                                data   => 'List group item heading',
+                            },
+                            {
+                                action => 'linked_group_item_text',
+                                data   => '...',
+                            }
+                        ],
+                    }
+                ],
+            },
+            expected =>
+'<div class="list-group"><a class="list-group-item active" href="#"><h4 class="list-group-item-heading">List group item heading</h4><p class="list-group-item-text">...</p></a></div>',
+        }
+      )
 
 };
 
