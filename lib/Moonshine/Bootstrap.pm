@@ -2641,6 +2641,52 @@ sub caption {
     return $caption;
 }
 
+=head2 alert
+
+    $self->alert({ data => '', switch => '' });
+
+=head3 Options
+
+=over
+
+=item data 
+
+Optional
+
+=item switch
+
+Optional - default is success
+
+=back
+
+=head3 Renders
+    
+    <div class="alert alert-success"></div>
+
+=cut
+
+sub alert {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                switch => { default => 'success' },
+            },
+        }
+    );
+
+    my $class = sprintf 'alert alert-%s', $build_args->{switch};
+    $base_args->{class} .=
+      defined $base_args->{class}
+      ? sprintf ' %s', $class
+      : $class;
+
+    my $div = $self->div($base_args);
+    return $div;
+}
+
+
 1;
 
 __END__
