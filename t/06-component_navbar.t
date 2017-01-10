@@ -14,6 +14,7 @@ subtest "build" => sub {
             class  => $class,
             action => 'link_image',
             args   => {
+                class => 'navbar-brand',
                 img => {
                     alt => 'Brand',
                     src => 'some.src',

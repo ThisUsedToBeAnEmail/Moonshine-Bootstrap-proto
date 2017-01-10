@@ -1605,6 +1605,7 @@ sub navbar_header {
     for my $header ( @{ $build_args->{headers} } ) {
         given ( delete $header->{header_type} ) {
             when ('link_image') {
+                $header->{class} = 'navbar-brand';
                 $navbar_header->add_child( $self->link_image($header) );
             }
             when ('toggle') {
@@ -2076,7 +2077,7 @@ sub link_image {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => 'navbar-brand' },
+                class => { default => '' },
                 img   => {
                     build => 1,
                     type  => HASHREF,
@@ -2723,8 +2724,8 @@ sub progress {
         {
             params => $_[0] // {},
             spec => {
-                bar => { optional => 1, type => HASHREF },
-                stacked => { optional => 1, type => ARRAYREF }, 
+                bar     => { optional => 1, type => HASHREF },
+                stacked => { optional => 1, type => ARRAYREF },
             },
         }
     );
@@ -2742,8 +2743,8 @@ sub progress {
     }
 
     if ( defined $build_args->{stacked} ) {
-        for (@{ $build_args->{stacked} }) {
-            $div->add_child($self->progress_bar($_));
+        for ( @{ $build_args->{stacked} } ) {
+            $div->add_child( $self->progress_bar($_) );
         }
     }
 
@@ -2825,6 +2826,142 @@ sub progress_bar {
     }
 
     return $div;
+}
+
+=head2 media
+
+    $self->media({ });
+
+=head3 options
+
+=over
+
+=item media
+
+=back
+
+=head3 renders
+
+    <div class="media">
+        <div class="media-left media-top"><a href="#"><img class="media-object" src="url" alt="alt text"></img></a></div>
+    </div>
+
+=cut
+
+sub media {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => 'media' },
+                items => { type    => ARRAYREF, optional => 1 }
+            },
+        }
+    );
+
+    my $div = $self->div($base_args);
+
+    for ( @{ $build_args->{items} } ) {
+        my $action = delete $_->{action} or die '\o/';
+        $div->add_child( $self->$action($_) );
+    }
+
+    return $div;
+}
+
+=head2 media_object 
+
+    $self->media_object({ });
+
+=head3 options
+
+=over
+
+=back
+
+=head3 renders
+
+    <div class="media-left media-top"><a href="#"><img class="media-object" src="url" alt="alt text"></img></a></div>'
+
+=cut
+
+sub media_object {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                x     => 0,
+                y     => 0,
+                body  => 0,
+                items => { type => ARRAYREF }
+            },
+        }
+    );
+
+    my $m     = 'media';
+    my @class = ();
+    $build_args->{body} and push @class, sprintf '%s-body', $m;
+    $build_args->{x} and push @class, sprintf '%s-%s', $m, $build_args->{x};
+    $build_args->{y} and push @class, sprintf '%s-%s', $m, $build_args->{y};
+    $base_args->{class} = \@class;
+
+    my $media_object = $self->div($base_args);
+
+    for ( @{ $build_args->{items} } ) {
+        my $action = delete $_->{action} or die "a horrible death";
+        $media_object->add_child( $self->$action($_) );
+    }
+
+    return $media_object;
+}
+
+=head2 media_link_img 
+
+    $self->media_link_img({ });
+
+=head3 options
+
+=over
+
+=item href
+
+required
+
+=item img
+
+required
+
+    { alt => '', src => '' }
+
+=back
+
+=head3 renders
+
+    <a href="#"><img class="media-object" src="url" alt="alt text"></img></a>
+
+=cut
+
+sub media_link_img {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => '' },
+                img   => {
+                    base => 1,
+                    type => HASHREF,
+                },
+                href => 1,
+            },
+        }
+    );
+
+    $base_args->{img}->{class} = 'media-object';
+    my $link = $self->link_image($base_args);
+    return $link;
 }
 
 1;
