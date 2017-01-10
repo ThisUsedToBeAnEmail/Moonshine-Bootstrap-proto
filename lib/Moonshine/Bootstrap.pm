@@ -2724,6 +2724,7 @@ sub progress {
             params => $_[0] // {},
             spec => {
                 bar => { optional => 1, type => HASHREF },
+                stacked => { optional => 1, type => ARRAYREF }, 
             },
         }
     );
@@ -2738,6 +2739,12 @@ sub progress {
 
     if ( my $bar = $build_args->{bar} ) {
         $div->add_child( $self->progress_bar($bar) );
+    }
+
+    if ( defined $build_args->{stacked} ) {
+        for (@{ $build_args->{stacked} }) {
+            $div->add_child($self->progress_bar($_));
+        }
     }
 
     return $div;
