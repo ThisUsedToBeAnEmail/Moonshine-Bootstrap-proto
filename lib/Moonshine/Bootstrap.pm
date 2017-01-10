@@ -2573,6 +2573,74 @@ sub page_header {
     return $div;
 }
 
+=head2 thumbnail
+
+TODO's - grids, items??
+
+    $self->thumbnail({ tag => '' });
+
+=head3 Options
+
+=head2 tag
+
+default div
+
+=head3 Renders
+
+    <div class="thumbnail"></div>
+
+=cut
+
+sub thumbnail {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => 'thumbnail' },
+                tag   => { default => 'div' },
+            },
+        }
+    );
+
+    my $thumbnail = Moonshine::Element->new($base_args);
+    return $thumbnail;
+}
+
+=head2 caption
+
+TODO's - grids, items??
+
+    $self->caption({ tag => '' });
+
+=head3 Options
+
+=head2 tag
+
+default div
+
+=head3 Renders
+
+    <div class="caption"></div>
+
+=cut
+
+sub caption {
+    my $self = shift;
+    my ( $base_args, $build_args ) = validate_base_and_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                class => { default => 'caption' },
+                tag   => { default => 'div' },
+            },
+        }
+    );
+
+    my $caption = Moonshine::Element->new($base_args);
+    return $caption;
+}
+
 1;
 
 __END__
