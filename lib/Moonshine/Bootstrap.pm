@@ -6,6 +6,7 @@ use warnings;
 
 use Moonshine::Element;
 use Params::Validate qw(:all);
+use Ref::Util qw(:all);
 
 use feature qw/switch/;
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
@@ -30,7 +31,7 @@ BEGIN {
     my %field_list = map { $_ => 0 } @{$fields}, qw/data tag/;
     {
         no strict 'refs';
-        *{"element_attributes"} = sub { \%field_list }
+        *{"element_attributes"} = sub { %field_list }
     };
 
     my @lazy_components =
@@ -66,37 +67,33 @@ sub validate_base_and_build {
         }
     );
 
-    my $html_spec   = {};
-    my $html_params = {};
+    my %html_spec   = __PACKAGE__->element_attributes;
+    my %html_params = ();
 
-    my $element_attributes = __PACKAGE__->element_attributes();
     my %combine = ( %{ $args{params} }, %{ $args{'spec'} } );
+    
     for my $key ( keys %combine ) {
-        if ( defined $element_attributes->{$key} ) {
+        if ( exists $html_spec{$key} ) {
             if ( my $spec = $args{spec}->{$key} ) {
                 ref $spec eq 'HASH' && exists $spec->{build} and next;
-                $html_spec->{$key} = delete $args{spec}->{$key};
+                $html_spec{$key} = delete $args{spec}->{$key};
             }
-            if ( my $params = delete $args{params}->{$key} ) {
-                $html_params->{$key} = $params;
-                if ( not exists $html_spec->{$key} ) {
-                    $html_spec->{$key} = 0;
-                }
+            if ( exists $args{params}->{$key} ) {
+                $html_params{$key} = delete $args{params}->{$key};
             }
         }
-        elsif ( ref $args{spec}->{$key} eq 'HASH'
-            && defined $args{spec}->{$key}->{base} )
+        elsif ( is_hashref($args{spec}->{$key}) && exists $args{spec}->{$key}->{base} )
         {
             my $param = delete $args{params}->{$key};
-            my $spec  = delete $args{spec}->{$key};
-            $html_params->{$key} = $param if $param;
-            $html_spec->{$key}   = $spec  if $spec;
+            my $spec = delete $args{spec}->{$key};
+            $html_params{$key} = $param if $param;
+            $html_spec{$key}   = $spec if $spec;
         }
     }
 
     my %base = validate_with(
-        params => $html_params,
-        spec   => $html_spec,
+        params => \%html_params,
+        spec   => \%html_spec,
     );
 
     my %build = validate_with(
@@ -487,7 +484,6 @@ sub dropdown {
         {
             params => $_[0] // {},
             spec => {
-                class  => { default => '' },
                 dropup => 0,
                 button => {
                     type => HASHREF,
@@ -586,7 +582,7 @@ sub dropdown_button {
         {
             params => $_[0] // {},
             spec => {
-                switch => { default => 'default', base => 1 },
+                switch => { default => 'default', base => 1},
                 class  => { default => 'dropdown-toggle' },
                 id     => 1,
                 split  => 0,
@@ -1355,7 +1351,6 @@ sub nav_item {
         {
             params => $_[0] // {},
             spec => {
-                class  => { default => '' },
                 role   => { default => "presentation" },
                 link   => { default => '#' },
                 active => {
@@ -2077,7 +2072,6 @@ sub link_image {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => '' },
                 img   => {
                     build => 1,
                     type  => HASHREF,
@@ -2788,7 +2782,7 @@ sub progress_bar {
                 class         => { default => ['progress-bar'] },
                 role          => { default => 'progressbar' },
                 aria_valuenow => 1,
-                aria_valuemin => { default => "1" },
+                aria_valuemin => { default => "0" },
                 aria_valuemax => { default => 100 },
                 style         => { default => ['min-width:3em;'] },
                 switch        => 0,
@@ -2798,6 +2792,9 @@ sub progress_bar {
             },
         }
     );
+
+    use Data::Dumper;
+    warn Dumper $base_args;
 
     if ( my $switch = $build_args->{switch} ) {
         push @{ $base_args->{class} }, sprintf 'progress-bar-%s', $switch;
@@ -2950,7 +2947,6 @@ sub media_link_img {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => '' },
                 img   => {
                     base => 1,
                     type => HASHREF,
