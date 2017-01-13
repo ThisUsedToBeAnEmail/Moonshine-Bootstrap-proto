@@ -93,10 +93,10 @@ subtest "build" => sub {
                 show          => 1,
                 switch        => 'danger',
                 striped       => 1,
-                animated      => 1,
+                active      => 1,
             },
             expected =>
-'<div class="progress-bar progress-bar-danger progress-bar-striped active" style="min-width:3em; width:60%;" aria-valuemax="100" aria-valuemin="0" aria-valuenow="60" role="progressbar">60%</div>',
+'<div class="progress-bar progress-bar-danger active progress-bar-striped" style="min-width:3em; width:60%;" aria-valuemax="100" aria-valuemin="0" aria-valuenow="60" role="progressbar">60%</div>',
         }
     );
 

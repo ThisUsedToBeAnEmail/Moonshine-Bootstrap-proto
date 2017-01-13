@@ -99,14 +99,10 @@ sub validate_base_and_build {
         }
         elsif ( exists $modifier_spec{$key} ) {
             if ( defined $spec ) {
-
-                #$modifier_spec{$key} = delete $args{spec}->{$key};
-                $modifier_spec{$key} = $args{spec}->{$key};
+                $modifier_spec{$key} = delete $args{spec}->{$key};
             }
             if ( exists $args{params}->{$key} ) {
-
-                #$modifier_params{$key} = delete $args{params}->{$key};
-                $modifier_params{$key} = $args{params}->{$key};
+                $modifier_params{$key} = delete $args{params}->{$key};
             }
             next;
         }
@@ -147,9 +143,11 @@ sub validate_base_and_build {
         $base{class} = append_str( $alignment, $base{class} );
     }
 
-    if ( defined $modifier{active} ) {
-
-        #        $base{class} = append_str('active', $base{class});
+    for (qw/active justified disable/) {
+        if ( defined $modifier{$_} ) {
+            $base{class} =
+              append_str( $modifier{ $_ . '_base' }, $base{class} );
+        }
     }
 
 # TODOs children, before, after... and probably some more bootstrap class things :D
@@ -167,6 +165,11 @@ sub modifier_spec {
         alignment      => 0,
         alignment_base => 0,
         active         => 0,
+        active_base    => { default => 'active' },
+        disable        => 0,
+        disable_base   => { default => 'disabled' },
+        justified      => 0,
+        justified_base => 0,
     );
 }
 
@@ -220,13 +223,12 @@ sub glyphicon {
             params => $_[0] // {},
             spec => {
                 tag         => { default => 'span' },
-                class       => 1,
+                switch      => 1,
+                switch_base => { default => 'glyphicon glyphicon-' },
                 aria_hidden => { default => 'true' },
             }
         }
     );
-
-    $base_args->{class} = sprintf "glyphicon glyphicon-%s", $base_args->{class};
 
     return Moonshine::Element->new($base_args);
 }
@@ -271,24 +273,14 @@ sub button {
         {
             params => $_[0] // {},
             spec => {
-                tag    => { default => 'button' },
-                switch => { default => 'default' },
-                type   => { default => 'button' },
-                data   => 0,
-                sizing => 0,
+                tag         => { default => 'button' },
+                switch      => { default => 'default' },
+                switch_base => { default => 'btn btn-' },
+                type        => { default => 'button' },
+                sizing_base => { default => 'btn-' },
             }
         }
     );
-
-    $base_args->{class} =
-      defined $base_args->{class}
-      ? sprintf "btn btn-%s %s", $build_args->{switch}, $base_args->{class}
-      : sprintf "btn btn-%s", $build_args->{switch};
-
-    if ( my $button_sizing = $build_args->{sizing} ) {
-        $base_args->{class} = sprintf '%s btn-%s', $base_args->{class},
-          $button_sizing;
-    }
 
     return Moonshine::Element->new($base_args);
 }
@@ -372,12 +364,12 @@ sub button_group {
         {
             params => $_[0] // {},
             spec => {
-                role      => { default => 'group' },
-                class     => { default => 'btn-group' },
-                sizing    => 0,
-                vertical  => 0,
-                justified => 0,
-                nested    => {
+                role           => { default => 'group' },
+                class_base     => { default => 'btn-group' },
+                sizing_base    => { default => 'btn-group-' },
+                vertical       => 0,
+                justified_base => { default => 'btn-group-justified' },
+                nested         => {
                     type     => ARRAYREF,
                     optional => 1,
                 },
@@ -388,19 +380,9 @@ sub button_group {
         }
     );
 
-    if ( my $group_sizing = $build_args->{sizing} ) {
-        $base_args->{class} = sprintf '%s btn-group-%s', $base_args->{class},
-          $group_sizing;
-    }
-
     if ( my $vertical = $build_args->{vertical} ) {
-        $base_args->{class} = sprintf '%s btn-group-vertical',
-          $base_args->{class};
-    }
-
-    if ( my $vertical = $build_args->{justified} ) {
-        $base_args->{class} = sprintf '%s btn-group-justified',
-          $base_args->{class};
+        $base_args->{class} =
+          append_str( 'btn-group-vertical', $base_args->{class} );
     }
 
     my $button_group = $self->div($base_args);
@@ -490,9 +472,9 @@ sub button_toolbar {
         {
             params => $_[0] // {},
             spec => {
-                role    => { default => 'toolbar' },
-                class   => { default => 'btn-toolbar' },
-                toolbar => {
+                role       => { default => 'toolbar' },
+                class_base => { default => 'btn-toolbar' },
+                toolbar    => {
                     type => ARRAYREF,
                 },
             },
@@ -578,21 +560,21 @@ sub dropdown {
     );
 
     my $class = $build_args->{dropup} ? 'dropup' : 'dropdown';
-    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
+    $base_args->{class} = append_str( $class, $base_args->{class} );
 
     my $div = $self->div($base_args);
     $div->add_child(
         $self->dropdown_button(
-            \( %{ $build_args->{button} }, id => $build_args->{mid} )
+            { %{ $build_args->{button} }, id => $build_args->{mid} }
         )
     );
     $div->add_child(
         $self->dropdown_ul(
             {
-                (
-                    %{ $build_args->{ul} },
-                    aria_labelledby => $build_args->{mid}
-                )
+
+                %{ $build_args->{ul} },
+                aria_labelledby => $build_args->{mid}
+
             }
         )
     );
@@ -661,10 +643,10 @@ sub dropdown_button {
         {
             params => $_[0] // {},
             spec => {
-                switch => { default => 'default', base => 1 },
-                class  => { default => 'dropdown-toggle' },
-                id     => 1,
-                split  => 0,
+                switch     => { default => 'default', base => 1 },
+                class_base => { default => 'dropdown-toggle' },
+                id         => 1,
+                split      => 0,
                 data_toggle   => { default => 'dropdown' },
                 aria_haspopup => { default => 'true' },
                 aria_expanded => { default => 'true' },
@@ -782,11 +764,10 @@ sub dropdown_ul {
         {
             params => $_[0] // {},
             spec => {
-                class           => { default => 'dropdown-menu' },
+                class_base      => { default => 'dropdown-menu' },
                 aria_labelledby => 0,
-                alignment       => {
-                    type     => SCALAR,
-                    optional => 1,
+                alignment_base  => {
+                    default => 'dropdown-menu-',
                 },
                 separators => {
                     type     => ARRAYREF,
@@ -802,10 +783,6 @@ sub dropdown_ul {
             }
         }
     );
-
-    if ( my $alignment = $build_args->{alignment} ) {
-        $base_args->{class} .= sprintf " dropdown-menu-%s", $alignment;
-    }
 
     my $ul = $self->ul($base_args);
 
@@ -902,8 +879,8 @@ sub dropdown_header_li {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => 'dropdown-header' },
-                data  => 1,
+                class_base => { default => 'dropdown-header' },
+                data       => 1,
             }
         }
     );
@@ -953,19 +930,12 @@ sub linked_li {
             params => $_[0] // {},
             spec => {
                 link    => 1,
-                data    => 1,
-                disable => 0,
+                data    => { build => 1 },
             }
         }
     );
 
-    $build_args->{data} = delete $base_args->{data};
-
     my $li = $self->li($base_args);
-
-    if ( $build_args->{disable} ) {
-        $li->class('disabled');
-    }
 
     $li->add_child(
         $self->a(
@@ -1018,7 +988,6 @@ sub linked_li_span {
             spec => {
                 link => { type => HASHREF },
                 span => { type => HASHREF, build => 1 },
-                disable => 0,
             }
         }
     );
@@ -1026,10 +995,6 @@ sub linked_li_span {
     $build_args->{data} = delete $base_args->{data};
 
     my $li = $self->li($base_args);
-
-    if ( $build_args->{disable} ) {
-        $li->class('disabled');
-    }
 
     my $a = $li->add_child( $self->a( $build_args->{link} ) );
     $a->add_child( $self->span( $build_args->{span} ) );
@@ -1126,11 +1091,11 @@ sub input_group {
         {
             params => $_[0] // {},
             spec => {
-                mid    => 1,
-                lid    => 0,
-                sizing => 0,
-                class  => { default => 'input-group' },
-                label  => {
+                mid         => 1,
+                lid         => 0,
+                sizing_base => { default => 'input-group-' },
+                class_base  => { default => 'input-group' },
+                label       => {
                     type     => HASHREF,
                     optional => 1,
                     build    => 1,
@@ -1151,11 +1116,6 @@ sub input_group {
             }
         }
     );
-
-    if ( my $sizing = $build_args->{sizing} ) {
-        $base_args->{class} = sprintf '%s input-group-%s', $base_args->{class},
-          $sizing;
-    }
 
     my $input_group = $self->div($base_args);
 
@@ -1219,9 +1179,9 @@ sub input {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'input' },
-                class => { default => 'form-control' },
-                type  => { default => 'text' },
+                tag        => { default => 'input' },
+                class_base => { default => 'form-control' },
+                type       => { default => 'text' },
             }
         }
     );
@@ -1356,33 +1316,20 @@ sub nav {
         {
             params => $_[0] // {},
             spec => {
-                class  => { default => '' },
-                switch => {
-                    build    => 1,
-                    type     => SCALAR,
-                    optional => 1,
-                },
-                items => {
+                class_base  => { default => 'nav' },
+                switch_base => { default => 'nav-' },
+                items       => {
                     type => ARRAYREF,
                 },
-                stacked   => 0,
-                justified => 0,
+                stacked        => 0,
+                justified      => 0,
+                justified_base => { default => 'nav-justified' },
             }
         }
     );
 
-    my $class;
-    if ( $class = $build_args->{switch} ) {
-        $class = sprintf "nav nav-%s", $class;
-        $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
-    }
-
     if ( $build_args->{stacked} ) {
-        $base_args->{class} .= ' nav-stacked';
-    }
-
-    if ( $build_args->{justified} ) {
-        $base_args->{class} .= ' nav-justified';
+        $base_args->{class} = append_str( 'nav-stacked', $base_args->{class} );
     }
 
     my $ul = $self->ul($base_args);
@@ -1430,14 +1377,9 @@ sub nav_item {
         {
             params => $_[0] // {},
             spec => {
-                role   => { default => "presentation" },
-                link   => { default => '#' },
-                active => {
-                    build    => 1,
-                    optional => 1,
-                },
-                data     => 0,
-                disable  => 0,
+                role    => { default => "presentation" },
+                link    => { default => '#', base => 1 },
+                disable => { base    => 1, optional => 1 },
                 dropdown => {
                     build    => 1,
                     type     => HASHREF,
@@ -1447,18 +1389,7 @@ sub nav_item {
         }
     );
 
-    if ( $build_args->{active} ) {
-        my $class = 'active';
-        $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
-    }
-
-    my $li = $self->linked_li(
-        {
-            %{$base_args},
-            link    => $build_args->{link},
-            disable => $build_args->{disable},
-        }
-    );
+    my $li = $self->linked_li($base_args);
 
     if ( my $dropdown = $build_args->{dropdown} ) {
         my $a = $li->children->[0];
@@ -1511,10 +1442,12 @@ sub navbar {
         {
             params => $_[0] // {},
             spec => {
-                tag    => { default => 'nav' },
-                mid    => 0,
-                switch => { default => 'default' },
-                navs   => {
+                tag         => { default => 'nav' },
+                mid         => 0,
+                class_base  => { default => 'navbar' },
+                switch      => { default => 'default' },
+                switch_base => { default => 'navbar-' },
+                navs        => {
                     type => ARRAYREF,
                 },
                 fixed  => { type => SCALAR, optional => 1 },
@@ -1522,9 +1455,6 @@ sub navbar {
             },
         }
     );
-
-    my $class = sprintf "navbar navbar-%s", $build_args->{switch};
-    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
 
     if ( my $fixed = $build_args->{fixed} ) {
         $base_args->{class} .= sprintf ' navbar-fixed-%s', $fixed;
@@ -1600,17 +1530,14 @@ sub navbar_collapse {
         {
             params => $_[0] // {},
             spec => {
-                id     => 1,
-                switch => { default => 'default' },
-                navs   => {
+                id         => 1,
+                class_base => { default => 'collapse navbar-collapse' },
+                navs       => {
                     type => ARRAYREF,
                 },
             },
         }
     );
-
-    my $class = sprintf "collapse navbar-collapse";
-    $base_args->{class} .= $base_args->{class} ? ' ' . $class : $class;
 
     my $collapse = $self->div($base_args);
 
@@ -1659,7 +1586,8 @@ sub navbar_header {
         {
             params => $_[0] // {},
             spec => {
-                headers => {
+                class_base => { default => 'navbar-header' },
+                headers    => {
                     type  => ARRAYREF,
                     build => 1,
                 },
@@ -1667,12 +1595,6 @@ sub navbar_header {
             },
         }
     );
-
-    my $class = 'navbar-header';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $navbar_header = $self->div($base_args);
 
@@ -1713,8 +1635,8 @@ sub navbar_brand {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => 'navbar-brand' },
-                data  => 1,
+                class_base => { default => 'navbar-brand' },
+                data       => 1,
             },
         }
     );
@@ -1745,7 +1667,7 @@ sub navbar_toggle {
             spec => {
                 tag           => { default => 'button' },
                 type          => { default => 'button' },
-                class         => { default => 'navbar-toggle collapsed' },
+                class_base    => { default => 'navbar-toggle collapsed' },
                 data_toggle   => { default => 'collapse' },
                 aria_expanded => { default => 'false' },
                 i             => { default => 'icon-bar' },
@@ -1795,23 +1717,14 @@ sub navbar_button {
         {
             params => $_[0] // {},
             spec => {
-                type   => { default => 'button' },
-                switch => { default => 'default', base => 1 },
-                data   => { default => 'Submit' },
-                alignment => 0,
+                type           => { default => 'button' },
+                switch         => { default => 'default', base => 1 },
+                class_base     => { default => 'navbar-btn' },
+                data           => { default => 'Submit' },
+                alignment_base => { default => 'navbar-' },
             },
         }
     );
-
-    my $class = 'navbar-btn';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
-
-    if ( my $align = $build_args->{alignment} ) {
-        $base_args->{class} .= sprintf ' navbar-%s', $align;
-    }
 
     my $navbar_button = $self->button($base_args);
     return $navbar_button;
@@ -1841,22 +1754,13 @@ sub navbar_text {
         {
             params => $_[0] // {},
             spec => {
-                tag       => { default => 'p', },
-                data      => 1,
-                alignment => 0,
+                tag            => { default => 'p', },
+                data           => 1,
+                alignment_base => { default => 'navbar-' },
+                class_base     => { default => 'navbar-text' },
             },
         }
     );
-
-    my $class = 'navbar-text';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
-
-    if ( my $align = $build_args->{alignment} ) {
-        $base_args->{class} .= sprintf ' navbar-%s', $align;
-    }
 
     my $navbar_text = Moonshine::Element->new($base_args);
     return $navbar_text;
@@ -1888,7 +1792,7 @@ sub navbar_text_link {
             spec => {
                 tag       => { default => 'p', },
                 link      => { type    => HASHREF },
-                alignment => { type    => SCALAR, base => 1, optional => 1 },
+                alignment => { base    => 1, optional => 1 },
                 data => 1,
             },
         }
@@ -1926,8 +1830,9 @@ sub navbar_nav {
         {
             params => $_[0] // {},
             spec => {
-                alignment => 0,
-                switch    => {
+                class_base     => { default => 'navbar-nav' },
+                alignment_base => { default => 'navbar-' },
+                switch         => {
                     base     => 1,
                     type     => SCALAR,
                     optional => 1,
@@ -1941,16 +1846,6 @@ sub navbar_nav {
             },
         }
     );
-
-    my $class = 'nav navbar-nav';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
-
-    if ( my $align = $build_args->{alignment} ) {
-        $base_args->{class} .= sprintf ' navbar-%s', $align;
-    }
 
     return $self->nav($base_args);
 }
@@ -1990,25 +1885,16 @@ sub navbar_form {
         {
             params => $_[0] // {},
             spec => {
-                alignment => 0,
-                role      => 0,
-                fields    => {
+                alignment_base => { default => 'navbar-' },
+                class_base     => { default => 'navbar-form' },
+                role           => 0,
+                fields         => {
                     type  => ARRAYREF,
                     build => 1,
                 }
             },
         }
     );
-
-    my $class = 'navbar-form';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
-
-    if ( my $align = $build_args->{alignment} ) {
-        $base_args->{class} .= sprintf ' navbar-%s', $align;
-    }
 
     my $form = $self->form($base_args);
 
@@ -2060,8 +1946,8 @@ sub form_group {
         {
             params => $_[0] // {},
             spec => {
-                class  => { default => 'form-group' },
-                fields => {
+                class_base => { default => 'form-group' },
+                fields     => {
                     type  => ARRAYREF,
                     build => 1,
                 }
@@ -2225,8 +2111,8 @@ sub breadcrumbs {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => 'breadcrumb' },
-                items => { type    => ARRAYREF },
+                class_base => { default => 'breadcrumb' },
+                items      => { type    => ARRAYREF },
             },
         }
     );
@@ -2234,8 +2120,7 @@ sub breadcrumbs {
     my $ol = $self->ol($base_args);
 
     for ( @{ $build_args->{items} } ) {
-        if ( delete $_->{active} ) {
-            $_->{class} = 'active';
+        if ( $_->{active} ) {
             $ol->add_child( $self->li($_) );
         }
         else {
@@ -2272,7 +2157,7 @@ sub breadcrumbs {
 
     <ul class="pagination">
         <li>
-            <a href="#" aria-label="Previous">
+            <a href="#" arilabel="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
@@ -2294,9 +2179,9 @@ sub pagination {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => 'pagination' },
-                items => { type    => ARRAYREF, optional => 1 },
-                sizing   => 0,
+                class_base  => { default => 'pagination' },
+                items       => { type    => ARRAYREF, optional => 1 },
+                sizing_base => { default => 'pagination-' },
                 count    => 0,
                 previous => {
                     default => {
@@ -2319,19 +2204,13 @@ sub pagination {
         }
     );
 
-    if ( my $group_sizing = $build_args->{sizing} ) {
-        $base_args->{class} = sprintf '%s pagination-%s', $base_args->{class},
-          $group_sizing;
-    }
-
     my $ul = $self->ul($base_args);
 
     $ul->add_child( $self->linked_li_span( $build_args->{previous} ) );
 
     if ( defined $build_args->{items} ) {
         for ( @{ $build_args->{items} } ) {
-            if ( delete $_->{active} ) {
-                $_->{class} = 'active';
+            if ( $_->{active} ) {
                 $ul->add_child( $self->li($_) );
             }
             else {
@@ -2399,10 +2278,10 @@ sub pager {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => 'pager' },
-                items => { type    => ARRAYREF, optional => 1, base => 1, },
-                sizing   => { optional => 1, base => 1 },
-                count    => { optional => 1, base => 1 },
+                class_base => { default => 'pager', base => 1 },
+                items    => { type     => ARRAYREF, optional => 1, base => 1, },
+                sizing   => { optional => 1,        base     => 1 },
+                count    => { optional => 1,        base     => 1 },
                 previous => {
                     default => {
                         span => { data => 'Previous' },
@@ -2420,7 +2299,7 @@ sub pager {
                     base => 1,
                 },
                 aligned => 0,
-                disable => 0,
+                disable => { build => 1, optional => 1 },
                 nav      => { optional => 1, base => 1 },
                 nav_args => { optional => 1, base => 1 },
             },
@@ -2435,18 +2314,18 @@ sub pager {
     given ( $build_args->{disable} ) {
         my $dis = 'disabled';
         when ('previous') {
-            $base_args->{previous}->{class} .=
-              defined $base_args->{previous}->{class} ? " $dis" : $dis;
+            $base_args->{previous}->{class} =
+              append_str( $dis, $base_args->{previous}->{class} );
         }
         when ('next') {
-            $base_args->{next}->{class} .=
-              defined $base_args->{next}->{class} ? " $dis" : $dis;
+            $base_args->{next}->{class} =
+              append_str( $dis, $base_args->{next}->{class} );
         }
         when ('both') {
-            $base_args->{next}->{class} .=
-              defined $base_args->{next}->{class} ? " $dis" : $dis;
-            $base_args->{previous}->{class} .=
-              defined $base_args->{previous}->{class} ? " $dis" : $dis;
+            $base_args->{next}->{class} =
+              append_str( $dis, $base_args->{next}->{class} );
+            $base_args->{previous}->{class} =
+              append_str( $dis, $base_args->{previous}->{class} );
         }
     }
 
@@ -2484,17 +2363,13 @@ sub text_label {
         {
             params => $_[0] // {},
             spec => {
-                switch => { default => 'default' },
-                data   => 1,
+                switch_base => { default => 'label-' },
+                switch      => { default => 'default' },
+                data        => 1,
+                class_base  => { default => 'label' },
             },
         }
     );
-
-    my $class = sprintf 'label label-%s', $build_args->{switch};
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $span = $self->span($base_args);
     return $span;
@@ -2532,15 +2407,10 @@ sub badge {
             spec => {
                 data    => 1,
                 wrapper => { type => HASHREF, optional => 1 },
+                class_base => { default => 'badge' },
             },
         }
     );
-
-    my $class = 'badge';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $span = $self->span($base_args);
 
@@ -2577,15 +2447,10 @@ sub jumbotron {
             spec => {
                 full_width => 0,
                 items      => { type => ARRAYREF, optional => 1 },
+                class_base => { default => 'jumbotron' },
             },
         }
     );
-
-    my $class = 'jumbotron';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $div = $self->div($base_args);
     if ( defined $build_args->{full_width} ) {
@@ -2627,7 +2492,7 @@ sub page_header {
         {
             params => $_[0] // {},
             spec => {
-                class      => { default => 'page-header' },
+                class_base => { default => 'page-header' },
                 header_tag => { default => 'h1' },
                 header     => 0,
                 small      => 0,
@@ -2671,8 +2536,8 @@ sub thumbnail {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => 'thumbnail' },
-                tag   => { default => 'div' },
+                class_base => { default => 'thumbnail' },
+                tag        => { default => 'div' },
             },
         }
     );
@@ -2705,8 +2570,8 @@ sub caption {
         {
             params => $_[0] // {},
             spec => {
-                class => { default => 'caption' },
-                tag   => { default => 'div' },
+                class_base => { default => 'caption' },
+                tag        => { default => 'div' },
             },
         }
     );
@@ -2745,26 +2610,17 @@ sub alert {
         {
             params => $_[0] // {},
             spec => {
-                switch => { default  => 'success' },
-                link   => { optional => 1, type => HASHREF },
+                switch      => { default  => 'success' },
+                switch_base => { default  => 'alert alert-' },
+                link        => { optional => 1, type => HASHREF },
             },
         }
     );
 
-    my $class = sprintf 'alert alert-%s', $build_args->{switch};
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
-
     my $div = $self->div($base_args);
 
     if ( my $link = $build_args->{link} ) {
-        my $link_class = 'alert-link';
-        $link->{class} .=
-          defined $link->{class}
-          ? sprintf ' %s', $link_class
-          : $link_class;
+        $link->{class} = append_str( 'alert-link', $link->{class} );
         $div->add_child( $self->a($link) );
     }
 
@@ -2797,17 +2653,12 @@ sub progress {
         {
             params => $_[0] // {},
             spec => {
-                bar     => { optional => 1, type => HASHREF },
-                stacked => { optional => 1, type => ARRAYREF },
+                class_base => { default  => 'progress' },
+                bar        => { optional => 1, type => HASHREF },
+                stacked    => { optional => 1, type => ARRAYREF },
             },
         }
     );
-
-    my $class = 'progress';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $div = $self->div($base_args);
 
@@ -2858,13 +2709,13 @@ sub progress_bar {
         {
             params => $_[0] // {},
             spec => {
-                class         => { default => ['progress-bar'] },
+                class_base    => { default => 'progress-bar' },
                 role          => { default => 'progressbar' },
                 aria_valuenow => 1,
                 aria_valuemin => { default => "0" },
                 aria_valuemax => { default => 100 },
                 style         => { default => ['min-width:3em;'] },
-                switch        => 0,
+                switch_base   => { default => 'progress-bar-' },
                 striped       => 0,
                 show          => 0,
                 animated      => 0,
@@ -2872,19 +2723,9 @@ sub progress_bar {
         }
     );
 
-    use Data::Dumper;
-    warn Dumper $base_args;
-
-    if ( my $switch = $build_args->{switch} ) {
-        push @{ $base_args->{class} }, sprintf 'progress-bar-%s', $switch;
-    }
-
     if ( defined $build_args->{striped} ) {
-        push @{ $base_args->{class} }, 'progress-bar-striped';
-    }
-
-    if ( defined $build_args->{animated} ) {
-        push @{ $base_args->{class} }, 'active';
+        $base_args->{class} =
+          append_str( 'progress-bar-striped', $base_args->{class} );
     }
 
     my $percent = $base_args->{aria_valuenow} . "%";
@@ -2930,9 +2771,9 @@ sub media {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'div' },
-                class => { default => 'media' },
-                items => { type    => ARRAYREF, optional => 1 }
+                tag        => { default => 'div' },
+                class_base => { default => 'media' },
+                items      => { type    => ARRAYREF, optional => 1 }
             },
         }
     );
@@ -3066,16 +2907,11 @@ sub media_list {
         {
             params => $_[0] // {},
             spec => {
-                items => { type => ARRAYREF, optional => 1 }
+                class_base => { default => 'media-list' },
+                items      => { type    => ARRAYREF, optional => 1 }
             },
         }
     );
-
-    my $class = 'media-list';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $ul = $self->ul($base_args);
 
@@ -3111,17 +2947,12 @@ sub list_group {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'ul' },
-                items => { type    => ARRAYREF, optional => 1 }
+                class_base => { default => 'list-group' },
+                tag        => { default => 'ul' },
+                items      => { type    => ARRAYREF, optional => 1 }
             },
         }
     );
-
-    my $class = 'list-group';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $list = Moonshine::Element->new($base_args);
 
@@ -3157,28 +2988,14 @@ sub list_group_item {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'li' },
-                items => { type    => ARRAYREF, optional => 1 },
-                active  => 0,
-                disable => 0,
-                switch  => 0,
+                class_base => { default => 'list-group-item' },
+                tag        => { default => 'li' },
+                items      => { type    => ARRAYREF, optional => 1 },
+                switch_base => { default => 'list-group-item-' },
                 badge => { type => HASHREF, optional => 1 },
             },
         }
     );
-
-    my $class = 'list-group-item';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
-
-    $build_args->{active}  and $base_args->{class} .= ' active';
-    $build_args->{disable} and $base_args->{class} .= ' disabled';
-
-    if ( my $switch = $build_args->{switch} ) {
-        $base_args->{class} .= sprintf ' %s-%s', $class, $switch;
-    }
 
     my $item = Moonshine::Element->new($base_args);
 
@@ -3214,17 +3031,12 @@ sub linked_group {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'div' },
-                items => { type    => ARRAYREF, optional => 1 }
+                class_base => { default => 'list-group' },
+                tag        => { default => 'div' },
+                items      => { type    => ARRAYREF, optional => 1 }
             },
         }
     );
-
-    my $class = 'list-group';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $list = Moonshine::Element->new($base_args);
 
@@ -3260,29 +3072,15 @@ sub linked_group_item {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'a' },
-                items => { type    => ARRAYREF, optional => 1 },
-                active  => 0,
-                disable => 0,
+                tag        => { default => 'a' },
+                items      => { type    => ARRAYREF, optional => 1 },
+                class_base => { default => 'list-group-item' },
                 badge  => { type => HASHREF, optional => 1 },
                 button => 0,
-                switch => 0,
+                switch_base => { default => 'list-group-item-' },
             },
         }
     );
-
-    my $class = 'list-group-item';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
-
-    $build_args->{active}  and $base_args->{class} .= ' active';
-    $build_args->{disable} and $base_args->{class} .= ' disabled';
-
-    if ( my $switch = $build_args->{switch} ) {
-        $base_args->{class} .= sprintf ' %s-%s', $class, $switch;
-    }
 
     if ( defined $build_args->{button} ) {
         $base_args->{tag}  = 'button';
@@ -3321,16 +3119,11 @@ sub linked_group_item_heading {
         {
             params => $_[0] // {},
             spec => {
-                tag => { default => 'h4' },
+                class_base => { default => 'list-group-item-heading' },
+                tag        => { default => 'h4' },
             },
         }
     );
-
-    my $class = 'list-group-item-heading';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $element = Moonshine::Element->new($base_args);
     return $element;
@@ -3354,16 +3147,11 @@ sub linked_group_item_text {
         {
             params => $_[0] // {},
             spec => {
-                tag => { default => 'p' },
+                class_base => { default => 'list-group-item-text' },
+                tag        => { default => 'p' },
             },
         }
     );
-
-    my $class = 'list-group-item-text';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $element = Moonshine::Element->new($base_args);
     return $element;
@@ -3389,20 +3177,15 @@ sub panel {
         {
             params => $_[0] // {},
             spec => {
-                tag    => { default  => 'div' },
-                switch => { default  => 'default' },
-                body   => { optional => 1, type => HASHREF },
-                header => { optional => 1, type => HASHREF },
-                footer => { optional => 1, type => HASHREF },
+                tag         => { default  => 'div' },
+                switch      => { default  => 'default' },
+                switch_base => { default  => 'panel panel-' },
+                body        => { optional => 1, type => HASHREF },
+                header      => { optional => 1, type => HASHREF },
+                footer      => { optional => 1, type => HASHREF },
             },
         }
     );
-
-    my $class = sprintf 'panel panel-%s', $build_args->{switch};
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $panel = Moonshine::Element->new($base_args);
 
@@ -3438,16 +3221,11 @@ sub panel_body {
         {
             params => $_[0] // {},
             spec => {
-                tag => { default => 'div' },
+                class_base => { default => 'panel-body' },
+                tag        => { default => 'div' },
             },
         }
     );
-
-    my $class = 'panel-body';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $body = Moonshine::Element->new($base_args);
 
@@ -3474,17 +3252,12 @@ sub panel_header {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'div' },
-                title => { build   => 1, optional => 1 },
+                class_base => { default => 'panel-heading' },
+                tag        => { default => 'div' },
+                title      => { build   => 1, optional => 1 },
             },
         }
     );
-
-    my $class = 'panel-heading';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $header = Moonshine::Element->new($base_args);
 
@@ -3519,17 +3292,12 @@ sub panel_title {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'h3' },
-                title => 0,
+                class_base => { default => 'panel-title' },
+                tag        => { default => 'h3' },
+                title      => 0,
             },
         }
     );
-
-    my $class = 'panel-title';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $title = Moonshine::Element->new($base_args);
 
@@ -3556,17 +3324,12 @@ sub panel_footer {
         {
             params => $_[0] // {},
             spec => {
-                tag   => { default => 'div' },
-                title => 0,
+                class_base => { default => 'panel-footer' },
+                tag        => { default => 'div' },
+                title      => 0,
             },
         }
     );
-
-    my $class = 'panel-footer';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $footer = Moonshine::Element->new($base_args);
 
@@ -3602,10 +3365,7 @@ sub responsive_embed {
 
     my $class = sprintf 'embed-responsive embed-responsive-%s',
       $build_args->{ratio};
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
+    $base_args->{class} .= append_str( $class, $base_args->{class} );
 
     my $responsive = Moonshine::Element->new($base_args);
 
@@ -3620,18 +3380,13 @@ sub responsive_iframe {
         {
             params => $_[0] // {},
             spec => {
-                tag    => { default => 'iframe' },
-                iframe => 0,
-                ratio  => 0,
+                tag        => { default => 'iframe' },
+                iframe     => 0,
+                ratio      => 0,
+                class_base => { default => 'embed-responsive-item' },
             },
         }
     );
-
-    my $class = sprintf 'embed-responsive-item';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
 
     my $responsive = Moonshine::Element->new($base_args);
 
@@ -3656,21 +3411,12 @@ sub well {
         {
             params => $_[0] // {},
             spec => {
-                tag    => { default => 'div' },
-                switch => 0,
+                tag         => { default => 'div' },
+                switch_base => { default => 'well-' },
+                class_base  => { default => 'well' },
             },
         }
     );
-
-    my $class = 'well';
-    $base_args->{class} .=
-      defined $base_args->{class}
-      ? sprintf ' %s', $class
-      : $class;
-
-    if ( my $switch = $build_args->{switch} ) {
-        $base_args->{class} .= sprintf ' %s-%s', $class, $switch;
-    }
 
     my $well = Moonshine::Element->new($base_args);
 

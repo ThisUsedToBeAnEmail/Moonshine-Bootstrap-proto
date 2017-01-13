@@ -69,7 +69,7 @@ subtest "build" => sub {
                 switch => 'success',
             },
             expected =>
-'<li class="list-group-item active list-group-item-success">Hello World<span class="badge">41</span></li>'
+'<li class="list-group-item list-group-item-success active">Hello World<span class="badge">41</span></li>'
         }
     );
 
