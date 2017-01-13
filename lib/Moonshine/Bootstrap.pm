@@ -29,9 +29,9 @@ our @ISA;
 BEGIN {
     my $fields = $Moonshine::Element::HAS{"attribute_list"}->();
     my %field_list = map { $_ => 0 } @{$fields}, qw/data tag/;
-    {
+	{
         no strict 'refs';
-        *{"element_attributes"} = sub { %field_list }
+        *{"element_attributes"} = sub { %field_list };
     };
 
     my @lazy_components =
@@ -70,25 +70,44 @@ sub validate_base_and_build {
     my %html_spec   = __PACKAGE__->element_attributes;
     my %html_params = ();
 
+	my %modifier_spec = __PACKAGE__->modifier_spec;
+	my %modifier_params = ();
+
     my %combine = ( %{ $args{params} }, %{ $args{'spec'} } );
     
-    for my $key ( keys %combine ) {
-        if ( exists $html_spec{$key} ) {
-            if ( my $spec = $args{spec}->{$key} ) {
-                ref $spec eq 'HASH' && exists $spec->{build} and next;
+    for my $key ( keys %combine ) { 
+		my $spec = $args{spec}->{$key};
+		if ( is_hashref($spec) ) {
+			defined $spec->{build} and next;
+			if (exists $spec->{base}) {
+				my $param = delete $args{params}->{$key};
+           		my $spec = delete $args{spec}->{$key};
+            	$html_params{$key} = $param if $param;
+            	$html_spec{$key}   = $spec if $spec;
+				next;
+			}
+        }
+
+		if ( exists $html_spec{$key} ) {
+            if ( defined $spec ) {
                 $html_spec{$key} = delete $args{spec}->{$key};
             }
             if ( exists $args{params}->{$key} ) {
-                $html_params{$key} = delete $args{params}->{$key};
+				$html_params{$key} = delete $args{params}->{$key};
             }
+			next;
         }
-        elsif ( is_hashref($args{spec}->{$key}) && exists $args{spec}->{$key}->{base} )
-        {
-            my $param = delete $args{params}->{$key};
-            my $spec = delete $args{spec}->{$key};
-            $html_params{$key} = $param if $param;
-            $html_spec{$key}   = $spec if $spec;
-        }
+		elsif ( exists $modifier_spec{$key} ) {
+			if ( defined $spec ) {
+				#$modifier_spec{$key} = delete $args{spec}->{$key};
+				$modifier_spec{$key} = $args{spec}->{$key};
+			}
+			if ( exists $args{params}->{$key} ) {
+				#$modifier_params{$key} = delete $args{params}->{$key};
+				$modifier_params{$key} = $args{params}->{$key};
+			}
+			next;
+		}
     }
 
     my %base = validate_with(
@@ -101,7 +120,60 @@ sub validate_base_and_build {
         spec   => $args{spec},
     );
 
-    return \%base, \%build;
+	my %modifier = validate_with(
+		params => \%modifier_params,
+		spec   => \%modifier_spec, 
+	);
+
+   	if (my $switch = join_class($modifier{switch_base}, $modifier{switch})) {
+        $base{class} = prepend_str($switch, $base{class});
+    }
+    
+    if (my $class_base = $modifier{class_base}) {
+        $base{class} = prepend_str($class_base, $base{class});
+    }
+
+    if ( my $sizing = join_class($modifier{sizing_base}, $modifier{sizing})) {
+        $base{class} = append_str($sizing, $base{class});
+    }
+
+    if ( my $alignment = join_class($modifier{alignment_base}, $modifier{alignment}) ) {
+        $base{class} = append_str($alignment, $base{class});
+    }
+
+    if ( defined $modifier{active} ) {
+#        $base{class} = append_str('active', $base{class});
+    }
+
+	# TODOs children, before, after... and probably some more bootstrap class things :D
+
+    return \%base, \%build, \%modifier;
+}
+
+sub modifier_spec {
+	return (
+		switch => 0,
+		switch_base => 0,
+		class_base => 0,
+		sizing => 0,
+		sizing_base => 0,
+		alignment => 0,
+		alignment_base => 0,
+		active => 0,
+	);
+}
+
+sub join_class {
+    defined $_[0] && defined $_[1] and return sprintf '%s%s', $_[0], $_[1]; 
+    return undef;
+}
+
+sub prepend_str {
+    return defined $_[1] ? sprintf '%s %s', $_[0], $_[1] : $_[0];  
+}
+
+sub append_str {
+    return defined $_[1] ? sprintf '%s %s', $_[1], $_[0] : $_[0];  
 }
 
 =head1 Bootstraps Components
