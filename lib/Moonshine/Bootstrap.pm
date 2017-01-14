@@ -150,9 +150,37 @@ sub validate_base_and_build {
         }
     }
 
+    for my $element (qw/before_element after_element/) {
+        if ( defined $modifier{$element} ) {
+            my $elements = __PACKAGE__->build_elements(@{ $modifier{$element} });
+            $base{$element} = $elements;
+        }
+    }
+
 # TODOs children, before, after... and probably some more bootstrap class things :D
 
     return \%base, \%build, \%modifier;
+}
+
+sub build_elements {
+    my $self = shift;
+    my @elements_build_instructions = @_;
+
+    my @elements;
+    for my $build (@elements_build_instructions) {
+        my $element;
+        if ( my $action = delete $build->{action} ) { 
+            $self->can($action) and $element = $self->$action($build) or die "cannot ......";
+        } elsif ( defined $build->{tag} ) {
+            $element = Moonshine::Element->new($build);
+        } else {
+            my $error_string = join(", ", map { "$_: $build->{$_}" } keys %{ $build });
+            die sprintf "no instructions to build the element: %s", $error_string;
+        }
+        push @elements, $element;
+    }
+    
+    return \@elements;
 }
 
 sub modifier_spec {
@@ -170,6 +198,8 @@ sub modifier_spec {
         disable_base   => { default => 'disabled' },
         justified      => 0,
         justified_base => 0,
+        before_element => { optional => 1, type => ARRAYREF },
+        after_element => { optional => 1, type => ARRAYREF },
     );
 }
 
