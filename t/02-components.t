@@ -317,7 +317,7 @@ subtest "build" => sub {
             action => 'dropdown_ul',
             args   => {
                 aria_labelledby => 'dropdownMenu1',
-                children        => [
+                items        => [
                     {
                         link => 'http://some.url',
                         data => 'URL',
@@ -340,7 +340,7 @@ subtest "build" => sub {
             args   => {
                 alignment       => 'right',
                 aria_labelledby => 'dropdownMenu1',
-                children        => [
+                items        => [
                     {
                         link => 'http://some.url',
                         data => 'URL',
@@ -363,7 +363,7 @@ subtest "build" => sub {
             args   => {
                 separators      => [2],
                 aria_labelledby => 'dropdownMenu1',
-                children        => [
+                items        => [
                     {
                         link => 'http://some.url',
                         data => 'URL',
@@ -386,7 +386,7 @@ subtest "build" => sub {
             args   => {
                 separators      => [ 1, 3, 5 ],
                 aria_labelledby => 'dropdownMenu1',
-                children        => [
+                items        => [
                     {
                         link => 'http://some.url',
                         data => 'URL',
@@ -410,7 +410,7 @@ subtest "build" => sub {
                 mid => 'dropdownMenu1',
                 ul  => {
                     separators => [ 1, 3, 5 ],
-                    children   => [
+                    items   => [
                         {
                             link => 'http://some.url',
                             data => 'URL',
@@ -439,7 +439,7 @@ subtest "build" => sub {
                 mid => 'dropdownMenu1',
                 ul  => {
                     separators => [ 1, 3, 5 ],
-                    children   => [
+                    items   => [
                         {
                             link => 'http://some.url',
                             data => 'URL',
@@ -469,7 +469,7 @@ subtest "build" => sub {
                 mid => 'dropdownMenu1',
                 ul  => {
                     separators => [ 1, 3, 5 ],
-                    children   => [
+                    items   => [
                         {
                             link => 'http://some.url',
                             data => 'URL',
@@ -499,7 +499,7 @@ subtest "build" => sub {
                 dropup => 1,
                 ul     => {
                     separators => [ 1, 3, 5 ],
-                    children   => [
+                    items   => [
                         {
                             link => 'http://some.url',
                             data => 'URL',
@@ -541,7 +541,7 @@ subtest "build" => sub {
                         dropup   => 1,
                         ul       => {
                             separators => [ 1, 3, 5 ],
-                            children   => [
+                            items   => [
                                 {
                                     link => 'http://some.url',
                                     data => 'URL',
@@ -583,7 +583,7 @@ subtest "build" => sub {
                         dropup   => 1,
                         ul       => {
                             separators => [ 1, 3, 5 ],
-                            children   => [
+                            items   => [
                                 {
                                     link => 'http://some.url',
                                     data => 'URL',

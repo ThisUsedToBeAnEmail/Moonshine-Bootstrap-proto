@@ -152,7 +152,7 @@ subtest "build" => sub {
                     {
                         data     => 'Messages',
                         dropdown => {
-                            children => [
+                            items => [
                                 {
                                     link => 'http://some.url',
                                     data => 'URL',

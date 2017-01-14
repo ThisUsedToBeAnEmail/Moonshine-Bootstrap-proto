@@ -7,7 +7,7 @@ use warnings;
 use Moonshine::Element;
 use Params::Validate qw(:all);
 use Ref::Util qw(:all);
-
+use MOP::Class;
 use feature qw/switch/;
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 
@@ -25,24 +25,37 @@ our $VERSION = '0.01';
 
 our @ISA;
 { @ISA = "UNIVERSAL::Object" };
+our %HAS;
 
 BEGIN {
-    my $fields = $Moonshine::Element::HAS{"attribute_list"}->();
-    my %field_list = map { $_ => 0 } @{$fields}, qw/data tag/;
-    {
-        no strict 'refs';
-        *{"element_attributes"} = sub { %field_list };
-    };
+    my $fields        = $Moonshine::Element::HAS{"attribute_list"}->();
+    my %html_spec     = map { $_ => 0 } @{$fields}, qw/data tag/;
+    my %modifier_spec = (
+        (
+            map { $_ => 0 }
+              qw/switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base/
+        ),
+        (
+            map { $_ => { optional => 1, type => ARRAYREF } }
+              qw/before_element after_element children/
+        ),
+        active_base  => { default => 'active' },
+        disable_base => { default => 'disabled' },
+    );
 
-    my @lazy_components =
-      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form small/;
+    %HAS = (
+        html_spec     => sub { \%html_spec },
+        modifier_spec => sub { \%modifier_spec },
+    );
+
+    my @lazy_components = qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form small/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
             *{"$component"} = sub {
                 my $self = shift;
 
-                my ( $base_args, $build_args ) = validate_base_and_build(
+                my ( $base_args, $build_args ) = $self->validate_build(
                     {
                         params => $_[0] // {},
                         spec => {
@@ -58,7 +71,8 @@ BEGIN {
     }
 }
 
-sub validate_base_and_build {
+sub validate_build {
+    my $self = shift;
     my %args = validate_with(
         params => $_[0],
         spec   => {
@@ -67,10 +81,10 @@ sub validate_base_and_build {
         }
     );
 
-    my %html_spec   = __PACKAGE__->element_attributes;
+    my %html_spec   = %{ $self->{html_spec} };
     my %html_params = ();
 
-    my %modifier_spec   = __PACKAGE__->modifier_spec;
+    my %modifier_spec   = %{ $self->{modifier_spec} };
     my %modifier_params = ();
 
     my %combine = ( %{ $args{params} }, %{ $args{'spec'} } );
@@ -150,21 +164,19 @@ sub validate_base_and_build {
         }
     }
 
-    for my $element (qw/before_element after_element/) {
+    for my $element (qw/before_element after_element children/) {
         if ( defined $modifier{$element} ) {
             my $elements =
-              __PACKAGE__->build_elements( @{ $modifier{$element} } );
+              $self->build_elements( @{ $modifier{$element} } );
             $base{$element} = $elements;
         }
     }
-
-# TODOs children, before, after... and probably some more bootstrap class things :D
 
     return \%base, \%build, \%modifier;
 }
 
 sub build_elements {
-    my $self                        = shift;
+    my $self = shift;
     my @elements_build_instructions = @_;
 
     my @elements;
@@ -187,26 +199,6 @@ sub build_elements {
     }
 
     return \@elements;
-}
-
-sub modifier_spec {
-    return (
-        switch         => 0,
-        switch_base    => 0,
-        class_base     => 0,
-        sizing         => 0,
-        sizing_base    => 0,
-        alignment      => 0,
-        alignment_base => 0,
-        active         => 0,
-        active_base    => { default => 'active' },
-        disable        => 0,
-        disable_base   => { default => 'disabled' },
-        justified      => 0,
-        justified_base => 0,
-        before_element => { optional => 1, type => ARRAYREF },
-        after_element  => { optional => 1, type => ARRAYREF },
-    );
 }
 
 sub join_class {
@@ -254,7 +246,7 @@ default true
 
 sub glyphicon {
     my ($self) = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -271,7 +263,7 @@ sub glyphicon {
 
 =head2 Buttons
     
-    $self->button( class => 'success', data => 'Left' );
+    $self->button({ class => 'success', data => 'Left' });
 
 =head3 Options
 
@@ -305,7 +297,7 @@ defaults to button
 
 sub button {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -396,7 +388,7 @@ Make a group of buttons stretch at equal sizes to span the entire width of its p
 
 sub button_group {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -504,7 +496,7 @@ sub button_group {
 
 sub button_toolbar {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -577,7 +569,7 @@ Change position of dropdown menu via base_element div class - dropdown, dropup,
 
 sub dropdown {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -675,7 +667,7 @@ Create split dropdown button
 sub dropdown_button {
     my ($self) = shift;
 
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -718,7 +710,7 @@ sub dropdown_button {
                 data => 'Title',
             }
         ]
-        children => [
+        items => [
             {
                 heading => 1,
                 data => 'Title',
@@ -796,7 +788,7 @@ Change alignment of dropdown menu
 sub dropdown_ul {
     my $self = shift;
 
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -813,7 +805,7 @@ sub dropdown_ul {
                     type     => ARRAYREF,
                     optional => 1,
                 },
-                children => {
+                items => {
                     type => ARRAYREF,
                 }
             }
@@ -822,7 +814,7 @@ sub dropdown_ul {
 
     my $ul = $self->ul($base_args);
 
-    for ( @{ $build_args->{children} } ) {
+    for ( @{ $build_args->{items} } ) {
         if ( delete $_->{header} ) {
             $ul->add_child( $self->dropdown_header_li($_) );
         }
@@ -875,7 +867,7 @@ sub dropdown_ul {
 sub separator_li {
     my $self = shift;
 
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -911,7 +903,7 @@ sub separator_li {
 sub dropdown_header_li {
     my $self = shift;
 
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -961,7 +953,7 @@ sub dropdown_header_li {
 sub linked_li {
     my $self = shift;
 
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1018,7 +1010,7 @@ sub linked_li {
 sub linked_li_span {
     my $self = shift;
 
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1058,7 +1050,7 @@ sub linked_li_span {
 
 sub caret {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1123,7 +1115,7 @@ Used to map label to input.
 
 sub input_group {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1211,7 +1203,7 @@ default text
 
 sub input {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1253,7 +1245,7 @@ sub input {
 
 sub input_group_addon {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1348,7 +1340,7 @@ nav links become stacked.
 
 sub nav {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1409,7 +1401,7 @@ sub nav {
 
 sub nav_item {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1474,7 +1466,7 @@ nav_type
 
 sub navbar {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1562,7 +1554,7 @@ nav_type
 
 sub navbar_collapse {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1618,7 +1610,7 @@ sub navbar_collapse {
 
 sub navbar_header {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1667,7 +1659,7 @@ sub navbar_header {
 
 sub navbar_brand {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1697,7 +1689,7 @@ sub navbar_brand {
 
 sub navbar_toggle {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1749,7 +1741,7 @@ default/success....
 
 sub navbar_button {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1786,7 +1778,7 @@ Defaults <p>
 
 sub navbar_text {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1822,7 +1814,7 @@ Hash Reference Used to build the <a>.
 
 sub navbar_text_link {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1862,7 +1854,7 @@ Hash Reference Used to build the <a>.
 
 sub navbar_nav {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1917,7 +1909,7 @@ Defaults to Submit
 
 sub navbar_form {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -1978,7 +1970,7 @@ sub navbar_form {
 
 sub form_group {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2028,7 +2020,7 @@ default/success....
 
 sub submit_button {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2069,7 +2061,7 @@ required
 
 sub link_image {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2113,7 +2105,7 @@ Required
 
 sub img {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2143,7 +2135,7 @@ sub img {
 
 sub breadcrumbs {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2211,7 +2203,7 @@ sub breadcrumbs {
 
 sub pagination {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2310,7 +2302,7 @@ sub pagination {
 
 sub pager {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2395,7 +2387,7 @@ Optional - default is default
 
 sub text_label {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2437,7 +2429,7 @@ Optional
 
 sub badge {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2477,7 +2469,7 @@ sub badge {
 
 sub jumbotron {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2524,7 +2516,7 @@ sub jumbotron {
 
 sub page_header {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2568,7 +2560,7 @@ default div
 
 sub thumbnail {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2602,7 +2594,7 @@ default div
 
 sub caption {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2642,7 +2634,7 @@ Optional - default is success
 
 sub alert {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2685,7 +2677,7 @@ Optional
 
 sub progress {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2741,7 +2733,7 @@ sub progress {
 
 sub progress_bar {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2803,7 +2795,7 @@ sub progress_bar {
 
 sub media {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2842,7 +2834,7 @@ sub media {
 
 sub media_object {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2899,7 +2891,7 @@ required
 
 sub media_link_img {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2939,7 +2931,7 @@ sub media_link_img {
 
 sub media_list {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -2979,7 +2971,7 @@ sub media_list {
 
 sub list_group {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3020,7 +3012,7 @@ sub list_group {
 
 sub list_group_item {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3063,7 +3055,7 @@ sub list_group_item {
 
 sub linked_group {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3104,7 +3096,7 @@ sub linked_group {
 
 sub linked_group_item {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3151,7 +3143,7 @@ sub linked_group_item {
 
 sub linked_group_item_heading {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3179,7 +3171,7 @@ sub linked_group_item_heading {
 
 sub linked_group_item_text {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3209,7 +3201,7 @@ sub linked_group_item_text {
 
 sub panel {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3253,7 +3245,7 @@ sub panel {
 
 sub panel_body {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3284,7 +3276,7 @@ sub panel_body {
 
 sub panel_header {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3324,7 +3316,7 @@ sub panel_header {
 
 sub panel_title {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3356,7 +3348,7 @@ sub panel_title {
 
 sub panel_footer {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3388,7 +3380,7 @@ sub panel_footer {
 
 sub responsive_embed {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3412,7 +3404,7 @@ sub responsive_embed {
 
 sub responsive_iframe {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {
@@ -3443,7 +3435,7 @@ sub responsive_iframe {
 
 sub well {
     my $self = shift;
-    my ( $base_args, $build_args ) = validate_base_and_build(
+    my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
             spec => {

@@ -173,7 +173,7 @@ subtest "build" => sub {
                 dropdown => {
                     mid => 'dropdownMenu1',
                     ul  => {
-                        children => [
+                        items => [
                             {
                                 link => 'http://some.url',
                                 data => 'URL',
