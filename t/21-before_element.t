@@ -14,16 +14,17 @@ subtest "build" => sub {
             class  => $class,
             action => 'well',
             args   => {
-                data => '...',
+                data           => '...',
                 before_element => [
                     {
                         action => 'glyphicon',
-                        tag => 'div',
+                        tag    => 'div',
                         switch => 'search',
                     }
                 ],
             },
-            expected => '<div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
+            expected =>
+'<div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
         }
     );
 
@@ -32,21 +33,22 @@ subtest "build" => sub {
             class  => $class,
             action => 'well',
             args   => {
-                data => '...',
+                data           => '...',
                 before_element => [
                     {
                         action => 'glyphicon',
-                        tag => 'div',
+                        tag    => 'div',
                         switch => 'search',
                     },
                     {
                         action => 'glyphicon',
-                        tag => 'div',
+                        tag    => 'div',
                         switch => 'trash',
                     }
                 ],
             },
-            expected => '<div class="glyphicon glyphicon-trash" aria-hidden="true"></div><div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
+            expected =>
+'<div class="glyphicon glyphicon-trash" aria-hidden="true"></div><div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
         }
     );
 
@@ -55,28 +57,29 @@ subtest "build" => sub {
             class  => $class,
             action => 'well',
             args   => {
-                data => '...',
+                data           => '...',
                 before_element => [
                     {
-                        action => 'glyphicon',
-                        tag => 'div',
-                        switch => 'search',
+                        action         => 'glyphicon',
+                        tag            => 'div',
+                        switch         => 'search',
                         before_element => [
                             {
                                 action => 'glyphicon',
-                                tag => 'div',
+                                tag    => 'div',
                                 switch => 'home',
                             }
                         ]
                     },
                     {
                         action => 'glyphicon',
-                        tag => 'div',
+                        tag    => 'div',
                         switch => 'trash',
                     }
                 ],
             },
-            expected => '<div class="glyphicon glyphicon-trash" aria-hidden="true"></div><div class="glyphicon glyphicon-home" aria-hidden="true"></div><div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
+            expected =>
+'<div class="glyphicon glyphicon-trash" aria-hidden="true"></div><div class="glyphicon glyphicon-home" aria-hidden="true"></div><div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
         }
     );
 
@@ -85,16 +88,17 @@ subtest "build" => sub {
             class  => $class,
             action => 'well',
             args   => {
-                data => '...',
+                data           => '...',
                 before_element => [
                     {
-                        tag => 'div',
-                        class => 'glyphicon glyphicon-search',
+                        tag         => 'div',
+                        class       => 'glyphicon glyphicon-search',
                         aria_hidden => 'true',
                     }
                 ],
             },
-            expected => '<div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
+            expected =>
+'<div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
         }
     );
 
@@ -103,10 +107,10 @@ subtest "build" => sub {
             class  => $class,
             action => 'well',
             args   => {
-                data => '...',
+                data           => '...',
                 before_element => [
                     {
-                        class => 'glyphicon glyphicon-search',
+                        class       => 'glyphicon glyphicon-search',
                         aria_hidden => 'true',
                     }
                 ],
@@ -131,8 +135,7 @@ sub dead_test {
     my $action = $args->{action};
     eval { $args->{class}->$action( $args->{args} // {} ) };
     my $error = $@;
-    return like($error, $args->{expected}, "got expected $args->{expected}"); 
+    return like( $error, $args->{expected}, "got expected $args->{expected}" );
 }
-
 
 done_testing();

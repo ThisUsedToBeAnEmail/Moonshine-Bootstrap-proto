@@ -152,7 +152,8 @@ sub validate_base_and_build {
 
     for my $element (qw/before_element after_element/) {
         if ( defined $modifier{$element} ) {
-            my $elements = __PACKAGE__->build_elements(@{ $modifier{$element} });
+            my $elements =
+              __PACKAGE__->build_elements( @{ $modifier{$element} } );
             $base{$element} = $elements;
         }
     }
@@ -163,23 +164,28 @@ sub validate_base_and_build {
 }
 
 sub build_elements {
-    my $self = shift;
+    my $self                        = shift;
     my @elements_build_instructions = @_;
 
     my @elements;
     for my $build (@elements_build_instructions) {
         my $element;
-        if ( my $action = delete $build->{action} ) { 
-            $self->can($action) and $element = $self->$action($build) or die "cannot ......";
-        } elsif ( defined $build->{tag} ) {
+        if ( my $action = delete $build->{action} ) {
+            $self->can($action) and $element = $self->$action($build)
+              or die "cannot ......";
+        }
+        elsif ( defined $build->{tag} ) {
             $element = Moonshine::Element->new($build);
-        } else {
-            my $error_string = join(", ", map { "$_: $build->{$_}" } keys %{ $build });
-            die sprintf "no instructions to build the element: %s", $error_string;
+        }
+        else {
+            my $error_string =
+              join( ", ", map { "$_: $build->{$_}" } keys %{$build} );
+            die sprintf "no instructions to build the element: %s",
+              $error_string;
         }
         push @elements, $element;
     }
-    
+
     return \@elements;
 }
 
@@ -199,7 +205,7 @@ sub modifier_spec {
         justified      => 0,
         justified_base => 0,
         before_element => { optional => 1, type => ARRAYREF },
-        after_element => { optional => 1, type => ARRAYREF },
+        after_element  => { optional => 1, type => ARRAYREF },
     );
 }
 
@@ -959,8 +965,8 @@ sub linked_li {
         {
             params => $_[0] // {},
             spec => {
-                link    => 1,
-                data    => { build => 1 },
+                link => 1,
+                data => { build => 1 },
             }
         }
     );
@@ -3018,9 +3024,9 @@ sub list_group_item {
         {
             params => $_[0] // {},
             spec => {
-                class_base => { default => 'list-group-item' },
-                tag        => { default => 'li' },
-                items      => { type    => ARRAYREF, optional => 1 },
+                class_base  => { default => 'list-group-item' },
+                tag         => { default => 'li' },
+                items       => { type    => ARRAYREF, optional => 1 },
                 switch_base => { default => 'list-group-item-' },
                 badge => { type => HASHREF, optional => 1 },
             },
