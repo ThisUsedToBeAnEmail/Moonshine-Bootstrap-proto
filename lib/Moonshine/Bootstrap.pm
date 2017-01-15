@@ -33,7 +33,7 @@ BEGIN {
     my %modifier_spec = (
         (
             map { $_ => 0 }
-              qw/md xs sm row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base/
+              qw/md xs sm row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base container/
         ),
         (
             map { $_ => { optional => 1, type => ARRAYREF } }
@@ -45,6 +45,7 @@ BEGIN {
         xs_base      => { default => 'col-xs-' },
         sm_base      => { default => 'col-sm-' },
         md_base      => { default => 'col-md-' },
+        container_base => { default => 'container' },
     );
 
     %HAS = (
@@ -151,18 +152,10 @@ sub validate_build {
         $base{class} = prepend_str( $class_base, $base{class} );
     }
 
-    for (qw/xs sm md/) {
+    for (qw/xs sm md sizing alignment/) {
         if ( my $append_class = join_class( $modifier{ $_ . '_base' }, $modifier{$_} ) ) {
             $base{class} = append_str($append_class, $base{class});
         }
-    }
-
-    if ( my $sizing = join_class( $modifier{sizing_base}, $modifier{sizing} ) ) {
-        $base{class} = append_str( $sizing, $base{class} );
-    }
-
-    if ( my $alignment = join_class( $modifier{alignment_base}, $modifier{alignment} ) ) {
-        $base{class} = append_str( $alignment, $base{class} );
     }
 
     for (qw/active justified disable row/) {
@@ -170,6 +163,12 @@ sub validate_build {
             $base{class} =
               append_str( $modifier{ $_ . '_base' }, $base{class} );
         }
+    }
+
+    if ( my $container = $modifier{container} ) {
+        my $cb = $modifier{container_base};
+        my $container_class = ($container =~ m/^\D/) ? sprintf "%s-%s", $cb, $container : $cb;
+        $base{class} = append_str( $container_class, $base{class} );
     }
 
     for my $element (qw/before_element after_element children/) {
@@ -3514,6 +3513,35 @@ sub col {
 
     return $self->div($base_args);
 }
+
+=head2 container
+
+    $self->container( );
+
+=head3 options
+
+=over
+
+=back
+
+=head3 render
+
+    <div class="col-md-1"></div>
+
+=cut
+
+sub container {
+    my $self = shift;
+    my ( $base_args, $build_args ) = $self->validate_build(
+        {
+            params => $_[0] // {},
+            spec => { container => { default => 1 } },
+        }
+    );
+
+    return $self->div($base_args);
+}
+
 
 
 
