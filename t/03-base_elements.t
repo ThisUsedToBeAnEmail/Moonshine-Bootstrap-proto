@@ -343,6 +343,25 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'ul',
+            args     => { inline => 1 },
+            expected => '<ul class="list-inline"></ul>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'ul',
+            args     => { unstyle => 1 },
+            expected => '<ul class="list-unstyled"></ul>'
+        }
+    );
+
+
 };
 
 sub component_test {

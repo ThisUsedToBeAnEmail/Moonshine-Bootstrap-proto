@@ -66,7 +66,7 @@ BEGIN {
         grid_spec     => sub { \%grid },
     );
 
-    my @lazy_components = qw/li ul a th td tr p div span b i u dl dt h1 h2 h3 h4 h5 h6 ol label form small mark del s ins em strong address blockquote footer cite/;
+    my @lazy_components = qw/li a th td tr p div span b i u dl dt h1 h2 h3 h4 h5 h6 ol label form small mark del s ins em strong address blockquote footer cite/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
@@ -3626,6 +3626,53 @@ sub abbr {
 
     return Moonshine::Element->new($base_args);
 }
+
+=head2 ul
+
+    $self->ul();
+
+=head3 Options
+
+=over
+
+=item title
+
+=item data
+
+=item initialism
+
+=back
+
+=head3 Render
+
+    <abbr title="...">.</div>
+
+=cut
+
+sub ul {
+    my $self = shift;
+    my ( $base_args, $build_args ) = $self->validate_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag => { default => 'ul' }, 
+                inline => 0,
+                unstyle => 0,
+            },
+        }
+    );
+
+    if (defined $build_args->{unstyle}) {
+        $base_args->{class} = append_str('list-unstyled', $base_args->{class})
+    }
+
+    if (defined $build_args->{inline}) {
+        $base_args->{class} = append_str('list-inline', $base_args->{class})
+    }
+
+    return Moonshine::Element->new($base_args);
+}
+
 
 1;
 
