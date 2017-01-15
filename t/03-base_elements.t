@@ -388,6 +388,14 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'code',
+            args     => { },
+            expected => '<code></code>'
+        }
+    );
 
 };
 
