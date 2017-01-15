@@ -33,18 +33,21 @@ BEGIN {
     my %modifier_spec = (
         (
             map { $_ => 0 }
-              qw/md xs sm row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base container/
+              qw/md xs sm md_offset xs_offset sm_offset row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base container/
         ),
         (
             map { $_ => { optional => 1, type => ARRAYREF } }
               qw/before_element after_element children/
         ),
+        (
+            map { 
+                $_ . '_base' => { default => 'col-' . $_ . '-' }, 
+                $_ . '_offset_base' => { default => 'col-' . $_ . '-offset-' }
+            } qw/xs sm md/
+        ),
         active_base  => { default => 'active' },
         disable_base => { default => 'disabled' },
         row_base     => { default => 'row' },
-        xs_base      => { default => 'col-xs-' },
-        sm_base      => { default => 'col-sm-' },
-        md_base      => { default => 'col-md-' },
         container_base => { default => 'container' },
     );
 
@@ -152,7 +155,7 @@ sub validate_build {
         $base{class} = prepend_str( $class_base, $base{class} );
     }
 
-    for (qw/xs sm md sizing alignment/) {
+    for (qw/xs xs_offset sm sm_offset md md_offset sizing alignment/) {
         if ( my $append_class = join_class( $modifier{ $_ . '_base' }, $modifier{$_} ) ) {
             $base{class} = append_str($append_class, $base{class});
         }

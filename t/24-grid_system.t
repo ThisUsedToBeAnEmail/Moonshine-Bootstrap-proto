@@ -122,6 +122,74 @@ subtest "build" => sub {
             expected => '<div class="clearfix visible-xs-block"></div>',
         }
     );
+
+    component_test(
+        {
+            class => $class,
+            action => 'col',
+            args => { md => 4, md_offset => 4, data => '.col-md-4 .col-md-offset-4' },
+            expected => '<div class="col-md-4 col-md-offset-4">.col-md-4 .col-md-offset-4</div>',
+        }
+    );
+
+    component_test(
+        {
+            class => $class,
+            action => 'col',
+            args => { sm => 4, sm_offset => 4, data => '.col-md-4 .col-md-offset-4' },
+            expected => '<div class="col-sm-4 col-sm-offset-4">.col-md-4 .col-md-offset-4</div>',
+        }
+    );
+
+
+    component_test(
+        {
+            class => $class,
+            action => 'col',
+            args => { xs => 6, xs_offset => 3, sm => 4, sm_offset => 0 },
+            expected => '<div class="col-xs-6 col-xs-offset-3 col-sm-4 col-sm-offset-0"></div>',
+        }
+    );
+
+    # NESTED
+    component_test(
+        {
+            class => $class,
+            action => 'row',
+            args => { 
+                children => [
+                    {
+                        action => 'col',
+                        sm => 9,
+                        data => 'Level 1: .col-sm-9',
+                        children => [
+                            {
+                                action => 'row',
+                                children => [
+                                    {
+                                        action => 'col',
+                                        xs => 8,
+                                        sm => 6,
+                                        data => 'Level 2: .col-xs-8 .col-sm-6',
+                                    },
+                                    {
+                                        action => 'col',
+                                        xs => 4,
+                                        sm => 6,
+                                        data => 'Level 2: .col-xs-4 .col-sm-6',
+                                    }
+                                ]
+                            }
+
+                        ]
+                    }
+                ]
+            },
+            expected => '<div class="row"><div class="col-sm-9">Level 1: .col-sm-9<div class="row"><div class="col-xs-8 col-sm-6">Level 2: .col-xs-8 .col-sm-6</div><div class="col-xs-4 col-sm-6">Level 2: .col-xs-4 .col-sm-6</div></div></div></div>',
+        }
+    );
+
+
 };
 
 sub component_test {
