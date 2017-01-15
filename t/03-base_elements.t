@@ -361,6 +361,33 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'dl',
+            args     => { },
+            expected => '<dl></dl>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'dt',
+            args     => { },
+            expected => '<dt></dt>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'dd',
+            args     => { },
+            expected => '<dd></dd>'
+        }
+    );
+
 
 };
 
