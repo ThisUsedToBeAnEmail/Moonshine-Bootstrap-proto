@@ -27,7 +27,7 @@ subtest "build" => sub {
 '<div class="glyphicon glyphicon-search" aria-hidden="true"></div><div class="well">...</div>'
         }
     );
-
+    
     component_test(
         {
             class  => $class,
@@ -118,6 +118,7 @@ subtest "build" => sub {
             expected => qr/no instructions to build the element:/,
         }
     );
+
 };
 
 sub component_test {

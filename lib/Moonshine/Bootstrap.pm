@@ -7,7 +7,7 @@ use warnings;
 use Moonshine::Element;
 use Params::Validate qw(:all);
 use Ref::Util qw(:all);
-use MOP::Class;
+
 use feature qw/switch/;
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 
@@ -33,7 +33,7 @@ BEGIN {
     my %modifier_spec = (
         (
             map { $_ => 0 }
-              qw/row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base/
+              qw/md xs sm row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base/
         ),
         (
             map { $_ => { optional => 1, type => ARRAYREF } }
@@ -42,6 +42,9 @@ BEGIN {
         active_base  => { default => 'active' },
         disable_base => { default => 'disabled' },
         row_base     => { default => 'row' },
+        xs_base      => { default => 'col-xs-' },
+        sm_base      => { default => 'col-sm-' },
+        md_base      => { default => 'col-md-' },
     );
 
     %HAS = (
@@ -118,6 +121,7 @@ sub validate_build {
                 $modifier_spec{$key} = delete $args{spec}->{$key};
             }
             if ( exists $args{params}->{$key} ) {
+                my $params = $args{params}->{$key};
                 $modifier_params{$key} = delete $args{params}->{$key};
             }
             next;
@@ -139,8 +143,7 @@ sub validate_build {
         spec   => \%modifier_spec,
     );
 
-    if ( my $switch = join_class( $modifier{switch_base}, $modifier{switch} ) )
-    {
+    if ( my $switch = join_class( $modifier{switch_base}, $modifier{switch} ) ) {
         $base{class} = prepend_str( $switch, $base{class} );
     }
 
@@ -148,14 +151,17 @@ sub validate_build {
         $base{class} = prepend_str( $class_base, $base{class} );
     }
 
-    if ( my $sizing = join_class( $modifier{sizing_base}, $modifier{sizing} ) )
-    {
+    for (qw/xs sm md/) {
+        if ( my $append_class = join_class( $modifier{ $_ . '_base' }, $modifier{$_} ) ) {
+            $base{class} = append_str($append_class, $base{class});
+        }
+    }
+
+    if ( my $sizing = join_class( $modifier{sizing_base}, $modifier{sizing} ) ) {
         $base{class} = append_str( $sizing, $base{class} );
     }
 
-    if ( my $alignment =
-        join_class( $modifier{alignment_base}, $modifier{alignment} ) )
-    {
+    if ( my $alignment = join_class( $modifier{alignment_base}, $modifier{alignment} ) ) {
         $base{class} = append_str( $alignment, $base{class} );
     }
 
@@ -168,8 +174,7 @@ sub validate_build {
 
     for my $element (qw/before_element after_element children/) {
         if ( defined $modifier{$element} ) {
-            my $elements =
-              $self->build_elements( @{ $modifier{$element} } );
+            my $elements = $self->build_elements( @{ $modifier{$element} } );
             $base{$element} = $elements;
         }
     }
@@ -178,13 +183,16 @@ sub validate_build {
 }
 
 sub build_elements {
-    my $self                        = shift;
+    my $self = shift;
     my @elements_build_instructions = @_;
 
     my @elements;
     for my $build (@elements_build_instructions) {
         my $element;
-        if ( my $action = delete $build->{action} ) {
+        if ( is_blessed_ref($build) and $build->isa('Moonshine::Element') ) {
+            $element = $build;
+        }
+        elsif ( my $action = delete $build->{action} ) {
             $self->can($action) and $element = $self->$action($build)
               or die "cannot ......";
         }
@@ -252,15 +260,13 @@ sub glyphicon {
         {
             params => $_[0] // {},
             spec => {
-                tag         => { default => 'span' },
                 switch      => 1,
                 switch_base => { default => 'glyphicon glyphicon-' },
                 aria_hidden => { default => 'true' },
             }
         }
     );
-
-    return Moonshine::Element->new($base_args);
+    return $self->span($base_args);
 }
 
 =head2 Buttons
@@ -3447,7 +3453,8 @@ sub well {
         }
     );
 
-    return $self->div($base_args);
+    my $div = $self->div($base_args);
+    return $div;
 }
 
 =head2 row
@@ -3479,6 +3486,38 @@ sub row {
 
     return $self->div($base_args);
 }
+
+=head2 col
+
+    $self->col( );
+
+=head3 options
+
+=over
+
+=back
+
+=head3 render
+
+    <div class="col-md-1"></div>
+
+=cut
+
+sub col {
+    my $self = shift;
+    my ( $base_args, $build_args ) = $self->validate_build(
+        {
+            params => $_[0] // {},
+            spec => {},
+        }
+    );
+
+    return $self->div($base_args);
+}
+
+
+
+
 
 1;
 
