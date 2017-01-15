@@ -114,6 +114,14 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class   => $class,
+            action  => 'clearfix',
+            args     => { },
+            expected => '<div class="clearfix visible-xs-block"></div>',
+        }
+    );
 };
 
 sub component_test {

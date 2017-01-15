@@ -3526,7 +3526,7 @@ sub col {
 
 =head3 render
 
-    <div class="col-md-1"></div>
+    <div class="container"></div>
 
 =cut
 
@@ -3542,9 +3542,29 @@ sub container {
     return $self->div($base_args);
 }
 
+=head2 clearfix
 
+    $self->clearfix();
 
+=head3 Options
 
+=head3 Render
+
+    <div class="clearfix visible-xs-block"></div>
+
+=cut
+
+sub clearfix {
+    my $self = shift;
+    my ( $base_args, $build_args ) = $self->validate_build(
+        {
+            params => $_[0] // {},
+            spec => { class_base => { default => 'clearfix visible-xs-block' } },
+        }
+    );
+
+    return $self->div($base_args);
+}
 
 
 1;
