@@ -33,6 +33,61 @@ subtest "build" => sub {
     component_test(
         {
             class  => $class,
+            action => 'h2',
+            args   => {
+                class => 'one',
+            },
+            expected => '<h2 class="one"></h2>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'h3',
+            args   => {
+                class => 'one',
+            },
+            expected => '<h3 class="one"></h3>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'h4',
+            args   => {
+                class => 'one',
+            },
+            expected => '<h4 class="one"></h4>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'h5',
+            args   => {
+                class => 'one',
+            },
+            expected => '<h5 class="one"></h5>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'h6',
+            args   => {
+                class => 'one',
+            },
+            expected => '<h6 class="one"></h6>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
             action => 'ul',
             args   => {
                 class => 'one',
@@ -60,6 +115,17 @@ subtest "build" => sub {
                 class => 'one',
             },
             expected => '<tr class="one"></tr>'
+        }
+    );
+
+    component_test(
+        {
+            class  => $class,
+            action => 'p',
+            args   => {
+                lead => 1,
+            },
+            expected => '<p class="lead"></p>'
         }
     );
 
