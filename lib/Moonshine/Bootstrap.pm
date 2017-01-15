@@ -45,7 +45,7 @@ BEGIN {
     my %modifier_spec = (
         (
             map { $_ => 0 }
-              qw/row switch lead switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base container/
+              qw/row switch lead txt switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base container/
         ),
         (
             map { $_ => { optional => 1, type => ARRAYREF } }
@@ -57,6 +57,7 @@ BEGIN {
         lead_base      => { default => 'lead' },
         row_base       => { default => 'row' },
         container_base => { default => 'container' },
+        txt_base       => { default => 'text-' },
     );
 
     %HAS = (
@@ -165,9 +166,8 @@ sub validate_build {
     }
 
     my @grid_keys = map { $_ } grep { $_ !~ m{^.*_base$}xms } sort keys %{ $self->{grid_spec} };
-    for ( @grid_keys, qw/sizing alignment/ ) {
-        if ( my $append_class =
-            join_class( $modifier{ $_ . '_base' }, $modifier{$_} ) )
+    for ( @grid_keys, qw/sizing alignment txt/ ) {
+        if ( my $append_class = join_class( $modifier{ $_ . '_base' }, $modifier{$_} ) )
         {
             $base{class} = append_str( $append_class, $base{class} );
         }
