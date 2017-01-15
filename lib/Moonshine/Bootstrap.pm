@@ -33,7 +33,7 @@ BEGIN {
     my %modifier_spec = (
         (
             map { $_ => 0 }
-              qw/switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base/
+              qw/row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base/
         ),
         (
             map { $_ => { optional => 1, type => ARRAYREF } }
@@ -41,6 +41,7 @@ BEGIN {
         ),
         active_base  => { default => 'active' },
         disable_base => { default => 'disabled' },
+        row_base     => { default => 'row' },
     );
 
     %HAS = (
@@ -48,7 +49,8 @@ BEGIN {
         modifier_spec => sub { \%modifier_spec },
     );
 
-    my @lazy_components = qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form small/;
+    my @lazy_components =
+      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form small/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
@@ -157,7 +159,7 @@ sub validate_build {
         $base{class} = append_str( $alignment, $base{class} );
     }
 
-    for (qw/active justified disable/) {
+    for (qw/active justified disable row/) {
         if ( defined $modifier{$_} ) {
             $base{class} =
               append_str( $modifier{ $_ . '_base' }, $base{class} );
@@ -176,7 +178,7 @@ sub validate_build {
 }
 
 sub build_elements {
-    my $self = shift;
+    my $self                        = shift;
     my @elements_build_instructions = @_;
 
     my @elements;
@@ -3439,16 +3441,43 @@ sub well {
         {
             params => $_[0] // {},
             spec => {
-                tag         => { default => 'div' },
                 switch_base => { default => 'well-' },
                 class_base  => { default => 'well' },
             },
         }
     );
 
-    my $well = Moonshine::Element->new($base_args);
+    return $self->div($base_args);
+}
 
-    return $well;
+=head2 row
+
+    $self->row( );
+
+=head3 options
+
+=over
+
+=back
+
+=head3 render
+
+    <div class="row"></div>
+
+=cut
+
+sub row {
+    my $self = shift;
+    my ( $base_args, $build_args ) = $self->validate_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                row => { default => 1 },
+            },
+        }
+    );
+
+    return $self->div($base_args);
 }
 
 1;
