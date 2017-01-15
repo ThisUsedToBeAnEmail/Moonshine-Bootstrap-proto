@@ -129,6 +129,78 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'mark',
+            args     => { data => 'Some Text' },
+            expected => '<mark>Some Text</mark>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'del',
+            args     => { data => 'Some Text' },
+            expected => '<del>Some Text</del>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 's',
+            args     => { data => 'Some Text' },
+            expected => '<s>Some Text</s>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'ins',
+            args     => { data => 'Some Text' },
+            expected => '<ins>Some Text</ins>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'u',
+            args     => { data => 'Some Text' },
+            expected => '<u>Some Text</u>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'small',
+            args     => { data => 'Some Text' },
+            expected => '<small>Some Text</small>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'strong',
+            args     => { data => 'Some Text' },
+            expected => '<strong>Some Text</strong>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'em',
+            args     => { data => 'Some Text' },
+            expected => '<em>Some Text</em>'
+        }
+    );
+
 };
 
 sub component_test {

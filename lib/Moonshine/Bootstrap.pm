@@ -65,7 +65,7 @@ BEGIN {
         grid_spec     => sub { \%grid },
     );
 
-    my @lazy_components = qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form small/;
+    my @lazy_components = qw/li ul a th td tr p div span b i u dl dt h1 h2 h3 h4 h5 h6 ol label form small mark del s ins em strong/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
@@ -164,7 +164,7 @@ sub validate_build {
         $base{class} = prepend_str( $class_base, $base{class} );
     }
 
-    my @grid_keys = map { $_ } grep { $_ !~ m{^*_base$}xms } sort keys %{ $self->{grid_spec} };
+    my @grid_keys = map { $_ } grep { $_ !~ m{^.*_base$}xms } sort keys %{ $self->{grid_spec} };
     for ( @grid_keys, qw/sizing alignment/ ) {
         if ( my $append_class =
             join_class( $modifier{ $_ . '_base' }, $modifier{$_} ) )
