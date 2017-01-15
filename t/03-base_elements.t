@@ -414,6 +414,25 @@ subtest "build" => sub {
             expected => '<p>For example, <code>&lt;section&gt;</code> should be wrapped as inline.</p>'
         }
     );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'kbd',
+            args     => { },
+            expected => '<kbd></kbd>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'p',
+            args     => { data => [ 'To switch directories, type', { tag => 'kbd', data => 'cd' }, 'followed by the name of the directory' ] },
+            expected => '<p>To switch directories, type <kbd>cd</kbd> followed by the name of the directory</p>'
+        }
+    );
+
 };
 
 sub component_test {
