@@ -226,6 +226,36 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'address',
+            args     => {},
+            expected => '<address></address>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'address',
+            args     => {
+                children => [
+                    {
+                        action => 'strong',
+                        data => 'Full Name',
+                    },
+                    {
+                        action => 'a',
+                        href => 'mailto:#',
+                        data => 'first.last@example.com',
+                    }
+                ],    
+            },
+            expected => '<address><strong>Full Name</strong><a href="mailto:#">first.last@example.com</a></address>'
+        }
+    );
+
 };
 
 sub component_test {

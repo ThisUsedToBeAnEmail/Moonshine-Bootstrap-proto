@@ -66,7 +66,7 @@ BEGIN {
         grid_spec     => sub { \%grid },
     );
 
-    my @lazy_components = qw/li ul a th td tr p div span b i u dl dt h1 h2 h3 h4 h5 h6 ol label form small mark del s ins em strong/;
+    my @lazy_components = qw/li ul a th td tr p div span b i u dl dt h1 h2 h3 h4 h5 h6 ol label form small mark del s ins em strong address/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
