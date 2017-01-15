@@ -28,36 +28,43 @@ our @ISA;
 our %HAS;
 
 BEGIN {
-    my $fields        = $Moonshine::Element::HAS{"attribute_list"}->();
-    my %html_spec     = map { $_ => 0 } @{$fields}, qw/data tag/;
+    my $fields = $Moonshine::Element::HAS{"attribute_list"}->();
+    my %html_spec = map { $_ => 0 } @{$fields}, qw/data tag/;
+
+    my %grid = map {
+        $_ => 0,
+          $_ . '_base'        => { default => 'col-' . $_ . '-' },
+          $_ . '_offset'      => 0,
+          $_ . '_offset_base' => { default => 'col-' . $_ . '-offset-' },
+          $_ . '_pull'        => 0,
+          $_ . '_pull_base'   => { default => 'col-' . $_ . '-pull-' },
+          $_ . '_push'        => 0,
+          $_ . '_push_base'   => { default => 'col-' . $_ . '-push-' },
+    } qw/xs sm md/;
+
     my %modifier_spec = (
         (
             map { $_ => 0 }
-              qw/md xs sm md_offset xs_offset sm_offset row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base container/
+              qw/row switch switch_base class_base sizing sizing_base alignment alignment_base active disable justified justified_base container/
         ),
         (
             map { $_ => { optional => 1, type => ARRAYREF } }
               qw/before_element after_element children/
         ),
-        (
-            map { 
-                $_ . '_base' => { default => 'col-' . $_ . '-' }, 
-                $_ . '_offset_base' => { default => 'col-' . $_ . '-offset-' }
-            } qw/xs sm md/
-        ),
-        active_base  => { default => 'active' },
-        disable_base => { default => 'disabled' },
-        row_base     => { default => 'row' },
+        %grid,
+        active_base    => { default => 'active' },
+        disable_base   => { default => 'disabled' },
+        row_base       => { default => 'row' },
         container_base => { default => 'container' },
     );
 
     %HAS = (
         html_spec     => sub { \%html_spec },
         modifier_spec => sub { \%modifier_spec },
+        grid_spec     => sub { \%grid },
     );
 
-    my @lazy_components =
-      qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form small/;
+    my @lazy_components = qw/li ul a th td tr p div span b i u dl dt em h1 h2 h3 h4 h5 h6 ol label form small/;
     for my $component (@lazy_components) {
         {
             no strict 'refs';
@@ -147,7 +154,8 @@ sub validate_build {
         spec   => \%modifier_spec,
     );
 
-    if ( my $switch = join_class( $modifier{switch_base}, $modifier{switch} ) ) {
+    if ( my $switch = join_class( $modifier{switch_base}, $modifier{switch} ) )
+    {
         $base{class} = prepend_str( $switch, $base{class} );
     }
 
@@ -155,9 +163,14 @@ sub validate_build {
         $base{class} = prepend_str( $class_base, $base{class} );
     }
 
-    for (qw/xs xs_offset sm sm_offset md md_offset sizing alignment/) {
-        if ( my $append_class = join_class( $modifier{ $_ . '_base' }, $modifier{$_} ) ) {
-            $base{class} = append_str($append_class, $base{class});
+    my @grid_keys =
+      map  { $_ }
+      grep { $_ !~ m{^*_base$}xms } sort keys %{ $self->{grid_spec} };
+    for ( @grid_keys, qw/sizing alignment/ ) {
+        if ( my $append_class =
+            join_class( $modifier{ $_ . '_base' }, $modifier{$_} ) )
+        {
+            $base{class} = append_str( $append_class, $base{class} );
         }
     }
 
@@ -169,8 +182,10 @@ sub validate_build {
     }
 
     if ( my $container = $modifier{container} ) {
-        my $cb = $modifier{container_base};
-        my $container_class = ($container =~ m/^\D/) ? sprintf "%s-%s", $cb, $container : $cb;
+        my $cb              = $modifier{container_base};
+        my $container_class = ( $container =~ m/^\D/ )
+          ? sprintf "%s-%s", $cb, $container
+          : $cb;
         $base{class} = append_str( $container_class, $base{class} );
     }
 
@@ -185,7 +200,7 @@ sub validate_build {
 }
 
 sub build_elements {
-    my $self = shift;
+    my $self                        = shift;
     my @elements_build_instructions = @_;
 
     my @elements;
@@ -3562,13 +3577,13 @@ sub clearfix {
     my ( $base_args, $build_args ) = $self->validate_build(
         {
             params => $_[0] // {},
-            spec => { class_base => { default => 'clearfix visible-xs-block' } },
+            spec =>
+              { class_base => { default => 'clearfix visible-xs-block' } },
         }
     );
 
     return $self->div($base_args);
 }
-
 
 1;
 
