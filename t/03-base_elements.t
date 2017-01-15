@@ -470,6 +470,15 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'samp',
+            args     => { data => 'Some Text' },
+            expected => '<samp>Some Text</samp>'
+        }
+    );
+
 };
 
 sub component_test {
