@@ -256,6 +256,93 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'blockquote',
+            args     => {},
+            expected => '<blockquote></blockquote>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'blockquote',
+            args     => {
+                children => [
+                    {
+                        action => 'p',
+                        data => 'Full Name',
+                    },
+                ],    
+            },
+            expected => '<blockquote><p>Full Name</p></blockquote>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'footer',
+            args     => {},
+            expected => '<footer></footer>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'cite',
+            args     => {},
+            expected => '<cite></cite>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'footer',
+            args     => {
+                children => [
+                    {
+                        action => 'cite',
+                        title => 'Full Name',
+                        data => 'Full Name',
+                    },
+                ],    
+            },
+            expected => '<footer><cite title="Full Name">Full Name</cite></footer>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'address',
+            args     => {
+                children => [
+                    {
+                        action => 'strong',
+                        data => 'Full Name',
+                    },
+                    {
+                        action => 'footer',
+                        data => 'Someone famous in',
+                        children => [
+                            {
+                                action => 'cite',
+                                title => 'Source Title',
+                                data => 'Source Title',
+                            }
+                        ]
+                    }
+                ],    
+            },
+            expected => '<address><strong>Full Name</strong><footer>Someone famous in<cite title="Source Title">Source Title</cite></footer></address>'
+        }
+    );
+
 };
 
 sub component_test {
