@@ -397,6 +397,23 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'code',
+            args     => { },
+            expected => '<code></code>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'p',
+            args     => { data => [ 'For example,', { tag => 'code', data => '&lt;section&gt;' }, 'should be wrapped as inline.' ] },
+            expected => '<p>For example, <code>&lt;section&gt;</code> should be wrapped as inline.</p>'
+        }
+    );
 };
 
 sub component_test {
