@@ -452,6 +452,24 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'var',
+            args     => { },
+            expected => '<var></var>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'p',
+            args     => { data => [ { tag => 'var', data => 'y' }, '=', { tag => 'var', data => 'x' } ] },
+            expected => '<p><var>y</var> = <var>x</var></p>'
+        }
+    );
+
 };
 
 sub component_test {
