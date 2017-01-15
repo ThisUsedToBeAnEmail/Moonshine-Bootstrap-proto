@@ -433,6 +433,25 @@ subtest "build" => sub {
         }
     );
 
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'pre',
+            args     => { },
+            expected => '<pre></pre>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'pre',
+            args     => { data => '&lt;p&gt;Sample text here...&lt;/p&gt;' },
+            expected => '<pre>&lt;p&gt;Sample text here...&lt;/p&gt;</pre>',
+        }
+    );
+
 };
 
 sub component_test {
