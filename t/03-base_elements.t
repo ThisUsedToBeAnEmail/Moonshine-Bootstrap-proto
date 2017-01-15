@@ -201,6 +201,31 @@ subtest "build" => sub {
         }
     );
 
+    component_test(
+        {
+            class    => $class,
+            action   => 'abbr',
+            args     => {
+                title => 'HyperText Markup Language',
+                data  => 'HTML'
+            },
+            expected => '<abbr title="HyperText Markup Language">HTML</abbr>'
+        }
+    );
+
+    component_test(
+        {
+            class    => $class,
+            action   => 'abbr',
+            args     => {
+                title => 'HyperText Markup Language',
+                data  => 'HTML',
+                initialism => 1,
+            },
+            expected => '<abbr class="initialism" title="HyperText Markup Language">HTML</abbr>',
+        }
+    );
+
 };
 
 sub component_test {

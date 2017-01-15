@@ -3584,6 +3584,49 @@ sub clearfix {
     return $self->div($base_args);
 }
 
+=head2 abbr
+
+    $self->abbr();
+
+=head3 Options
+
+=over
+
+=item title
+
+=item data
+
+=item initialism
+
+=back
+
+=head3 Render
+
+    <abbr title="...">.</div>
+
+=cut
+
+sub abbr {
+    my $self = shift;
+    my ( $base_args, $build_args ) = $self->validate_build(
+        {
+            params => $_[0] // {},
+            spec => {
+                tag => { default => 'abbr' }, 
+                title => 1,
+                data => 1,
+                initialism => 0,
+            },
+        }
+    );
+
+    if ( defined $build_args->{initialism} ) {
+        $base_args->{class} = append_str('initialism', $base_args->{class});
+    }
+
+    return Moonshine::Element->new($base_args);
+}
+
 1;
 
 __END__
